@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		45A2E6272F9A948F003258DB /* WMS */ = {
+		457CC1C12F9AA01800605500 /* WMS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WMS;
 			sourceTree = "<group>";
@@ -32,7 +32,7 @@
 		45A2E61C2F9A948F003258DB = {
 			isa = PBXGroup;
 			children = (
-				45A2E6272F9A948F003258DB /* WMS */,
+				457CC1C12F9AA01800605500 /* WMS */,
 				45A2E6262F9A948F003258DB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				45A2E6272F9A948F003258DB /* WMS */,
+				457CC1C12F9AA01800605500 /* WMS */,
 			);
 			name = WMS;
 			packageProductDependencies = (
