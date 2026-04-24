@@ -4,7 +4,10 @@ struct PickingModuleView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isLoadingTask = false
     private let taskService: PickingTaskServiceProtocol
-
+    @State private var errorMessage: String?
+    @State private var userId: Int = 1
+    @State private var task: PickingTask?
+    
     init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
         self.taskService = taskService
     }
@@ -25,15 +28,26 @@ struct PickingModuleView: View {
             }
         }
         .navigationBarBackButtonHidden()
+        .navigationDestination(item: $task) { task in
+            PickingTaskView(pickingTask: task)
+        }
     }
 
     private var content: some View {
         VStack(spacing: 60) {
-            Image(.pickingList)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 140, height: 140)
-
+            Button {
+                if userId == 1 {
+                    userId = 666
+                } else {
+                    userId = 1
+                }
+            } label: {
+                Image(.pickingList)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 140, height: 140)
+            }
+            
             Button {
                 Task {
                     await getTaskTapped()
@@ -63,6 +77,15 @@ struct PickingModuleView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
+        .overlay(alignment: .top) {
+            if errorMessage != nil {
+                errorBanner
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 16)
+                    .transition(.move(edge: .top))
+            }
+        }
+        .animation(.easeInOut(duration: 0.4), value: errorMessage)
     }
     private var customTopBar: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -96,10 +119,38 @@ struct PickingModuleView: View {
             isLoadingTask = false
         }
         do {
-            try await taskService.fetchTask(userId: 1)
+            let result = try await taskService.fetchTask(userId: userId)
+            task = result
         } catch {
+            errorMessage = error.localizedDescription
+            try? await Task.sleep(for: .seconds(3))
+            errorMessage = nil
         }
     }
+
+    private var errorBanner: some View {
+        VStack(spacing: .zero) {
+            Text("Не удалось получить сборочный лист")
+                .foregroundStyle(ColorPalette.surfacePrimary)
+                .font(.system(size: 18, weight: .bold))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
+
+            if let errorMessage {
+                Text(errorMessage)
+                    .padding(.top, 4)
+                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .font(.system(size: 16, weight: .regular))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 4)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(ColorPalette.error)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+
 }
 
 #Preview {
