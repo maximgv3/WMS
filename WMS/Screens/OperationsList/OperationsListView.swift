@@ -63,6 +63,7 @@ struct OperationsListView: View {
                             Text(operation.title)
                                 .foregroundStyle(ColorPalette.brandPrimary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.medium)
 
                             Image(systemName: "chevron.right")
                                 .foregroundStyle(ColorPalette.brandMuted.opacity(0.75))
