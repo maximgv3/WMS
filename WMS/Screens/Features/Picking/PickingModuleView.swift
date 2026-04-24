@@ -3,7 +3,11 @@ import SwiftUI
 struct PickingModuleView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isLoadingTask = false
+    private let taskService: PickingTaskServiceProtocol
 
+    init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
+        self.taskService = taskService
+    }
     var body: some View {
         ZStack {
             ColorPalette.brandPrimary
@@ -31,17 +35,19 @@ struct PickingModuleView: View {
                 .frame(width: 140, height: 140)
 
             Button {
-                getTaskTapped()
+                Task {
+                    await getTaskTapped()
+                }
             } label: {
-                Group {
-                    if isLoadingTask {
-                        ProgressView()
-                            .tint(ColorPalette.brandPrimary)
-                    } else {
-                        Text("Получить задание")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundStyle(ColorPalette.brandPrimary)
-                    }
+                ZStack {
+                    ProgressView()
+                        .tint(ColorPalette.brandPrimary)
+                        .opacity(isLoadingTask ? 1 : 0)
+
+                    Text("Получить задание")
+                        .font(.system(size: 20, weight: .medium))
+                        .foregroundStyle(ColorPalette.brandPrimary)
+                        .opacity(isLoadingTask ? 0 : 1)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
@@ -53,6 +59,7 @@ struct PickingModuleView: View {
             .padding(.horizontal, 64)
             .buttonStyle(.plain)
             .disabled(isLoadingTask)
+            .animation(.easeInOut(duration: 0.2), value: isLoadingTask)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
@@ -83,8 +90,15 @@ struct PickingModuleView: View {
         .background(ColorPalette.brandPrimary)
     }
 
-    private func getTaskTapped() {
+    private func getTaskTapped() async {
         isLoadingTask = true
+        defer {
+            isLoadingTask = false
+        }
+        do {
+            try await taskService.fetchTask(userId: 1)
+        } catch {
+        }
     }
 }
 
