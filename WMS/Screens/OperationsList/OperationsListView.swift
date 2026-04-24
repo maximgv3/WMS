@@ -54,14 +54,16 @@ struct OperationsListView: View {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
                                     .fill(ColorPalette.accentPrimary.opacity(0.18))
-                                    .frame(width: 36, height: 36)
+                                    .frame(width: 44, height: 44)
 
                                 Image(systemName: operation.iconName)
                                     .foregroundStyle(ColorPalette.brandPrimary)
+                                    .font(.system(size: 22))
                             }
 
                             Text(operation.title)
                                 .foregroundStyle(ColorPalette.brandPrimary)
+                                .font(.system(size: 17, weight: .regular))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.medium)
 
