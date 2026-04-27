@@ -29,6 +29,7 @@ struct PickingModuleView: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .gesture(moduleExitDragGesture)
             .navigationDestination(for: PickingRoute.self) { route in
                 switch route {
                 case .task(let task):
@@ -38,6 +39,18 @@ struct PickingModuleView: View {
                 }
             }
         }
+    }
+
+    private var moduleExitDragGesture: some Gesture {
+        DragGesture(minimumDistance: 30)
+            .onEnded { value in
+                let isMostlyVertical = abs(value.translation.height) > abs(value.translation.width)
+                let isSwipeDown = value.translation.height > 120
+
+                if isMostlyVertical && isSwipeDown && path.isEmpty {
+                    dismiss()
+                }
+            }
     }
 
     private var content: some View {
