@@ -75,7 +75,7 @@ struct PickingTaskView: View {
                             .scaledToFit()
                     case .empty:
                         ProgressView()
-                            .tint(.citrusBrandSecondary)
+                            .tint(ColorPalette.brandSecondary)
                             .controlSize(.large)
                     case .failure:
                         noImage
@@ -130,6 +130,7 @@ struct PickingTaskView: View {
         VStack {
             Text("Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)")
             ProgressView(value: progressPercentage)
+                .tint(ColorPalette.accentPrimary)
                 .animation(.easeInOut(duration: 0.25), value: progressPercentage)
         }
     }
@@ -145,8 +146,8 @@ struct PickingTaskView: View {
                     .frame(maxWidth: .infinity, minHeight: 60)
             }
             .buttonStyle(.borderedProminent)
-            .tint(.citrusAccentPrimary)
-            .foregroundStyle(.citrusBrandPrimary)
+            .tint(ColorPalette.accentPrimary)
+            .foregroundStyle(ColorPalette.brandPrimary)
         } else {
             EmptyView()
         }
@@ -155,7 +156,7 @@ struct PickingTaskView: View {
     private var noImage: some View {
         Image(systemName: "photo.badge.exclamationmark")
             .font(.system(size: 44))
-            .foregroundStyle(.citrusBrandMuted)
+            .foregroundStyle(ColorPalette.brandMuted)
     }
 }
 

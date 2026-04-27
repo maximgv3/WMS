@@ -35,7 +35,7 @@ struct PickingModuleView: View {
                 case .task(let task):
                     PickingTaskView(pickingTask: task, path: $path)
                 case .finish(let collectedItems):
-                    PickingFinishView(path: $path, collectedItems: collectedItems)
+                    PickingFinishView(path: $path, collectedItems: collectedItems, taskService: taskService)
                 }
             }
         }

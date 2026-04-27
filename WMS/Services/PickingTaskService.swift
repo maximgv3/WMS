@@ -2,10 +2,11 @@ import Foundation
 
 protocol PickingTaskServiceProtocol: AnyObject {
     func fetchTask(userId: Int) async throws -> PickingTask
+    func finishTask(collectedItems: [Item], userId: Int) async throws -> Void
 }
 
 final class PickingListServiceMock: PickingTaskServiceProtocol {
-    
+
     private let mockItems: [Item] = MockData().mockItems
         
     func fetchTask(userId: Int) async throws -> PickingTask {
@@ -19,6 +20,10 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
         
         return PickingTask(allItems: mockItems)
 
+    }
+    
+    func finishTask(collectedItems: [Item], userId: Int) async throws {
+        try await Task.sleep(for: .seconds(1.0))
     }
     
 }
