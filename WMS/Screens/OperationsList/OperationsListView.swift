@@ -3,6 +3,7 @@ import SwiftUI
 struct OperationsListView: View {
     
     private let operations = OperationType.allCases
+    @State private var selectedOperation: OperationType?
     
     var body: some View {
         NavigationStack {
@@ -25,6 +26,9 @@ struct OperationsListView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
+            .fullScreenCover(item: $selectedOperation) { operation in
+                destination(for: operation)
+            }
         }
     }
 
@@ -47,8 +51,8 @@ struct OperationsListView: View {
         ScrollView {
             VStack(spacing: 0) {
                 ForEach(Array(operations.enumerated()), id: \.element.id) { index, operation in
-                    NavigationLink {
-                        destination(for: operation)
+                    Button {
+                        selectedOperation = operation
                     } label: {
                         HStack(spacing: 12) {
                             ZStack {

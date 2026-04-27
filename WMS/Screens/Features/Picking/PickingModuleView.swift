@@ -6,30 +6,37 @@ struct PickingModuleView: View {
     private let taskService: PickingTaskServiceProtocol
     @State private var errorMessage: String?
     @State private var userId: Int = 1
-    @State private var task: PickingTask?
+    @State private var path: [PickingRoute] = []
     
     init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
         self.taskService = taskService
     }
     var body: some View {
-        ZStack {
-            ColorPalette.brandPrimary
+        NavigationStack(path: $path) {
+            ZStack {
+                ColorPalette.brandPrimary
 
-            VStack(spacing: 0) {
-                customTopBar
-                content
-                    .clipShape(
-                        UnevenRoundedRectangle(
-                            topLeadingRadius: 28,
-                            topTrailingRadius: 28
+                VStack(spacing: 0) {
+                    customTopBar
+                    content
+                        .clipShape(
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: 28,
+                                topTrailingRadius: 28
+                            )
                         )
-                    )
-                    .ignoresSafeArea(edges: .bottom)
+                        .ignoresSafeArea(edges: .bottom)
+                }
             }
-        }
-        .navigationBarBackButtonHidden()
-        .navigationDestination(item: $task) { task in
-            PickingTaskView(pickingTask: task)
+            .navigationBarBackButtonHidden()
+            .navigationDestination(for: PickingRoute.self) { route in
+                switch route {
+                case .task(let task):
+                    PickingTaskView(pickingTask: task, path: $path)
+                case .finish(let collectedItems):
+                    PickingFinishView(path: $path, collectedItems: collectedItems)
+                }
+            }
         }
     }
 
@@ -120,7 +127,7 @@ struct PickingModuleView: View {
         }
         do {
             let result = try await taskService.fetchTask(userId: userId)
-            task = result
+            path.append(.task(result))
         } catch {
             errorMessage = error.localizedDescription
             try? await Task.sleep(for: .seconds(3))

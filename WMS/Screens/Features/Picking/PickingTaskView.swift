@@ -3,9 +3,11 @@ import SwiftUI
 struct PickingTaskView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: PickingTaskViewModel
+    @Binding private var path: [PickingRoute]
     private var isPickingEnded: Bool { viewModel.isPickingEnded }
-    init(pickingTask: PickingTask) {
+    init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
+        self._path = path
     }
     private var currentItem: Item? { viewModel.currentItem }
     
@@ -40,20 +42,17 @@ struct PickingTaskView: View {
             collectButton
                 .padding(.horizontal, 24)
         }
-        .navigationDestination(
-            isPresented: Binding(
-                get: { isPickingEnded },
-                set: { _ in }
-            )
-        ) {
-            PickingFinishView()
+        .onChange(of: isPickingEnded) { _, newValue in
+            if newValue {
+                path.append(.finish(viewModel.collectedItems))
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(role: .destructive) {
-                        dismiss()
+                        path.removeAll()
                     } label: {
                         Label("Выйти из модуля", systemImage: "rectangle.portrait.and.arrow.right")
                     }
@@ -161,8 +160,9 @@ struct PickingTaskView: View {
 }
 
 #Preview {
-     
-    NavigationStack {
-        PickingTaskView(pickingTask: PickingTask(allItems: MockData().mockItems))
+    @Previewable @State var path: [PickingRoute] = []
+
+    NavigationStack(path: $path) {
+        PickingTaskView(pickingTask: PickingTask(allItems: MockData().mockItems), path: $path)
     }
 }

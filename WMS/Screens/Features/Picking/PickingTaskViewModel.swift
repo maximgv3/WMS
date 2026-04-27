@@ -7,6 +7,7 @@ final class PickingTaskViewModel {
     
     var allItemsCount: Int { pickingTask.allItems.count }
     var collectedItemsCount: Int { pickingTask.collectedItems.count }
+    var collectedItems: [Item] { pickingTask.collectedItems }
     var isPickingEnded: Bool { collectedItemsCount == allItemsCount }
     
     var leftItems: [Item] {
