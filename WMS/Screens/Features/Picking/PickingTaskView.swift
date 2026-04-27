@@ -1,18 +1,35 @@
 import SwiftUI
 
 struct PickingTaskView: View {
-    private let viewModel: PickingTaskViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var viewModel: PickingTaskViewModel
+    private var isPickingEnded: Bool { viewModel.isPickingEnded }
     init(pickingTask: PickingTask) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
     }
     private var currentItem: Item? { viewModel.currentItem }
     
+    private var progressPercentage: Double { Double(viewModel.collectedItemsCount) / Double(viewModel.allItemsCount) }
     var body: some View {
         Group {
             if let currentItem {
-                VStack {
-                    image
-                    Text(currentItem.title)
+                ScrollView {
+                    VStack {
+                        image
+                        VStack(spacing: 6) {
+                            Text(currentItem.title)
+                                .font(.system(size: 22, weight: .bold))
+                            highlightedIdText(currentItem.id)
+                                .font(.system(size: 27))
+                        }
+                        itemInfoTable(for: currentItem)
+                            .padding(.top, 8)
+                        progress
+                            .padding(.horizontal, 16)
+                            .padding(.top, 8)
+                    }
+                    .padding(.top, 12)
+                    .padding(.bottom, 110)
                 }
             } else {
                 EmptyView()
@@ -20,14 +37,33 @@ struct PickingTaskView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(alignment: .bottom) {
-            Spacer()
-            Button("Next") {
-                try! viewModel.tryToCollect(itemId: currentItem!.id)
+            collectButton
+                .padding(.horizontal, 24)
+        }
+        .navigationDestination(
+            isPresented: Binding(
+                get: { isPickingEnded },
+                set: { _ in }
+            )
+        ) {
+            PickingFinishView()
+        }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button(role: .destructive) {
+                        dismiss()
+                    } label: {
+                        Label("Выйти из модуля", systemImage: "rectangle.portrait.and.arrow.right")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
             }
-            .buttonStyle(.borderedProminent)
         }
     }
-
+    
     @ViewBuilder
     private var image: some View {
         Group {
@@ -53,8 +89,68 @@ struct PickingTaskView: View {
                 noImage
             }
         }
-        .frame(height: 240)
+        .frame(height: 280)
         .frame(maxWidth: .infinity)
+    }
+    
+    private func highlightedIdText(_ id: Int) -> Text {
+        let idString = String(id)
+        let prefix = String(idString.dropLast(4))
+        let suffix = String(idString.suffix(4))
+        return Text(prefix).fontWeight(.medium) + Text(suffix).fontWeight(.heavy)
+    }
+
+    private func itemInfoTable(for item: Item) -> some View {
+        VStack(spacing: 0) {
+            infoRow(title: "Ячейка", value: item.placement ?? "—", isPrimary: true)
+            infoRow(title: "Размер", value: item.size ?? "—")
+            infoRow(title: "Цвет", value: item.color ?? "—")
+            infoRow(title: "Артикул", value: item.article)
+            infoRow(title: "Бренд", value: item.brand ?? "—")
+        }
+        .padding(.horizontal, 16)
+    }
+
+    private func infoRow(title: String, value: String, isPrimary: Bool = false) -> some View {
+        HStack {
+            Text(title)
+                .font(.system(size: isPrimary ? 21 : 19, weight: isPrimary ? .semibold : .regular))
+                .foregroundStyle(isPrimary ? .primary : .secondary)
+            Spacer()
+            Text(value)
+                .font(.system(size: isPrimary ? 22 : 19, weight: isPrimary ? .bold : .medium))
+                .multilineTextAlignment(.trailing)
+        }
+        .padding(.vertical, isPrimary ? 14 : 12)
+        .overlay(alignment: .bottom) {
+            Divider()
+        }
+    }
+
+    private var progress: some View {
+        VStack {
+            Text("Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)")
+            ProgressView(value: progressPercentage)
+                .animation(.easeInOut(duration: 0.25), value: progressPercentage)
+        }
+    }
+    
+    @ViewBuilder
+    private var collectButton: some View {
+        if let currentItem {
+            Button {
+                try? viewModel.tryToCollect(itemId: currentItem.id)
+            } label: {
+                Text("Собрать")
+                    .font(.system(size: 20, weight: .bold))
+                    .frame(maxWidth: .infinity, minHeight: 60)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.citrusAccentPrimary)
+            .foregroundStyle(.citrusBrandPrimary)
+        } else {
+            EmptyView()
+        }
     }
     
     private var noImage: some View {
@@ -65,20 +161,8 @@ struct PickingTaskView: View {
 }
 
 #Preview {
-    let mockItems: [Item] = [
-        Item(id: 1000017, barcode: "4607043980028", article: "THRM-8821", brand: nil, title: "Термокружка", size: "350мл", color: "Чёрный", imageUrl: URL(string: "https://s.a-5.ru/i/file/161/7/f2/32/f2327ecacc88862f.jpg")!, placement: "АЛ21.05.03.12.03"),
-        Item(id: 1000003, barcode: "4607043980014", article: "JNS-4453", brand: "Zara", title: "Джинсы", size: "32", color: "Синий", imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-13/847/668/404/231/38/100051616967b0.jpg")!, placement: "АЛ21.05.03.27.01"),
-        Item(id: 1000008, barcode: "4607043980019", article: "CAP-3301", brand: "Reebok", title: "Кепка", size: nil, color: "Чёрный", imageUrl: URL(string: "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg")!, placement: "АЛ21.05.03.45.02"),
-        Item(id: 1000020, barcode: "4607043980031", article: "MPAD-7734", brand: nil, title: "Коврик для мыши", size: nil, color: "Чёрный", imageUrl: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdbHmxNfPDfJzz5i5FKN8nkfmJZN3-fXjpAA&s")!, placement: "АЛ21.05.03.58.01"),
-        Item(id: 1000001, barcode: "4607043980012", article: "SNK-9920", brand: "Nike", title: "Кроссовки", size: "42", color: "Белый", imageUrl: URL(string: "https://static.rendez-vous.ru/files/catalog_models/resize_640x630/3/3462742_kedy_nike_dm0211_belyy_natural_naya_kozha.JPG")!, placement: "АЛ21.05.03.63.04"),
-        Item(id: 1000018, barcode: "4607043980029", article: "ORG-5512", brand: "Ikea", title: "Органайзер", size: nil, color: "Белый", imageUrl: URL(string: "https://ir.ozone.ru/s3/multimedia-1-w/c1000/7087702532.jpg")!, placement: "АЛ21.05.03.74.02"),
-        Item(id: 1000006, barcode: "4607043980017", article: "SHRT-2287", brand: "Puma", title: "Шорты", size: "M", color: "Красный", imageUrl: URL(string: "https://static.insales-cdn.com/images/products/1/5761/2379585153/705752-01_1.webp")!, placement: "АЛ21.05.03.81.03"),
-        Item(id: 1000016, barcode: "4607043980027", article: "PNC-2046", brand: "Kite", title: "Пенал", size: nil, color: "Синий", imageUrl: URL(string: "https://akvarel.com/storage/products/2025_06_02/products_other_528160_1_1748856353.2669.webp")!, placement: "АЛ21.05.03.95.01"),
-        Item(id: 1000009, barcode: "4607043980020", article: "SWT-6643", brand: "Uniqlo", title: "Свитер", size: "L", color: "Бежевый", imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-78/705/966/823/192/7/100047646246b0.jpg")!, placement: "АЛ21.05.03.108.02"),
-        Item(id: 1000002, barcode: "4607043980013", article: "TSH-1134", brand: "Adidas", title: "Футболка", size: "L", color: "Чёрный", imageUrl: URL(string: "https://fridaywear.ru/upload/dev2fun.imagecompress/webp/resize_cache/iblock/7f6/676_1352_1/7f64bb09cb21b36f177e86e6d7ba0423.webp")!, placement: "АЛ21.05.03.119.01"),
-        Item(id: 1000007, barcode: "4607043980018", article: "SHRT-8820", brand: "Levi's", title: "Рубашка", size: "S", color: "Голубой", imageUrl: URL(string: "https://media.partner.frgroup.kz/images/3d/50/da4c7c9999a35b20c8fa29c2c0c6.jpg")!, placement: "АЛ21.05.03.133.04"),
-        Item(id: 1000019, barcode: "4607043980030", article: "PWR-3309", brand: "Xiaomi", title: "Повербанк", size: "10000мАч", color: "Серый", imageUrl: URL(string: "https://avatars.mds.yandex.net/get-mpic/5219318/img_id6508126417426035281.png/orig")!, placement: "АЛ21.05.03.147.02"),
-        Item(id: 1000005, barcode: "4607043980016", article: "SCK-4471", brand: nil, title: "Носки", size: "40-42", color: "Белый", imageUrl: URL(string: "https://static.markformelle.ru/site/master/catalog/536149/desktop/card/6625115.webp")!, placement: "АЛ21.05.03.162.01"),
-        Item(id: 1000004, barcode: "4607043980015", article: "JKT-7756", brand: "H&M", title: "Куртка", size: "XL", color: "Серый", imageUrl: URL(string: "https://ir.ozone.ru/s3/multimedia-1-y/c1000/7286834086.jpg")!, placement: "АЛ21.05.03.178.03"),
-    ]
-    PickingTaskView(pickingTask: PickingTask(allItems: mockItems))}
+     
+    NavigationStack {
+        PickingTaskView(pickingTask: PickingTask(allItems: MockData().mockItems))
+    }
+}

@@ -12,3 +12,4 @@ struct Item: Identifiable, Hashable, Equatable {
     let imageUrl: URL
     let placement: String?
 }
+

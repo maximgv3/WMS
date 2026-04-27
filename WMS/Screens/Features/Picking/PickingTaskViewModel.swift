@@ -4,7 +4,11 @@ import Observation
 @Observable
 final class PickingTaskViewModel {
     private var pickingTask: PickingTask
-
+    
+    var allItemsCount: Int { pickingTask.allItems.count }
+    var collectedItemsCount: Int { pickingTask.collectedItems.count }
+    var isPickingEnded: Bool { collectedItemsCount == allItemsCount }
+    
     var leftItems: [Item] {
         sortedByPlacement(pickingTask.allItems.filter {
             !pickingTask.collectedItems.contains($0)
