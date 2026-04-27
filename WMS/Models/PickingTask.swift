@@ -1,13 +1,12 @@
 import Foundation
 
-class PickingTask: Hashable {
+struct PickingTask: Identifiable, Sendable, Hashable {
     let id: UUID = UUID()
-    
-    static func == (lhs: PickingTask, rhs: PickingTask) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+    let allItems: [Item]
+    var collectedItems: [Item] = []
+}
+
+enum PickingTaskError: Error {
+    case wrongId
+    case alreadyCollected
 }
