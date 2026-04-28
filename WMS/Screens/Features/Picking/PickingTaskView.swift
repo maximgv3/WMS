@@ -4,6 +4,11 @@ struct PickingTaskView: View {
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
     @State private var errorMessage: String?
+    @State private var errorDismissTask: Task<Void, Never>?
+    @State private var errorBannerID = UUID()
+    @State private var isErrorToolbarPresented = false
+    @State private var isErrorBannerVisible = false
+    @State private var isErrorBannerPulsing = false
     private var isPickingEnded: Bool { viewModel.isPickingEnded }
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
@@ -43,17 +48,15 @@ struct PickingTaskView: View {
             collectButton
                 .padding(.horizontal, 24)
         }
-        .overlay(alignment: .top) {
-            if let errorMessage {
-                errorBanner(errorMessage)
-                    .padding(.horizontal, 8)
-                    .padding(.top, 12)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
         .animation(.easeInOut(duration: 0.25), value: errorMessage)
+        .animation(.easeInOut(duration: 0.25), value: errorBannerID)
         .task {
             await viewModel.preloadImages()
+        }
+        .onDisappear {
+            errorDismissTask?.cancel()
+            isErrorBannerVisible = false
+            isErrorToolbarPresented = false
         }
         .onChange(of: isPickingEnded) { _, newValue in
             if newValue {
@@ -62,6 +65,17 @@ struct PickingTaskView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
+            if isErrorToolbarPresented {
+                ToolbarItem(placement: .principal) {
+                    errorBanner(errorMessage ?? "Это не тот товар")
+                        .id(errorBannerID)
+                        .scaleEffect(isErrorBannerVisible ? (isErrorBannerPulsing ? 1.08 : 1) : 0.96)
+                        .opacity(isErrorBannerVisible ? (isErrorBannerPulsing ? 0.65 : 1) : 0)
+                        .animation(.easeInOut(duration: 0.18), value: isErrorBannerVisible)
+                        .animation(.spring(response: 0.22, dampingFraction: 0.55), value: isErrorBannerPulsing)
+                        .allowsHitTesting(isErrorBannerVisible)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button(role: .destructive) {
@@ -71,6 +85,7 @@ struct PickingTaskView: View {
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
+                        .foregroundStyle(ColorPalette.brandPrimary)
                 }
             }
         }
@@ -167,13 +182,46 @@ struct PickingTaskView: View {
         } else {
             errorMessage = error.localizedDescription
         }
+        errorBannerID = UUID()
+        errorDismissTask?.cancel()
+        isErrorToolbarPresented = true
+        isErrorBannerVisible = false
 
         Task {
+            try? await Task.sleep(for: .milliseconds(50))
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                isErrorBannerVisible = true
+                pulseErrorBanner()
+            }
+        }
+
+        errorDismissTask = Task {
             try? await Task.sleep(for: .seconds(2))
-            errorMessage = nil
+            guard !Task.isCancelled else { return }
+            await hideErrorBanner()
         }
     }
     
+    private func pulseErrorBanner() {
+        isErrorBannerPulsing = true
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(180))
+            isErrorBannerPulsing = false
+        }
+    }
+
+    @MainActor
+    private func hideErrorBanner() async {
+        isErrorBannerVisible = false
+
+        try? await Task.sleep(for: .milliseconds(180))
+        guard !Task.isCancelled else { return }
+
+        errorMessage = nil
+        isErrorToolbarPresented = false
+    }
+
     @ViewBuilder
     private var collectButton: some View {
         if let currentItem {
@@ -207,13 +255,13 @@ struct PickingTaskView: View {
     
     private func errorBanner(_ message: String) -> some View {
         Text(message)
-            .font(.system(size: 17, weight: .semibold))
+            .font(.system(size: 16, weight: .semibold))
             .foregroundStyle(ColorPalette.surfacePrimary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
             .background(ColorPalette.error)
-            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .clipShape(Capsule())
+            .lineLimit(1)
     }
     
     private var noImage: some View {
