@@ -1,4 +1,5 @@
 import SwiftUI
+import AudioToolbox
 
 struct PickingTaskView: View {
     // MARK: - State
@@ -211,7 +212,9 @@ struct PickingTaskView: View {
     private func tryToCollect(itemId: Int) {
         do {
             try viewModel.tryToCollect(itemId: itemId)
+            PickingSoundFeedback.playSuccess()
         } catch {
+            PickingSoundFeedback.playError()
             showError(error)
         }
     }
@@ -326,5 +329,16 @@ struct PickingTaskView: View {
             pickingTask: PickingTask(allItems: MockData().mockItems),
             path: $path
         )
+    }
+}
+
+// MARK: - Sound Feedback
+private enum PickingSoundFeedback {
+    static func playSuccess() {
+        AudioServicesPlaySystemSound(1057)
+    }
+
+    static func playError() {
+        AudioServicesPlaySystemSound(1051)
     }
 }
