@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct PickingTaskView: View {
-    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
+    @State private var errorMessage: String?
     private var isPickingEnded: Bool { viewModel.isPickingEnded }
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
@@ -30,9 +30,10 @@ struct PickingTaskView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
                     }
-                    .padding(.top, 12)
+                    .padding(.top, .zero)
                     .padding(.bottom, 110)
                 }
+                .padding(.top, -12)
             } else {
                 EmptyView()
             }
@@ -41,6 +42,18 @@ struct PickingTaskView: View {
         .overlay(alignment: .bottom) {
             collectButton
                 .padding(.horizontal, 24)
+        }
+        .overlay(alignment: .top) {
+            if let errorMessage {
+                errorBanner(errorMessage)
+                    .padding(.horizontal, 8)
+                    .padding(.top, 12)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: errorMessage)
+        .task {
+            await viewModel.preloadImages()
         }
         .onChange(of: isPickingEnded) { _, newValue in
             if newValue {
@@ -88,7 +101,7 @@ struct PickingTaskView: View {
                 noImage
             }
         }
-        .frame(height: 280)
+        .frame(height: 240)
         .frame(maxWidth: .infinity)
     }
     
@@ -135,22 +148,72 @@ struct PickingTaskView: View {
         }
     }
     
+    private func collect(itemId: Int) {
+        do {
+            try viewModel.tryToCollect(itemId: itemId)
+        } catch {
+            showError(error)
+        }
+    }
+
+    private func showError(_ error: Error) {
+        if let pickingError = error as? PickingTaskError {
+            switch pickingError {
+            case .wrongId:
+                errorMessage = "Это не тот товар"
+            case .alreadyCollected:
+                errorMessage = "Этот товар уже собран"
+            }
+        } else {
+            errorMessage = error.localizedDescription
+        }
+
+        Task {
+            try? await Task.sleep(for: .seconds(2))
+            errorMessage = nil
+        }
+    }
+    
     @ViewBuilder
     private var collectButton: some View {
         if let currentItem {
-            Button {
-                try? viewModel.tryToCollect(itemId: currentItem.id)
-            } label: {
-                Text("Собрать")
-                    .font(.system(size: 20, weight: .bold))
-                    .frame(maxWidth: .infinity, minHeight: 60)
+            HStack(spacing: 12) {
+                Button {
+                    collect(itemId: -1)
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 20, weight: .bold))
+                        .frame(width: 64, height: 60)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(ColorPalette.error)
+                .foregroundStyle(ColorPalette.surfacePrimary)
+
+                Button {
+                    collect(itemId: currentItem.id)
+                } label: {
+                    Text("Собрать")
+                        .font(.system(size: 20, weight: .bold))
+                        .frame(maxWidth: .infinity, minHeight: 60)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(ColorPalette.accentPrimary)
+                .foregroundStyle(ColorPalette.brandPrimary)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(ColorPalette.accentPrimary)
-            .foregroundStyle(ColorPalette.brandPrimary)
         } else {
             EmptyView()
         }
+    }
+    
+    private func errorBanner(_ message: String) -> some View {
+        Text(message)
+            .font(.system(size: 17, weight: .semibold))
+            .foregroundStyle(ColorPalette.surfacePrimary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(ColorPalette.error)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
     
     private var noImage: some View {
