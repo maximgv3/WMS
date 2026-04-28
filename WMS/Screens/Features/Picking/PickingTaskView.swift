@@ -13,6 +13,9 @@ struct PickingTaskView: View {
     @State private var isErrorBannerVisible = false
     @State private var isErrorBannerPulsing = false
 
+    // Scanner state
+    @State private var isScanningEnabled = false
+
     // MARK: - Init
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
@@ -63,6 +66,7 @@ struct PickingTaskView: View {
             errorDismissTask?.cancel()
             isErrorBannerVisible = false
             isErrorToolbarPresented = false
+            isScanningEnabled = false
         }
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
@@ -219,6 +223,16 @@ struct PickingTaskView: View {
         }
     }
 
+    private func tryToCollect(scannedCode: String) {
+        do {
+            try viewModel.tryToCollect(scannedCode: scannedCode)
+            PickingSoundFeedback.playSuccess()
+        } catch {
+            PickingSoundFeedback.playError()
+            showError(error)
+        }
+    }
+
     // MARK: - Error Banner
     private func showError(_ error: Error) {
         if let pickingError = error as? PickingTaskError {
@@ -285,30 +299,41 @@ struct PickingTaskView: View {
     @ViewBuilder
     private var collectButton: some View {
         if let currentItem {
-            HStack(spacing: 12) {
-                // TODO: Replace with scanner input.
-                Button {
-                    tryToCollect(itemId: -1)
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(width: 64, height: 60)
+            ScannerPreviewView(
+                isScanningEnabled: isScanningEnabled,
+                onScan: { scannedCode in
+                    tryToCollect(scannedCode: scannedCode)
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(ColorPalette.error)
-                .foregroundStyle(ColorPalette.surfacePrimary)
-
-                Button {
-                    tryToCollect(itemId: currentItem.id)
-                } label: {
-                    Text("Собрать")
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(ColorPalette.accentPrimary)
-                .foregroundStyle(ColorPalette.brandPrimary)
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 130)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(
+                        isScanningEnabled ? ColorPalette.accentPrimary : ColorPalette.brandMuted.opacity(0.35),
+                        lineWidth: isScanningEnabled ? 3 : 1
+                    )
             }
+            .overlay {
+                HStack(spacing: 10) {
+                    Image(systemName: "barcode.viewfinder")
+                        .font(.system(size: 22, weight: .semibold))
+                    Text(isScanningEnabled ? "Сканирование..." : "Удерживайте для сканирования")
+                        .font(.system(size: 20, weight: .bold))
+                }
+                .foregroundStyle(ColorPalette.surfacePrimary)
+                .opacity(isScanningEnabled ? 0.35 : 0.85)
+            }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        isScanningEnabled = true
+                    }
+                    .onEnded { _ in
+                        isScanningEnabled = false
+                    }
+            )
         }
     }
 
