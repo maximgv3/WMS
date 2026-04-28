@@ -37,7 +37,32 @@ final class PickingTaskViewModel {
         }
     }
 
+    func preloadImages() async {
+        await withTaskGroup(of: Void.self) { group in
+            for item in pickingTask.allItems {
+                let url = item.imageUrl
+                group.addTask {
+                    do {
+                        _ = try await URLSession.shared.data(from: url)
+                    } catch {
+                        print("Failed to load image:", error)
+                    }
+                }
+            }
+        }
+    }
+    
     private func sortedByPlacement(_ items: [Item]) -> [Item] {
-        items.sorted { ($0.placement ?? "") < ($1.placement ?? "") }
+        items.sorted { lhs, rhs in
+            let lhsPlacement = lhs.placement ?? ""
+            let rhsPlacement = rhs.placement ?? ""
+            let placementComparison = lhsPlacement.localizedStandardCompare(rhsPlacement)
+
+            if placementComparison == .orderedSame {
+                return lhs.article.localizedStandardCompare(rhs.article) == .orderedAscending
+            }
+
+            return placementComparison == .orderedAscending
+        }
     }
 }
