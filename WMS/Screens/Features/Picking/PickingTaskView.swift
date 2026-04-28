@@ -1,23 +1,32 @@
 import SwiftUI
 
 struct PickingTaskView: View {
+    // MARK: - State
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
+
+    // Error banner state
     @State private var errorMessage: String?
     @State private var errorDismissTask: Task<Void, Never>?
     @State private var isErrorToolbarPresented = false
     @State private var isErrorBannerVisible = false
     @State private var isErrorBannerPulsing = false
 
+    // MARK: - Init
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
         self._path = path
     }
+
+    // MARK: - Computed Properties
     private var currentItem: Item? { viewModel.currentItem }
 
     private var progressPercentage: Double {
-        Double(viewModel.collectedItemsCount) / Double(viewModel.allItemsCount)
+        guard viewModel.allItemsCount > 0 else { return 1 }
+        return Double(viewModel.collectedItemsCount) / Double(viewModel.allItemsCount)
     }
+
+    // MARK: - Body
     var body: some View {
         Group {
             if let currentItem {
@@ -39,8 +48,6 @@ struct PickingTaskView: View {
                     .padding(.bottom, 110)
                 }
                 .padding(.top, -12)
-            } else {
-                EmptyView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -103,6 +110,7 @@ struct PickingTaskView: View {
         }
     }
 
+    // MARK: - Image
     @ViewBuilder
     private var image: some View {
         Group {
@@ -132,6 +140,7 @@ struct PickingTaskView: View {
         .frame(maxWidth: .infinity)
     }
 
+    // MARK: - Item Info
     private func highlightedIdText(_ id: Int) -> Text {
         let idString = String(id)
         let prefix = String(idString.dropLast(4))
@@ -183,6 +192,7 @@ struct PickingTaskView: View {
         }
     }
 
+    // MARK: - Progress
     private var progress: some View {
         VStack {
             Text(
@@ -197,7 +207,8 @@ struct PickingTaskView: View {
         }
     }
 
-    private func collect(itemId: Int) {
+    // MARK: - Actions
+    private func tryToCollect(itemId: Int) {
         do {
             try viewModel.tryToCollect(itemId: itemId)
         } catch {
@@ -205,6 +216,7 @@ struct PickingTaskView: View {
         }
     }
 
+    // MARK: - Error Banner
     private func showError(_ error: Error) {
         if let pickingError = error as? PickingTaskError {
             switch pickingError {
@@ -255,37 +267,6 @@ struct PickingTaskView: View {
         isErrorToolbarPresented = false
     }
 
-    @ViewBuilder
-    private var collectButton: some View {
-        if let currentItem {
-            HStack(spacing: 12) {
-                Button {
-                    collect(itemId: -1)
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(width: 64, height: 60)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(ColorPalette.error)
-                .foregroundStyle(ColorPalette.surfacePrimary)
-
-                Button {
-                    collect(itemId: currentItem.id)
-                } label: {
-                    Text("Собрать")
-                        .font(.system(size: 20, weight: .bold))
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                }
-                .buttonStyle(.borderedProminent)
-                .tint(ColorPalette.accentPrimary)
-                .foregroundStyle(ColorPalette.brandPrimary)
-            }
-        } else {
-            EmptyView()
-        }
-    }
-
     private func errorBanner(_ message: String) -> some View {
         Text(message)
             .font(.system(size: 16, weight: .semibold))
@@ -297,6 +278,38 @@ struct PickingTaskView: View {
             .lineLimit(1)
     }
 
+    // MARK: - Bottom Controls
+    @ViewBuilder
+    private var collectButton: some View {
+        if let currentItem {
+            HStack(spacing: 12) {
+                // TODO: Replace with scanner input.
+                Button {
+                    tryToCollect(itemId: -1)
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 20, weight: .bold))
+                        .frame(width: 64, height: 60)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(ColorPalette.error)
+                .foregroundStyle(ColorPalette.surfacePrimary)
+
+                Button {
+                    tryToCollect(itemId: currentItem.id)
+                } label: {
+                    Text("Собрать")
+                        .font(.system(size: 20, weight: .bold))
+                        .frame(maxWidth: .infinity, minHeight: 60)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(ColorPalette.accentPrimary)
+                .foregroundStyle(ColorPalette.brandPrimary)
+            }
+        }
+    }
+
+    // MARK: - Placeholders
     private var noImage: some View {
         Image(systemName: "photo.badge.exclamationmark")
             .font(.system(size: 44))
@@ -304,6 +317,7 @@ struct PickingTaskView: View {
     }
 }
 
+// MARK: - Preview
 #Preview {
     @Previewable @State var path: [PickingRoute] = []
 
