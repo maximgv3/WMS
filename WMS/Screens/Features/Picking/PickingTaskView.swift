@@ -5,18 +5,19 @@ struct PickingTaskView: View {
     @Binding private var path: [PickingRoute]
     @State private var errorMessage: String?
     @State private var errorDismissTask: Task<Void, Never>?
-    @State private var errorBannerID = UUID()
     @State private var isErrorToolbarPresented = false
     @State private var isErrorBannerVisible = false
     @State private var isErrorBannerPulsing = false
-    private var isPickingEnded: Bool { viewModel.isPickingEnded }
+
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
         self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
         self._path = path
     }
     private var currentItem: Item? { viewModel.currentItem }
-    
-    private var progressPercentage: Double { Double(viewModel.collectedItemsCount) / Double(viewModel.allItemsCount) }
+
+    private var progressPercentage: Double {
+        Double(viewModel.collectedItemsCount) / Double(viewModel.allItemsCount)
+    }
     var body: some View {
         Group {
             if let currentItem {
@@ -35,7 +36,6 @@ struct PickingTaskView: View {
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
                     }
-                    .padding(.top, .zero)
                     .padding(.bottom, 110)
                 }
                 .padding(.top, -12)
@@ -48,8 +48,6 @@ struct PickingTaskView: View {
             collectButton
                 .padding(.horizontal, 24)
         }
-        .animation(.easeInOut(duration: 0.25), value: errorMessage)
-        .animation(.easeInOut(duration: 0.25), value: errorBannerID)
         .task {
             await viewModel.preloadImages()
         }
@@ -58,7 +56,7 @@ struct PickingTaskView: View {
             isErrorBannerVisible = false
             isErrorToolbarPresented = false
         }
-        .onChange(of: isPickingEnded) { _, newValue in
+        .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
                 path.append(.finish(viewModel.collectedItems))
             }
@@ -68,11 +66,22 @@ struct PickingTaskView: View {
             if isErrorToolbarPresented {
                 ToolbarItem(placement: .principal) {
                     errorBanner(errorMessage ?? "Это не тот товар")
-                        .id(errorBannerID)
-                        .scaleEffect(isErrorBannerVisible ? (isErrorBannerPulsing ? 1.08 : 1) : 0.96)
-                        .opacity(isErrorBannerVisible ? (isErrorBannerPulsing ? 0.65 : 1) : 0)
-                        .animation(.easeInOut(duration: 0.18), value: isErrorBannerVisible)
-                        .animation(.spring(response: 0.22, dampingFraction: 0.55), value: isErrorBannerPulsing)
+                        .scaleEffect(
+                            isErrorBannerVisible
+                                ? (isErrorBannerPulsing ? 1.08 : 1) : 0.96
+                        )
+                        .opacity(
+                            isErrorBannerVisible
+                                ? (isErrorBannerPulsing ? 0.65 : 1) : 0
+                        )
+                        .animation(
+                            .easeInOut(duration: 0.18),
+                            value: isErrorBannerVisible
+                        )
+                        .animation(
+                            .spring(response: 0.22, dampingFraction: 0.55),
+                            value: isErrorBannerPulsing
+                        )
                         .allowsHitTesting(isErrorBannerVisible)
                 }
             }
@@ -81,7 +90,10 @@ struct PickingTaskView: View {
                     Button(role: .destructive) {
                         path.removeAll()
                     } label: {
-                        Label("Выйти из модуля", systemImage: "rectangle.portrait.and.arrow.right")
+                        Label(
+                            "Выйти из модуля",
+                            systemImage: "rectangle.portrait.and.arrow.right"
+                        )
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -90,7 +102,7 @@ struct PickingTaskView: View {
             }
         }
     }
-    
+
     @ViewBuilder
     private var image: some View {
         Group {
@@ -119,17 +131,22 @@ struct PickingTaskView: View {
         .frame(height: 240)
         .frame(maxWidth: .infinity)
     }
-    
+
     private func highlightedIdText(_ id: Int) -> Text {
         let idString = String(id)
         let prefix = String(idString.dropLast(4))
         let suffix = String(idString.suffix(4))
-        return Text(prefix).fontWeight(.medium) + Text(suffix).fontWeight(.heavy)
+        return Text(prefix).fontWeight(.medium)
+            + Text(suffix).fontWeight(.heavy)
     }
 
     private func itemInfoTable(for item: Item) -> some View {
         VStack(spacing: 0) {
-            infoRow(title: "Ячейка", value: item.placement ?? "—", isPrimary: true)
+            infoRow(
+                title: "Ячейка",
+                value: item.placement ?? "—",
+                isPrimary: true
+            )
             infoRow(title: "Размер", value: item.size ?? "—")
             infoRow(title: "Цвет", value: item.color ?? "—")
             infoRow(title: "Артикул", value: item.article)
@@ -138,14 +155,26 @@ struct PickingTaskView: View {
         .padding(.horizontal, 16)
     }
 
-    private func infoRow(title: String, value: String, isPrimary: Bool = false) -> some View {
+    private func infoRow(title: String, value: String, isPrimary: Bool = false)
+        -> some View
+    {
         HStack {
             Text(title)
-                .font(.system(size: isPrimary ? 21 : 19, weight: isPrimary ? .semibold : .regular))
+                .font(
+                    .system(
+                        size: isPrimary ? 21 : 19,
+                        weight: isPrimary ? .semibold : .regular
+                    )
+                )
                 .foregroundStyle(isPrimary ? .primary : .secondary)
             Spacer()
             Text(value)
-                .font(.system(size: isPrimary ? 22 : 19, weight: isPrimary ? .bold : .medium))
+                .font(
+                    .system(
+                        size: isPrimary ? 22 : 19,
+                        weight: isPrimary ? .bold : .medium
+                    )
+                )
                 .multilineTextAlignment(.trailing)
         }
         .padding(.vertical, isPrimary ? 14 : 12)
@@ -156,13 +185,18 @@ struct PickingTaskView: View {
 
     private var progress: some View {
         VStack {
-            Text("Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)")
+            Text(
+                "Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)"
+            )
             ProgressView(value: progressPercentage)
                 .tint(ColorPalette.accentPrimary)
-                .animation(.easeInOut(duration: 0.25), value: progressPercentage)
+                .animation(
+                    .easeInOut(duration: 0.25),
+                    value: progressPercentage
+                )
         }
     }
-    
+
     private func collect(itemId: Int) {
         do {
             try viewModel.tryToCollect(itemId: itemId)
@@ -182,7 +216,6 @@ struct PickingTaskView: View {
         } else {
             errorMessage = error.localizedDescription
         }
-        errorBannerID = UUID()
         errorDismissTask?.cancel()
         isErrorToolbarPresented = true
         isErrorBannerVisible = false
@@ -202,7 +235,7 @@ struct PickingTaskView: View {
             await hideErrorBanner()
         }
     }
-    
+
     private func pulseErrorBanner() {
         isErrorBannerPulsing = true
         Task { @MainActor in
@@ -252,7 +285,7 @@ struct PickingTaskView: View {
             EmptyView()
         }
     }
-    
+
     private func errorBanner(_ message: String) -> some View {
         Text(message)
             .font(.system(size: 16, weight: .semibold))
@@ -263,7 +296,7 @@ struct PickingTaskView: View {
             .clipShape(Capsule())
             .lineLimit(1)
     }
-    
+
     private var noImage: some View {
         Image(systemName: "photo.badge.exclamationmark")
             .font(.system(size: 44))
@@ -275,6 +308,9 @@ struct PickingTaskView: View {
     @Previewable @State var path: [PickingRoute] = []
 
     NavigationStack(path: $path) {
-        PickingTaskView(pickingTask: PickingTask(allItems: MockData().mockItems), path: $path)
+        PickingTaskView(
+            pickingTask: PickingTask(allItems: MockData().mockItems),
+            path: $path
+        )
     }
 }
