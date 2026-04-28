@@ -24,6 +24,13 @@ final class PickingTaskViewModel {
         self.pickingTask = pickingTask
     }
 
+    func tryToCollect(scannedCode: String) throws {
+        guard let itemId = Int(scannedCode) else {
+            throw PickingTaskError.wrongId
+        }
+        try tryToCollect(itemId: itemId)
+    }
+    
     func tryToCollect(itemId: Int) throws {
         guard !pickingTask.collectedItems.contains(where: { $0.id == itemId }) else {
             throw PickingTaskError.alreadyCollected
