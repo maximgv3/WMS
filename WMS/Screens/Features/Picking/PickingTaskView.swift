@@ -374,7 +374,7 @@ struct PickingTaskView: View {
     // MARK: - Bottom Controls
     @ViewBuilder
     private var collectButton: some View {
-        if let currentItem {
+        if currentItem != nil {
             ScannerPreviewView(
                 scanAreaSize: nil,
                 isScanningEnabled: isScanningEnabled,
