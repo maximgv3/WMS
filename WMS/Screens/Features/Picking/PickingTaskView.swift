@@ -44,22 +44,18 @@ struct PickingTaskView: View {
                             highlightedIdText(currentItem.id)
                                 .font(.system(size: 27))
                         }
+                        collectButton
+                            .padding(.horizontal, 24)
+                            .padding(.top, 12)
                         itemInfoTable(for: currentItem)
                             .padding(.top, 8)
-                        progress
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
                     }
-                    .padding(.bottom, 110)
+                    .padding(.bottom, 24)
                 }
                 .padding(.top, -12)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(alignment: .bottom) {
-            collectButton
-                .padding(.horizontal, 24)
-        }
         .task {
             await viewModel.preloadImages()
         }
@@ -97,6 +93,9 @@ struct PickingTaskView: View {
                         )
                         .allowsHitTesting(isErrorBannerVisible)
                 }
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                progressMenu
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -199,18 +198,58 @@ struct PickingTaskView: View {
     }
 
     // MARK: - Progress
-    private var progress: some View {
-        VStack {
+    private var progressMenu: some View {
+        Menu {
             Text(
                 "Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)"
             )
-            ProgressView(value: progressPercentage)
-                .tint(ColorPalette.accentPrimary)
+            Text("Пропущено 0")
+        } label: {
+            progressIndicator
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var progressIndicator: some View {
+        HStack(spacing: 10) {
+            circularProgress
+            Text(
+                "\(viewModel.collectedItemsCount)/\(viewModel.allItemsCount)"
+            )
+            .font(.system(size: 14, weight: .semibold))
+            .foregroundStyle(ColorPalette.brandPrimary)
+            .monospacedDigit()
+        }
+        .padding(.leading, 9)
+        .padding(.trailing, 11)
+        .padding(.vertical, 5)
+        .background(ColorPalette.surfacePrimary)
+        .clipShape(Capsule())
+        .fixedSize(horizontal: true, vertical: false)
+        .animation(
+            .easeInOut(duration: 0.25),
+            value: progressPercentage
+        )
+    }
+
+    private var circularProgress: some View {
+        ZStack {
+            Circle()
+                .stroke(ColorPalette.brandMuted.opacity(0.22), lineWidth: 3)
+
+            Circle()
+                .trim(from: 0, to: progressPercentage)
+                .stroke(
+                    ColorPalette.brandMuted,
+                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
                 .animation(
                     .easeInOut(duration: 0.25),
                     value: progressPercentage
                 )
         }
+        .frame(width: 16, height: 16)
     }
 
     // MARK: - Actions
