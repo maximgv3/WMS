@@ -15,6 +15,7 @@ struct PickingTaskView: View {
 
     // Scanner state
     @State private var isScanningEnabled = false
+    private let scannerPreviewHeight: CGFloat = 130
 
     // MARK: - Init
     init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
@@ -300,13 +301,14 @@ struct PickingTaskView: View {
     private var collectButton: some View {
         if let currentItem {
             ScannerPreviewView(
+                scanAreaSize: nil,
                 isScanningEnabled: isScanningEnabled,
                 onScan: { scannedCode in
                     tryToCollect(scannedCode: scannedCode)
                 }
             )
             .frame(maxWidth: .infinity)
-            .frame(height: 130)
+            .frame(height: scannerPreviewHeight)
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
