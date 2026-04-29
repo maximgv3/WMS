@@ -12,6 +12,8 @@ struct PickingTaskView: View {
     @State private var isErrorToolbarPresented = false
     @State private var isErrorBannerVisible = false
     @State private var isErrorBannerPulsing = false
+    @State private var areToolbarSideItemsPresented = true
+    @State private var areToolbarSideItemsVisible = true
 
     // Scanner state
     @State private var isScanningEnabled = false
@@ -63,6 +65,8 @@ struct PickingTaskView: View {
             errorDismissTask?.cancel()
             isErrorBannerVisible = false
             isErrorToolbarPresented = false
+            areToolbarSideItemsPresented = true
+            areToolbarSideItemsVisible = true
             isScanningEnabled = false
         }
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
@@ -94,22 +98,26 @@ struct PickingTaskView: View {
                         .allowsHitTesting(isErrorBannerVisible)
                 }
             }
-            ToolbarItem(placement: .topBarLeading) {
-                progressMenu
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button(role: .destructive) {
-                        path.removeAll()
-                    } label: {
-                        Label(
-                            "Выйти из модуля",
-                            systemImage: "rectangle.portrait.and.arrow.right"
+            if areToolbarSideItemsPresented {
+                ToolbarItem(placement: .topBarLeading) {
+                    progressMenu
+                        .opacity(areToolbarSideItemsVisible ? 1 : 0)
+                        .scaleEffect(areToolbarSideItemsVisible ? 1 : 0.92)
+                        .animation(
+                            .easeInOut(duration: 0.18),
+                            value: areToolbarSideItemsVisible
                         )
-                    }
-                } label: {
-                    Image(systemName: "ellipsis.circle")
-                        .foregroundStyle(ColorPalette.brandPrimary)
+                        .allowsHitTesting(areToolbarSideItemsVisible)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    exitMenu
+                        .opacity(areToolbarSideItemsVisible ? 1 : 0)
+                        .scaleEffect(areToolbarSideItemsVisible ? 1 : 0.92)
+                        .animation(
+                            .easeInOut(duration: 0.18),
+                            value: areToolbarSideItemsVisible
+                        )
+                        .allowsHitTesting(areToolbarSideItemsVisible)
                 }
             }
         }
@@ -252,6 +260,26 @@ struct PickingTaskView: View {
         .frame(width: 16, height: 16)
     }
 
+    private var exitMenu: some View {
+        Menu {
+            Button(role: .destructive) {
+                path.removeAll()
+            } label: {
+                Label(
+                    "Выйти из модуля",
+                    systemImage: "rectangle.portrait.and.arrow.right"
+                )
+            }
+        } label: {
+            exitMenuIcon
+        }
+    }
+
+    private var exitMenuIcon: some View {
+        Image(systemName: "ellipsis.circle")
+            .foregroundStyle(ColorPalette.brandPrimary)
+    }
+
     // MARK: - Actions
     private func tryToCollect(itemId: Int) {
         do {
@@ -286,6 +314,7 @@ struct PickingTaskView: View {
             errorMessage = error.localizedDescription
         }
         errorDismissTask?.cancel()
+        areToolbarSideItemsVisible = false
         isErrorToolbarPresented = true
         isErrorBannerVisible = false
 
@@ -293,6 +322,7 @@ struct PickingTaskView: View {
             try? await Task.sleep(for: .milliseconds(50))
             guard !Task.isCancelled else { return }
             await MainActor.run {
+                areToolbarSideItemsPresented = false
                 isErrorBannerVisible = true
                 pulseErrorBanner()
             }
@@ -322,6 +352,12 @@ struct PickingTaskView: View {
 
         errorMessage = nil
         isErrorToolbarPresented = false
+        areToolbarSideItemsPresented = true
+
+        try? await Task.sleep(for: .milliseconds(50))
+        guard !Task.isCancelled else { return }
+
+        areToolbarSideItemsVisible = true
     }
 
     private func errorBanner(_ message: String) -> some View {
