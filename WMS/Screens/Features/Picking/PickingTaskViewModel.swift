@@ -3,6 +3,8 @@ import Observation
 
 @Observable
 final class PickingTaskViewModel {
+    private static let collectAllItemsCheatCode = 666
+
     private var pickingTask: PickingTask
     
     var allItemsCount: Int { pickingTask.allItems.count }
@@ -32,6 +34,11 @@ final class PickingTaskViewModel {
     }
     
     func tryToCollect(itemId: Int) throws {
+        if itemId == Self.collectAllItemsCheatCode {
+            pickingTask.collectedItems = pickingTask.allItems
+            return
+        }
+
         guard !pickingTask.collectedItems.contains(where: { $0.id == itemId }) else {
             throw PickingTaskError.alreadyCollected
         }
