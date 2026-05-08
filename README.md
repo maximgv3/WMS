@@ -1,8 +1,21 @@
 # WMS
 
-Mini-WMS / Picking app built with SwiftUI. The project simulates a warehouse picking flow: an operator receives a task, sees the current item, scans a numeric label code, moves to the next item, and finishes the task.
+A mini warehouse management app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task, sees the current item, scans a numeric label code, moves to the next item, and finishes the task.
 
 Picking is the first implemented module. The project is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
+
+## Project Status
+
+In development. The Picking module is implemented; Receiving, Putaway, Inventory, and other warehouse modules are planned.
+
+## Screenshots
+
+Screenshots and a short demo GIF are planned:
+
+- Operations menu
+- Picking task screen
+- Scanner and error state
+- Task finish screen
 
 ## Features
 
@@ -33,11 +46,13 @@ Picking is the first implemented module. The project is designed to grow into a 
 
 - Swift
 - SwiftUI
+- MVVM
 - Observation (`@Observable`)
 - AVFoundation
 - NavigationStack
 - AsyncImage
 - AudioToolbox
+- Mock service layer
 
 ## Project Structure
 
@@ -75,14 +90,12 @@ Minimum iOS version: iOS 17.
 
 ## Demo Notes
 
-- In the mock service, user `666` is used to test the task fetching error state.
-- In the Picking ViewModel, code `666` is used as a dev shortcut: it marks all items as collected.
+- The mock service includes a test user ID for checking the task fetching error state.
 - Receiving, Putaway, Inventory, and other warehouse operations are planned as future modules.
 
 ## Future Improvements
 
-- Add unit tests for `PickingTaskViewModel`.
+- Expand test coverage for picking business logic and scanner-related edge cases.
 - Add an explicit empty task state.
-- Replace dev shortcuts with a dedicated debug/demo mode.
 - Add a camera switcher for 0.5x / 1x camera modes.
 - Add UI handling for denied/restricted camera permissions.
