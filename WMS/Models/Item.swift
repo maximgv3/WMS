@@ -11,5 +11,7 @@ struct Item: Identifiable, Hashable, Equatable {
     let color: String?
     let imageUrl: URL
     let placement: String?
+    let price: Double
+    let stock: Int
 }
 

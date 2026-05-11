@@ -5,6 +5,7 @@ struct PickingTaskView: View {
     // MARK: - State
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
+    @State private var isSkipConfirmationPresented = false
 
     // Error banner state
     @State private var errorMessage: String?
@@ -27,6 +28,10 @@ struct PickingTaskView: View {
 
     // MARK: - Computed Properties
     private var currentItem: Item? { viewModel.currentItem }
+    private var currentItemPriceText: String {
+        guard let currentItem else { return "—" }
+        return String(format: "%.0f₽", currentItem.price)
+    }
 
     // MARK: - Body
     var body: some View {
@@ -55,6 +60,15 @@ struct PickingTaskView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             await viewModel.preloadImages()
+        }
+        .alert("Уверены?", isPresented: $isSkipConfirmationPresented) {
+            Button("Отмена", role: .cancel) { }
+
+            Button("Пропустить", role: .destructive) {
+                viewModel.skipCurrentItem()
+            }
+        } message: {
+            Text("Информация о потерянном товаре будет передана руководителю. Стоимость товара: \(currentItemPriceText)")
         }
         .onDisappear {
             errorDismissTask?.cancel()
@@ -168,6 +182,7 @@ struct PickingTaskView: View {
             infoRow(title: "Цвет", value: item.color ?? "—")
             infoRow(title: "Артикул", value: item.article)
             infoRow(title: "Бренд", value: item.brand ?? "—")
+            infoRow(title: "Остаток", value: "\(item.stock) шт.")
         }
         .padding(.horizontal, 16)
     }
@@ -212,7 +227,7 @@ struct PickingTaskView: View {
     private var topMenu: some View {
         Menu {
             Button {
-                viewModel.skipCurrentItem()
+                isSkipConfirmationPresented = true
             } label: {
                 Label(
                     "Пропустить товар",
