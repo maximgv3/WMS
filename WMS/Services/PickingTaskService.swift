@@ -10,7 +10,7 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
     private let mockItems: [Item] = MockData().mockItems
         
     func fetchTask(userId: Int) async throws -> PickingTask {
-        try await Task.sleep(for: .seconds(0.5))
+        try await Task.sleep(for: .seconds(0.1))
         
         if userId == 666 {
             throw NSError(domain: "PickingTask", code: 666, userInfo: [
@@ -23,7 +23,7 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
     }
     
     func finishTask(collectedItems: [Item], userId: Int) async throws {
-        try await Task.sleep(for: .seconds(1.0))
+        try await Task.sleep(for: .seconds(0.5))
     }
     
 }

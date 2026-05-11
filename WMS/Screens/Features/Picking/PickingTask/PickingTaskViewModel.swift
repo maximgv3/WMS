@@ -8,13 +8,15 @@ final class PickingTaskViewModel {
     private var pickingTask: PickingTask
     
     var allItemsCount: Int { pickingTask.allItems.count }
-    var collectedItemsCount: Int { pickingTask.collectedItems.count }
-    var collectedItems: [Item] { pickingTask.collectedItems }
-    var isPickingEnded: Bool { collectedItemsCount == allItemsCount }
+    var collectedItemsCount: Int { collectedItems.count }
+    var skippedItemsCount: Int { skippedItems.count }
+    private(set) var collectedItems: [Item] = []
+    private(set) var skippedItems: [Item] = []
+    var isPickingEnded: Bool { collectedItemsCount + skippedItemsCount == allItemsCount }
     
     var leftItems: [Item] {
         sortedByPlacement(pickingTask.allItems.filter {
-            !pickingTask.collectedItems.contains($0)
+            !collectedItems.contains($0) && !skippedItems.contains($0)
         })
     }
 
@@ -35,22 +37,27 @@ final class PickingTaskViewModel {
     
     func tryToCollect(itemId: Int) throws {
         if itemId == Self.collectAllItemsCheatCode {
-            pickingTask.collectedItems = pickingTask.allItems
+            collectedItems = pickingTask.allItems
             return
         }
 
-        guard !pickingTask.collectedItems.contains(where: { $0.id == itemId }) else {
+        guard !collectedItems.contains(where: { $0.id == itemId }) else {
             throw PickingTaskError.alreadyCollected
         }
         guard let currentItem else { return }
 
         if currentItem.id == itemId {
-            pickingTask.collectedItems.append(currentItem)
+            collectedItems.append(currentItem)
         } else {
             throw PickingTaskError.wrongId
         }
     }
 
+    func skipCurrentItem() {
+        guard let currentItem else { return }
+        skippedItems.append(currentItem)
+    }
+    
     func preloadImages() async {
         await withTaskGroup(of: Void.self) { group in
             for item in pickingTask.allItems {

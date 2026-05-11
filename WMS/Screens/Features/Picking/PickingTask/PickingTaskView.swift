@@ -105,7 +105,7 @@ struct PickingTaskView: View {
                         .allowsHitTesting(areToolbarSideItemsVisible)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    exitMenu
+                    topMenu
                         .opacity(areToolbarSideItemsVisible ? 1 : 0)
                         .scaleEffect(areToolbarSideItemsVisible ? 1 : 0.92)
                         .animation(
@@ -205,12 +205,20 @@ struct PickingTaskView: View {
         PickingProgressMenu(
             totalCount: viewModel.allItemsCount,
             collectedCount: viewModel.collectedItemsCount,
-            skippedCount: 0
+            skippedCount: viewModel.skippedItemsCount
         )
     }
 
-    private var exitMenu: some View {
+    private var topMenu: some View {
         Menu {
+            Button {
+                viewModel.skipCurrentItem()
+            } label: {
+                Label(
+                    "Пропустить товар",
+                    systemImage: "xmark.bin"
+                )
+            }
             Button(role: .destructive) {
                 path.removeAll()
             } label: {

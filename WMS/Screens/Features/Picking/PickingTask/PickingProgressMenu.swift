@@ -18,7 +18,9 @@ struct PickingProgressMenu: View {
     var body: some View {
         Menu {
             Text("Собрано \(collectedCount) из \(totalCount)")
-            Text("Пропущено \(skippedCount)")
+            if skippedCount > 0 {
+                Text("Пропущено \(skippedCount)")
+            }
         } label: {
             progressIndicator
         }
@@ -29,7 +31,7 @@ struct PickingProgressMenu: View {
         HStack(spacing: 10) {
             circularProgress
             Text(
-                "\(collectedCount)/\(totalCount)"
+                "\(collectedCount + skippedCount)/\(totalCount)"
             )
             .font(.system(size: 14, weight: .semibold))
             .foregroundStyle(ColorPalette.brandPrimary)
