@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct PickingProgressMenu: View {
-    private var totalCount: Int
-    private var collectedCount: Int
-    private var skippedCount: Int
+    private let totalCount: Int
+    private let collectedCount: Int
+    private let skippedCount: Int
     private var progressPercentage: Double {
         guard totalCount > 0 else { return 0 }
         return Double(collectedCount + skippedCount) / Double(totalCount)

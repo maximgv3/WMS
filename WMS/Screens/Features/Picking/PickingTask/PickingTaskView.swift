@@ -28,12 +28,6 @@ struct PickingTaskView: View {
     // MARK: - Computed Properties
     private var currentItem: Item? { viewModel.currentItem }
 
-    private var progressPercentage: Double {
-        guard viewModel.allItemsCount > 0 else { return 1 }
-        return Double(viewModel.collectedItemsCount)
-            / Double(viewModel.allItemsCount)
-    }
-
     // MARK: - Body
     var body: some View {
         Group {
