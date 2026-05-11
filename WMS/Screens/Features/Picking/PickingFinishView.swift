@@ -3,17 +3,27 @@ import SwiftUI
 struct PickingFinishView: View {
     @Binding private var path: [PickingRoute]
     private let collectedItems: [Item]
+    private let skippedItems: [Item]
     private let taskService: PickingTaskServiceProtocol
     @State private var isFinishingTask = false
     @State private var errorMessage: String?
+    private var resultText: String {
+        if skippedItems.count > 0 {
+            return "Собрано товаров: \(collectedItems.count)\nПропущено: \(skippedItems.count)"
+        } else {
+            return "Собрано товаров: \(collectedItems.count)"
+        }
+    }
 
     init(
         path: Binding<[PickingRoute]>,
         collectedItems: [Item],
+        skippedItems: [Item],
         taskService: PickingTaskServiceProtocol
     ) {
         self._path = path
         self.collectedItems = collectedItems
+        self.skippedItems = skippedItems
         self.taskService = taskService
     }
 
@@ -36,7 +46,7 @@ struct PickingFinishView: View {
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.brandPrimary)
 
-                Text("Собрано товаров: \(collectedItems.count)")
+                Text(resultText)
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(ColorPalette.brandMuted)
             }
@@ -97,7 +107,7 @@ struct PickingFinishView: View {
         }
 
         do {
-            try await taskService.finishTask(collectedItems: collectedItems, userId: 1)
+            try await taskService.finishTask(collectedItems: collectedItems, skippedItems: skippedItems, userId: 1)
             path.removeAll()
         } catch {
             errorMessage = error.localizedDescription

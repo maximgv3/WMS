@@ -80,7 +80,9 @@ struct PickingTaskView: View {
         }
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
-                path.append(.finish(viewModel.collectedItems))
+                path.append(
+                    .finish(viewModel.collectedItems, viewModel.skippedItems)
+                )
             }
         }
         .navigationBarBackButtonHidden(true)

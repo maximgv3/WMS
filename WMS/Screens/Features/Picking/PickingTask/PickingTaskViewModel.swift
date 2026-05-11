@@ -37,7 +37,7 @@ final class PickingTaskViewModel {
     
     func tryToCollect(itemId: Int) throws {
         if itemId == Self.collectAllItemsCheatCode {
-            collectedItems = pickingTask.allItems
+            collectedItems += leftItems
             return
         }
 
