@@ -1,3 +1,6 @@
+/// Обертка над AVFoundation scanner.
+/// Комментарии намеренно подробные: этот файл используется для изучения camera capture APIs.
+
 import AVFoundation // Подключает AVFoundation: камеру, AVCaptureSession, metadata scanner и preview layer.
 import SwiftUI // Подключает SwiftUI, чтобы использовать ScannerPreviewView как обычную SwiftUI-вью.
 
