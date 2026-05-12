@@ -88,6 +88,20 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.collectedItems == [item2, item3])
         #expect(viewModel.isPickingEnded)
     }
+    
+    @Test
+    func pickingResultCountsItems() {
+        let collectedItems = [makeItem(id: 1), makeItem(id: 2)]
+        let skippedItems = [makeItem(id: 3)]
+        let result = PickingResult(
+            collectedItems: collectedItems,
+            skippedItems: skippedItems
+        )
+
+        #expect(result.collectedCount == 2)
+        #expect(result.skippedCount == 1)
+        #expect(result.totalCount == 3)
+    }
 
     private func makeItem(id: Int = 123) -> Item {
         Item(
