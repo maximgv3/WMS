@@ -8,7 +8,7 @@ protocol PickingTaskServiceProtocol: AnyObject {
 
 final class PickingListServiceMock: PickingTaskServiceProtocol {
 
-    private let mockItems: [Item] = MockData().mockItems
+    private let mockItems: [Item] = MockData.mockItems
 
     func fetchTask(userId: Int) async throws -> PickingTask {
         try await Task.sleep(for: .seconds(0.1))

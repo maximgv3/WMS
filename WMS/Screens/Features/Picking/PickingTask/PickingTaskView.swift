@@ -36,11 +36,11 @@ struct PickingTaskView: View {
     }
     private var scannerIdleText: String {
         isReplacementModeOn
-            ? "Удерживайте для сканирования замены"
+            ? "Отсканируйте замену"
             : "Удерживайте для сканирования"
     }
     private var scannerActiveText: String {
-        isReplacementModeOn ? "Сканируйте замену..." : "Сканирование..."
+        isReplacementModeOn ? "Сканирование замены..." : "Сканирование..."
     }
 
     // MARK: - Body
@@ -251,7 +251,7 @@ struct PickingTaskView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Режим замены",
+                    "Собрать замену",
                     systemImage: "arrow.triangle.2.circlepath"
                 )
             }
@@ -466,13 +466,19 @@ struct PickingTaskView: View {
                 .overlay {
                     HStack(spacing: 10) {
                         Image(systemName: "barcode.viewfinder")
-                            .font(.system(size: 22, weight: .semibold))
+                            .font(.system(size: 20, weight: .semibold))
+                            .frame(width: 24)
+                            .padding(.leading, 10)
+
                         Text(
                             isScanningEnabled
                             ? scannerActiveText : scannerIdleText
                         )
-                        .font(.system(size: 20, weight: .bold))
+                        .font(.system(size: 18, weight: .bold))
+                        .minimumScaleFactor(0.85)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     }
+                    .padding(.horizontal, 10)
                     .foregroundStyle(ColorPalette.surfacePrimary)
                     .opacity(isScanningEnabled ? 0.35 : 0.85)
                 }
@@ -503,7 +509,7 @@ struct PickingTaskView: View {
 
     NavigationStack(path: $path) {
         PickingTaskView(
-            pickingTask: PickingTask(allItems: MockData().mockItems),
+            pickingTask: PickingTask(allItems: MockData.mockItems),
             pickingTaskService: PickingListServiceMock(),
             path: $path
         )

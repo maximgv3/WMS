@@ -1,7 +1,7 @@
 import Foundation
 
 struct MockData {
-    let mockItems: [Item] = [
+    static let mockItems: [Item] = [
         Item(
             id: 7839201741,
             barcode: "4620187349056",
@@ -274,6 +274,87 @@ struct MockData {
             placement: "АЛ21.05.03.178.03.01",
             price: 1190,
             stock: 33
+        ),
+    ]
+
+    static let realLifeMock: [Item] = [
+        Item(
+            id: 8761236971,
+            barcode: "",
+            article: "AQT-1000",
+            brand: "Sera",
+            title: "Aquatan кондиционер для аквариумной воды",
+            size: "1 л",
+            color: nil,
+            imageUrl: URL(string: "https://shoplineimg.com/62b4292fbba6b80017657b5e/62c7f85976f1b50017dd16a3/800x.jpg?")!,
+            placement: "",
+            price: 0,
+            stock: 1
+        ),
+        Item(
+            id: 7887732138,
+            barcode: "",
+            article: "LPT-GRN-1500",
+            brand: "Lipton",
+            title: "Зелёный чай",
+            size: "1.5 л",
+            color: nil,
+            imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/16906021028/100024030073b0.jpg")!,
+            placement: "",
+            price: 0,
+            stock: 1
+        ),
+        Item(
+            id: 1639360707,
+            barcode: "",
+            article: "LPT-LMN-1000",
+            brand: "Lipton",
+            title: "Чай с лимоном",
+            size: "1 л",
+            color: nil,
+            imageUrl: URL(string: "https://rosal24.ru/upload/iblock/ddd/wy4kjy9lxfopxnrm64n88ign1r9zlgjd.webp")!,
+            placement: "",
+            price: 0,
+            stock: 1
+        ),
+        Item(
+            id: 4933512907,
+            barcode: "",
+            article: "RDB-PEACH-025",
+            brand: "Red Bull",
+            title: "Энергетический напиток Персик",
+            size: "0.25 л",
+            color: nil,
+            imageUrl: URL(string: "https://images-foodtech.magnit.ru/NY_Dx7tfQBwSLqYCnuAvO48dGlp9fXYW23edDWZQ7Sg/rs:fit:1600:1600/plain/s3://img-dostavka/catalog/uf/5f8/5f84f80e2bfa0b5ea4fe37558574c33c/7e1cb29a1af49c5a8d10e1d260b1157f.jpeg@webp")!,
+            placement: "",
+            price: 0,
+            stock: 1
+        ),
+        Item(
+            id: 6271800197,
+            barcode: "",
+            article: "OMG3-90",
+            brand: nil,
+            title: "Омега-3 капсулы",
+            size: "90 шт",
+            color: nil,
+            imageUrl: URL(string: "https://images.apteka.ru/original_f206e159-3300-42dc-ac47-d6b12dd7b793.jpeg")!,
+            placement: "",
+            price: 0,
+            stock: 1
+        ),
+        Item(
+            id: 9323507236,
+            barcode: "",
+            article: "FRP-PEACH-1",
+            brand: "Fresh Pie",
+            title: "Пирожное Персик",
+            size: "1 шт",
+            color: nil,
+            imageUrl: URL(string: "https://basket-14.wbbasket.ru/vol2105/part210515/210515529/images/big/1.webp")!,
+            placement: "",
+            price: 0,
+            stock: 1
         ),
     ]
 }
