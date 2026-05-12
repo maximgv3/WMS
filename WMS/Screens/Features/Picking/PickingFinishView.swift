@@ -7,10 +7,10 @@ struct PickingFinishView: View {
     @State private var isFinishingTask = false
     @State private var errorMessage: String?
     private var resultText: String {
-        if result.skippedItems.count > 0 {
-            return "Собрано товаров: \(result.collectedItems.count)\nПропущено: \(result.skippedItems.count)"
+        if result.skippedCount > 0 {
+            return "Собрано товаров: \(result.collectedCount)\nПропущено: \(result.skippedCount)"
         } else {
-            return "Собрано товаров: \(result.collectedItems.count)"
+            return "Собрано товаров: \(result.collectedCount)"
         }
     }
 
