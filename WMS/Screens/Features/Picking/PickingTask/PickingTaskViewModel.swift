@@ -3,7 +3,7 @@ import Observation
 
 @Observable
 final class PickingTaskViewModel {
-    private static let collectAllItemsCheatCode = 666
+    static let collectAllItemsCheatCode = 666
 
     private var pickingTask: PickingTask
     

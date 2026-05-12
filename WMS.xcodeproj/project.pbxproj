@@ -6,11 +6,27 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		4508E6762FB3453D00530B38 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 45A2E61D2F9A948F003258DB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 45A2E6242F9A948F003258DB;
+			remoteInfo = WMS;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		4508E6722FB3453D00530B38 /* WMSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WMSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		45A2E6252F9A948F003258DB /* WMS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WMS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		4508E6732FB3453D00530B38 /* WMSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = WMSTests;
+			sourceTree = "<group>";
+		};
 		457CC1C12F9AA01800605500 /* WMS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WMS;
@@ -19,6 +35,13 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		4508E66F2FB3453D00530B38 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		45A2E6222F9A948F003258DB /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +56,7 @@
 			isa = PBXGroup;
 			children = (
 				457CC1C12F9AA01800605500 /* WMS */,
+				4508E6732FB3453D00530B38 /* WMSTests */,
 				45A2E6262F9A948F003258DB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +65,7 @@
 			isa = PBXGroup;
 			children = (
 				45A2E6252F9A948F003258DB /* WMS.app */,
+				4508E6722FB3453D00530B38 /* WMSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +73,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4508E6712FB3453D00530B38 /* WMSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4508E6782FB3453D00530B38 /* Build configuration list for PBXNativeTarget "WMSTests" */;
+			buildPhases = (
+				4508E66E2FB3453D00530B38 /* Sources */,
+				4508E66F2FB3453D00530B38 /* Frameworks */,
+				4508E6702FB3453D00530B38 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4508E6772FB3453D00530B38 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4508E6732FB3453D00530B38 /* WMSTests */,
+			);
+			name = WMSTests;
+			packageProductDependencies = (
+			);
+			productName = WMSTests;
+			productReference = 4508E6722FB3453D00530B38 /* WMSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		45A2E6242F9A948F003258DB /* WMS */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 45A2E6302F9A9490003258DB /* Build configuration list for PBXNativeTarget "WMS" */;
@@ -77,9 +125,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					4508E6712FB3453D00530B38 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = 45A2E6242F9A948F003258DB;
+					};
 					45A2E6242F9A948F003258DB = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -100,11 +152,19 @@
 			projectRoot = "";
 			targets = (
 				45A2E6242F9A948F003258DB /* WMS */,
+				4508E6712FB3453D00530B38 /* WMSTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		4508E6702FB3453D00530B38 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		45A2E6232F9A948F003258DB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +175,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		4508E66E2FB3453D00530B38 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		45A2E6212F9A948F003258DB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +191,59 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		4508E6772FB3453D00530B38 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 45A2E6242F9A948F003258DB /* WMS */;
+			targetProxy = 4508E6762FB3453D00530B38 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		4508E6792FB3453D00530B38 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L785ZM72MS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximgv3.WMSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WMS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WMS";
+			};
+			name = Debug;
+		};
+		4508E67A2FB3453D00530B38 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = L785ZM72MS;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maximgv3.WMSTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WMS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/WMS";
+			};
+			name = Release;
+		};
 		45A2E62E2F9A9490003258DB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -317,6 +436,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		4508E6782FB3453D00530B38 /* Build configuration list for PBXNativeTarget "WMSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4508E6792FB3453D00530B38 /* Debug */,
+				4508E67A2FB3453D00530B38 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		45A2E6202F9A948F003258DB /* Build configuration list for PBXProject "WMS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
