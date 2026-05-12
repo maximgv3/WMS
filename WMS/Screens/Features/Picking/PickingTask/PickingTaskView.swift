@@ -7,6 +7,7 @@ struct PickingTaskView: View {
     @Binding private var path: [PickingRoute]
     @State private var isSkipConfirmationPresented = false
     @State private var isDemoModeOn = false
+    @State private var isReplacementModeOn = false
 
     // Error banner state
     @State private var errorMessage: String?
@@ -32,6 +33,14 @@ struct PickingTaskView: View {
     private var currentItemPriceText: String {
         guard let currentItem else { return "—" }
         return String(format: "%.0f₽", currentItem.price)
+    }
+    private var scannerIdleText: String {
+        isReplacementModeOn
+            ? "Удерживайте для сканирования замены"
+            : "Удерживайте для сканирования"
+    }
+    private var scannerActiveText: String {
+        isReplacementModeOn ? "Сканируйте замену..." : "Сканирование..."
     }
 
     // MARK: - Body
@@ -78,6 +87,7 @@ struct PickingTaskView: View {
             areToolbarSideItemsPresented = true
             areToolbarSideItemsVisible = true
             isScanningEnabled = false
+            isReplacementModeOn = false
         }
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
@@ -236,7 +246,18 @@ struct PickingTaskView: View {
     private var topMenu: some View {
         Menu {
             Button {
+                isReplacementModeOn.toggle()
+                isDemoModeOn = false
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Режим замены",
+                    systemImage: "arrow.triangle.2.circlepath"
+                )
+            }
+            Button {
                 isDemoModeOn.toggle()
+                isReplacementModeOn = false
                 isScanningEnabled = false
             } label: {
                 Label(
@@ -288,6 +309,23 @@ struct PickingTaskView: View {
         } catch {
             PickingSoundFeedback.playError()
             showError(error)
+        }
+    }
+
+    private func tryToReplace(scannedCode: String) {
+        Task {
+            do {
+                guard let replacementId = Int(scannedCode) else {
+                    throw PickingTaskError.wrongId
+                }
+
+                try await viewModel.tryToReplace(replacementId: replacementId)
+                isReplacementModeOn = false
+                PickingSoundFeedback.playSuccess()
+            } catch {
+                PickingSoundFeedback.playError()
+                showError(error)
+            }
         }
     }
 
@@ -406,7 +444,11 @@ struct PickingTaskView: View {
                     scanAreaSize: nil,
                     isScanningEnabled: isScanningEnabled,
                     onScan: { scannedCode in
-                        tryToCollect(scannedCode: scannedCode)
+                        if isReplacementModeOn {
+                            tryToReplace(scannedCode: scannedCode)
+                        } else {
+                            tryToCollect(scannedCode: scannedCode)
+                        }
                     }
                 )
                 .frame(maxWidth: .infinity)
@@ -427,7 +469,7 @@ struct PickingTaskView: View {
                             .font(.system(size: 22, weight: .semibold))
                         Text(
                             isScanningEnabled
-                            ? "Сканирование..." : "Удерживайте для сканирования"
+                            ? scannerActiveText : scannerIdleText
                         )
                         .font(.system(size: 20, weight: .bold))
                     }
