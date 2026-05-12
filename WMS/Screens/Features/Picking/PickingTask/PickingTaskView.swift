@@ -231,6 +231,7 @@ struct PickingTaskView: View {
         Menu {
             Button {
                 isDemoModeOn.toggle()
+                isScanningEnabled = false
             } label: {
                 Label(
                     "Демо-режим",

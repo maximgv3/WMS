@@ -24,6 +24,7 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
     
     func finishTask(result: PickingResult, userId: Int) async throws {
         try await Task.sleep(for: .seconds(0.5))
+        print("✅⬆ Successfully finished Picking Task with result: \(result)")
     }
     
 }
