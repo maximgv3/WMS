@@ -22,8 +22,8 @@ struct PickingTaskView: View {
     private let scannerPreviewHeight: CGFloat = 130
 
     // MARK: - Init
-    init(pickingTask: PickingTask, path: Binding<[PickingRoute]>) {
-        self.viewModel = PickingTaskViewModel(pickingTask: pickingTask)
+    init(pickingTask: PickingTask, pickingTaskService: PickingTaskServiceProtocol, path: Binding<[PickingRoute]>) {
+        self.viewModel = PickingTaskViewModel(pickingTask: pickingTask, pickingTaskService: pickingTaskService)
         self._path = path
     }
 
@@ -82,7 +82,13 @@ struct PickingTaskView: View {
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
                 path.append(
-                    .finish(PickingResult(collectedItems: viewModel.collectedItems, skippedItems: viewModel.skippedItems))
+                    .finish(
+                        PickingResult(
+                            collectedItems: viewModel.collectedItems,
+                            skippedItems: viewModel.skippedItems,
+                            replacements: viewModel.replacements
+                        )
+                    )
                 )
             }
         }
@@ -292,7 +298,9 @@ struct PickingTaskView: View {
             case .wrongId:
                 errorMessage = "Это не тот товар"
             case .alreadyCollected:
-                errorMessage = "Этот товар уже собран"
+                errorMessage = "Этот ШК уже собран"
+            case .cantUseForReplacement:
+                errorMessage = "Замена не подходит"
             }
         } else {
             errorMessage = error.localizedDescription
@@ -454,6 +462,7 @@ struct PickingTaskView: View {
     NavigationStack(path: $path) {
         PickingTaskView(
             pickingTask: PickingTask(allItems: MockData().mockItems),
+            pickingTaskService: PickingListServiceMock(),
             path: $path
         )
     }

@@ -2,12 +2,13 @@ import Testing
 import Foundation
 @testable import WMS
 
+@MainActor
 struct PickingTaskViewModelTests {
     @Test
     func correctItemIdCollectsCurrentItem() throws {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
 
         try viewModel.tryToCollect(itemId: item.id)
 
@@ -20,7 +21,7 @@ struct PickingTaskViewModelTests {
     func wrongItemIdThrowsWrongId() throws {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
 
         #expect(throws: PickingTaskError.wrongId) { try viewModel.tryToCollect(itemId: -1) }
         #expect(viewModel.collectedItems.isEmpty)
@@ -33,7 +34,7 @@ struct PickingTaskViewModelTests {
         let item1 = makeItem()
         let item2 = makeItem(id: 456)
         let task = PickingTask(allItems: [item1, item2])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
         try viewModel.tryToCollect(itemId: item1.id)
 
         #expect(throws: PickingTaskError.alreadyCollected) {
@@ -46,7 +47,7 @@ struct PickingTaskViewModelTests {
     @Test
     func pickingFinishesSuccessfully() throws {
         let task = PickingTask(allItems: [makeItem(), makeItem(id: 456), makeItem(id: 789)])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
 
         try viewModel.tryToCollect(itemId: 123)
         try viewModel.tryToCollect(itemId: 456)
@@ -61,7 +62,7 @@ struct PickingTaskViewModelTests {
     func skipCurrentItemMovesItemToSkippedAndEndsSingleItemTask() {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
 
         viewModel.skipCurrentItem()
 
@@ -77,7 +78,7 @@ struct PickingTaskViewModelTests {
         let item2 = makeItem(id: 456)
         let item3 = makeItem(id: 789)
         let task = PickingTask(allItems: [item1, item2, item3])
-        let viewModel = PickingTaskViewModel(pickingTask: task)
+        let viewModel = makeViewModel(pickingTask: task)
         let cheatCode = PickingTaskViewModel.collectAllItemsCheatCode
 
         viewModel.skipCurrentItem()
@@ -88,19 +89,68 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.collectedItems == [item2, item3])
         #expect(viewModel.isPickingEnded)
     }
+
+    @Test
+    func availableReplacementRegistersReplacementAndMovesToNextItem() async throws {
+        let item1 = makeItem(id: 123)
+        let item2 = makeItem(id: 456)
+        let task = PickingTask(allItems: [item1, item2])
+        let viewModel = makeViewModel(pickingTask: task)
+
+        try await viewModel.tryToReplace(replacementId: 111)
+
+        #expect(viewModel.replacements == [item1: 111])
+        #expect(viewModel.collectedItemsCount == 1)
+        #expect(viewModel.currentItem == item2)
+        #expect(viewModel.isPickingEnded == false)
+    }
+
+    @Test
+    func unavailableReplacementThrowsCantUseForReplacement() async {
+        let item = makeItem()
+        let task = PickingTask(allItems: [item])
+        let viewModel = makeViewModel(pickingTask: task)
+
+        await #expect(throws: PickingTaskError.cantUseForReplacement) {
+            try await viewModel.tryToReplace(replacementId: 999)
+        }
+
+        #expect(viewModel.replacements.isEmpty)
+        #expect(viewModel.collectedItemsCount == 0)
+        #expect(viewModel.isPickingEnded == false)
+    }
+
+    @Test
+    func alreadyUsedReplacementIdThrowsAlreadyCollected() async throws {
+        let item1 = makeItem(id: 123)
+        let item2 = makeItem(id: 456)
+        let task = PickingTask(allItems: [item1, item2])
+        let viewModel = makeViewModel(pickingTask: task)
+
+        try await viewModel.tryToReplace(replacementId: 111)
+
+        await #expect(throws: PickingTaskError.alreadyCollected) {
+            try await viewModel.tryToReplace(replacementId: 111)
+        }
+
+        #expect(viewModel.replacements == [item1: 111])
+        #expect(viewModel.currentItem == item2)
+    }
     
     @Test
     func pickingResultCountsItems() {
         let collectedItems = [makeItem(id: 1), makeItem(id: 2)]
         let skippedItems = [makeItem(id: 3)]
+        let replacedItem = makeItem(id: 4)
         let result = PickingResult(
             collectedItems: collectedItems,
-            skippedItems: skippedItems
+            skippedItems: skippedItems,
+            replacements: [replacedItem: 111]
         )
 
-        #expect(result.collectedCount == 2)
+        #expect(result.collectedCount == 3)
         #expect(result.skippedCount == 1)
-        #expect(result.totalCount == 3)
+        #expect(result.totalCount == 4)
     }
 
     private func makeItem(id: Int = 123) -> Item {
@@ -116,6 +166,15 @@ struct PickingTaskViewModelTests {
             placement: "A1",
             price: 1000,
             stock: 5
+        )
+    }
+
+    private func makeViewModel(
+        pickingTask: PickingTask
+    ) -> PickingTaskViewModel {
+        PickingTaskViewModel(
+            pickingTask: pickingTask,
+            pickingTaskService: PickingListServiceMock()
         )
     }
 }

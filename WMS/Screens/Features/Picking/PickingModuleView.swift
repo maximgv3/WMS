@@ -3,13 +3,13 @@ import SwiftUI
 struct PickingModuleView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var isLoadingTask = false
-    private let taskService: PickingTaskServiceProtocol
+    private let pickingTaskService: PickingTaskServiceProtocol
     @State private var errorMessage: String?
     @State private var userId: Int = 1
     @State private var path: [PickingRoute] = []
     
     init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
-        self.taskService = taskService
+        self.pickingTaskService = taskService
     }
     var body: some View {
         NavigationStack(path: $path) {
@@ -34,9 +34,9 @@ struct PickingModuleView: View {
             .navigationDestination(for: PickingRoute.self) { route in
                 switch route {
                 case .task(let task):
-                    PickingTaskView(pickingTask: task, path: $path)
+                    PickingTaskView(pickingTask: task, pickingTaskService: pickingTaskService, path: $path)
                 case .finish(let result):
-                    PickingFinishView(path: $path, result: result, taskService: taskService)
+                    PickingFinishView(path: $path, result: result, taskService: pickingTaskService)
                 }
             }
         }
@@ -147,7 +147,7 @@ struct PickingModuleView: View {
             isLoadingTask = false
         }
         do {
-            let result = try await taskService.fetchTask(userId: userId)
+            let result = try await pickingTaskService.fetchTask(userId: userId)
             path.append(.task(result))
         } catch {
             errorMessage = error.localizedDescription

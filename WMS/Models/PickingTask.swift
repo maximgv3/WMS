@@ -8,4 +8,5 @@ nonisolated struct PickingTask: Identifiable, Sendable, Hashable {
 nonisolated enum PickingTaskError: Error {
     case wrongId
     case alreadyCollected
+    case cantUseForReplacement
 }
