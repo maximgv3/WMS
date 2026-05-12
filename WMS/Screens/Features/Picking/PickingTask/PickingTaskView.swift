@@ -6,6 +6,7 @@ struct PickingTaskView: View {
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
     @State private var isSkipConfirmationPresented = false
+    @State private var isDemoModeOn = false
 
     // Error banner state
     @State private var errorMessage: String?
@@ -229,6 +230,14 @@ struct PickingTaskView: View {
     private var topMenu: some View {
         Menu {
             Button {
+                isDemoModeOn.toggle()
+            } label: {
+                Label(
+                    "Демо-режим",
+                    systemImage: "arrow.trianglehead.2.clockwise.rotate.90.camera"
+                )
+            }
+            Button {
                 isSkipConfirmationPresented = true
             } label: {
                 Label(
@@ -348,48 +357,84 @@ struct PickingTaskView: View {
     // MARK: - Bottom Controls
     @ViewBuilder
     private var collectButton: some View {
-        if currentItem != nil {
-            ScannerPreviewView(
-                scanAreaSize: nil,
-                isScanningEnabled: isScanningEnabled,
-                onScan: { scannedCode in
-                    tryToCollect(scannedCode: scannedCode)
+        if isDemoModeOn {
+            HStack(spacing: 12) {
+                Button {
+                    tryToCollect(itemId: -1)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(ColorPalette.error)
+                        .frame(width: 56, height: 56)
+                        .background(ColorPalette.error.opacity(0.12))
+                        .clipShape(Circle())
                 }
-            )
-            .frame(maxWidth: .infinity)
-            .frame(height: scannerPreviewHeight)
-            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-            .overlay {
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(
-                        isScanningEnabled
+                .buttonStyle(.plain)
+
+                if let currentItem {
+                    Button {
+                        tryToCollect(itemId: currentItem.id)
+                    } label: {
+                        Text("Собрать")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(ColorPalette.brandPrimary)
+                            .clipShape(
+                                RoundedRectangle(
+                                    cornerRadius: 20,
+                                    style: .continuous
+                                )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        } else {
+            if currentItem != nil {
+                ScannerPreviewView(
+                    scanAreaSize: nil,
+                    isScanningEnabled: isScanningEnabled,
+                    onScan: { scannedCode in
+                        tryToCollect(scannedCode: scannedCode)
+                    }
+                )
+                .frame(maxWidth: .infinity)
+                .frame(height: scannerPreviewHeight)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 24, style: .continuous)
+                        .stroke(
+                            isScanningEnabled
                             ? ColorPalette.accentPrimary
                             : ColorPalette.brandMuted.opacity(0.35),
-                        lineWidth: isScanningEnabled ? 3 : 1
-                    )
-            }
-            .overlay {
-                HStack(spacing: 10) {
-                    Image(systemName: "barcode.viewfinder")
-                        .font(.system(size: 22, weight: .semibold))
-                    Text(
-                        isScanningEnabled
-                            ? "Сканирование..." : "Удерживайте для сканирования"
-                    )
-                    .font(.system(size: 20, weight: .bold))
+                            lineWidth: isScanningEnabled ? 3 : 1
+                        )
                 }
-                .foregroundStyle(ColorPalette.surfacePrimary)
-                .opacity(isScanningEnabled ? 0.35 : 0.85)
+                .overlay {
+                    HStack(spacing: 10) {
+                        Image(systemName: "barcode.viewfinder")
+                            .font(.system(size: 22, weight: .semibold))
+                        Text(
+                            isScanningEnabled
+                            ? "Сканирование..." : "Удерживайте для сканирования"
+                        )
+                        .font(.system(size: 20, weight: .bold))
+                    }
+                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .opacity(isScanningEnabled ? 0.35 : 0.85)
+                }
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            isScanningEnabled = true
+                        }
+                        .onEnded { _ in
+                            isScanningEnabled = false
+                        }
+                )
             }
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in
-                        isScanningEnabled = true
-                    }
-                    .onEnded { _ in
-                        isScanningEnabled = false
-                    }
-            )
         }
     }
 
