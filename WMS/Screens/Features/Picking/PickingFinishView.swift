@@ -2,28 +2,25 @@ import SwiftUI
 
 struct PickingFinishView: View {
     @Binding private var path: [PickingRoute]
-    private let collectedItems: [Item]
-    private let skippedItems: [Item]
+    private let result: PickingResult
     private let taskService: PickingTaskServiceProtocol
     @State private var isFinishingTask = false
     @State private var errorMessage: String?
     private var resultText: String {
-        if skippedItems.count > 0 {
-            return "Собрано товаров: \(collectedItems.count)\nПропущено: \(skippedItems.count)"
+        if result.skippedItems.count > 0 {
+            return "Собрано товаров: \(result.collectedItems.count)\nПропущено: \(result.skippedItems.count)"
         } else {
-            return "Собрано товаров: \(collectedItems.count)"
+            return "Собрано товаров: \(result.collectedItems.count)"
         }
     }
 
     init(
         path: Binding<[PickingRoute]>,
-        collectedItems: [Item],
-        skippedItems: [Item],
+        result: PickingResult,
         taskService: PickingTaskServiceProtocol
     ) {
         self._path = path
-        self.collectedItems = collectedItems
-        self.skippedItems = skippedItems
+        self.result = result
         self.taskService = taskService
     }
 
@@ -107,7 +104,7 @@ struct PickingFinishView: View {
         }
 
         do {
-            try await taskService.finishTask(collectedItems: collectedItems, skippedItems: skippedItems, userId: 1)
+            try await taskService.finishTask(result: result, userId: 1)
             path.removeAll()
         } catch {
             errorMessage = error.localizedDescription

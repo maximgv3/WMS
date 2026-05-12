@@ -34,8 +34,8 @@ struct PickingModuleView: View {
                 switch route {
                 case .task(let task):
                     PickingTaskView(pickingTask: task, path: $path)
-                case .finish(let collectedItems, let skippedItems):
-                    PickingFinishView(path: $path, collectedItems: collectedItems, skippedItems: skippedItems, taskService: taskService)
+                case .finish(let result):
+                    PickingFinishView(path: $path, result: result, taskService: taskService)
                 }
             }
         }

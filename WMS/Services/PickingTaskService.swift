@@ -2,7 +2,7 @@ import Foundation
 
 protocol PickingTaskServiceProtocol: AnyObject {
     func fetchTask(userId: Int) async throws -> PickingTask
-    func finishTask(collectedItems: [Item], skippedItems: [Item], userId: Int) async throws -> Void
+    func finishTask(result: PickingResult, userId: Int) async throws -> Void
 }
 
 final class PickingListServiceMock: PickingTaskServiceProtocol {
@@ -22,7 +22,7 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
 
     }
     
-    func finishTask(collectedItems: [Item], skippedItems: [Item], userId: Int) async throws {
+    func finishTask(result: PickingResult, userId: Int) async throws {
         try await Task.sleep(for: .seconds(0.5))
     }
     

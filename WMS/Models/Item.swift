@@ -1,6 +1,6 @@
 import Foundation
 
-struct Item: Identifiable, Hashable, Equatable {
+nonisolated struct Item: Identifiable, Hashable, Equatable, Sendable {
     
     let id: Int
     let barcode: String
@@ -14,4 +14,3 @@ struct Item: Identifiable, Hashable, Equatable {
     let price: Double
     let stock: Int
 }
-

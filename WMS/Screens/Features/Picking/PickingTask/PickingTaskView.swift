@@ -81,7 +81,7 @@ struct PickingTaskView: View {
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
                 path.append(
-                    .finish(viewModel.collectedItems, viewModel.skippedItems)
+                    .finish(PickingResult(collectedItems: viewModel.collectedItems, skippedItems: viewModel.skippedItems))
                 )
             }
         }

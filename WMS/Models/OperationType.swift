@@ -1,6 +1,6 @@
 import Foundation
 
-enum OperationType: String, CaseIterable, Identifiable {
+nonisolated enum OperationType: String, CaseIterable, Identifiable {
     case picking
     case receiving
     case inventory
