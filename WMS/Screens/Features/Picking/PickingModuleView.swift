@@ -15,6 +15,7 @@ struct PickingModuleView: View {
         NavigationStack(path: $path) {
             ZStack {
                 ColorPalette.brandPrimary
+                    .ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     customTopBar
@@ -46,8 +47,15 @@ struct PickingModuleView: View {
             .onEnded { value in
                 let isMostlyVertical = abs(value.translation.height) > abs(value.translation.width)
                 let isSwipeDown = value.translation.height > 120
+                let isMostlyHorizontal = abs(value.translation.width) > abs(value.translation.height)
+                let isSwipeRight = value.translation.width > 90
+                let isStartedFromLeadingEdge = value.startLocation.x < 32
 
-                if isMostlyVertical && isSwipeDown && path.isEmpty {
+                if path.isEmpty && isMostlyVertical && isSwipeDown {
+                    dismiss()
+                }
+
+                if path.isEmpty && isMostlyHorizontal && isSwipeRight && isStartedFromLeadingEdge {
                     dismiss()
                 }
             }
