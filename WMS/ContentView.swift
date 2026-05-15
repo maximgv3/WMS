@@ -4,13 +4,13 @@ struct ContentView: View {
     var body: some View {
         TabView {
             OperationsListView()
-                .tint(ColorPalette.brandPrimary)
+                .tint(nil)
                 .tabItem {
                     Label("Операции", systemImage: "shippingbox")
                 }
 
             ProfileView()
-                .tint(ColorPalette.brandPrimary)
+                .tint(nil)
                 .tabItem {
                     Label("Профиль", systemImage: "person.crop.circle")
                 }
