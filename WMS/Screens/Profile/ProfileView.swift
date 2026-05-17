@@ -3,14 +3,17 @@ import SwiftUI
 struct ProfileView: View {
     private var avatarTempUrl: URL = URL(string: "https://sun9-1.userapi.com/s/v1/ig2/oNxDkf_sAkoTnFVCU3gjLTbvgc-7Luo-lyR5FUTw_fkBoaen9C0Xb7-Th1Q4LL45vPH99A_nQFMPx8nLlE6V_dO5.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=lxaomKbnmjX0juMyksVX_k_G5PuVDWboDWSd7FDbhy0&cs=1920x0")!
     private var name: String = "Гвазава Максим Александрович"
-    
+    private var id: String = "1 023 780"
     var body: some View {
         NavigationStack {
             ZStack {
                 background
-                VStack(spacing: 44) {
-                    profileData
-                    financeStack
+                VStack(alignment: .leading, spacing: 24) {
+                    Text("Профиль")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundStyle(ColorPalette.surfacePrimary)
+                    profileCard
+                   //ye financeStack
                     Spacer()
                 }
                 .padding(20)
@@ -29,13 +32,53 @@ struct ProfileView: View {
         .background(ColorPalette.backgroundPrimary)
     }
     
-    private var profileData: some View {
-        HStack {
-            profileImage
-            Spacer()
-            Text(name)
-                .font(.system(size: 22, weight: .bold))
-                .frame(maxWidth: .infinity)
+    private var profileCard: some View {
+        VStack {
+            HStack(spacing: 20) {
+                profileImage
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(name)
+                        .font(.system(size: 21, weight: .bold))
+                        .foregroundStyle(ColorPalette.brandPrimary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .layoutPriority(1)
+                    HStack {
+                        Group {
+                            Image(systemName: "person.text.rectangle")
+                            Text("id: " + id)
+                        }
+                        .font(.system(size: 15))
+                        .foregroundStyle(ColorPalette.brandPrimary)
+                    }
+                    .padding(5)
+                    .background(ColorPalette.accentPrimary.opacity(0.18))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                Spacer()
+            }
+            .padding(12)
+            Divider()
+                .padding(.horizontal, 16)
+            HStack {
+                Group {
+                    Image(systemName: "clock")
+                    Text("17 мая 2026, 15:12")
+                }
+                .font(.system(size: 13))
+                .foregroundStyle(ColorPalette.brandMuted)
+                Spacer()
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 14)
+            .padding(.horizontal, 16)
+        }
+        .padding(8)
+        .background(ColorPalette.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(.gray.opacity(0.15), lineWidth: 1)
         }
     }
     
