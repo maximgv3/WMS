@@ -6,16 +6,29 @@ struct ProfileView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 44) {
-                profileData
-                financeStack
-                Spacer()
-                
+            ZStack {
+                background
+                VStack(spacing: 44) {
+                    profileData
+                    financeStack
+                    Spacer()
+                }
+                .padding(20)
             }
-            .padding(20)
         }
     }
 
+    private var background: some View {
+        VStack {
+            UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 24, bottomTrailingRadius: 16, topTrailingRadius: 0, style: .continuous)
+                .foregroundStyle(ColorPalette.brandPrimary)
+                .ignoresSafeArea()
+                .frame(maxHeight: 200)
+            Spacer()
+        }
+        .background(ColorPalette.backgroundPrimary)
+    }
+    
     private var profileData: some View {
         HStack {
             profileImage
@@ -34,32 +47,47 @@ struct ProfileView: View {
             }
             NavigationLink() {
             } label: {
-                profileRow(title: "Подробнее", icon: "")
+                subRow(title: "Подробнее", icon: nil)
             }
             .buttonStyle(.plain)
+            
+            profileRow(title: "Кнопка-коробка", icon: "shippingbox")
+                .padding(.top, 24)
         }
     }
-    
-    private func profileRow(title: String, icon: String) -> some View {
+    private func profileRow(title: String, icon: String?, value: String? = nil, ) -> some View {
         HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 28))
-                .foregroundStyle(.purple)
-
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .foregroundStyle(ColorPalette.accentPrimary)
+            }
             Text(title)
-                .font(.system(size: 24))
-                .foregroundStyle(.primary)
-
+                .font(.system(size: 20))
             Spacer()
-
             Image(systemName: "chevron.right")
                 .foregroundStyle(.gray.opacity(0.5))
         }
-        .padding(.horizontal, 24)
-        .frame(height: 72)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .padding(12)
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+    
+    private func subRow(title: String, icon: String?) -> some View {
+        HStack(spacing: 16) {
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 28))
+            }
+            Text(title)
+                .font(.system(size: 20))
+                .foregroundStyle(.primary)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.gray.opacity(0.5))
+        }
         .padding(.horizontal, 16)
+        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
     
     private func financeBlock(value: Int, type: String) -> some View {
