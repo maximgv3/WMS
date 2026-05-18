@@ -15,7 +15,9 @@ struct ProfileView: View {
                             .font(.system(size: 32, weight: .bold))
                             .foregroundStyle(ColorPalette.surfacePrimary)
                         profileCard
-                        financeStack
+                        section(header: "Финансы") {
+                            financeStack
+                        }
                         Spacer()
                     }
                     .padding(20)
@@ -33,6 +35,19 @@ struct ProfileView: View {
             Spacer()
         }
         .background(ColorPalette.backgroundPrimary)
+    }
+    
+    private func section<Content: View>(
+        header: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(header.uppercased())
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(ColorPalette.brandMuted)
+                .padding(.horizontal, 12)
+            content()
+        }
     }
     
     private var profileCard: some View {
