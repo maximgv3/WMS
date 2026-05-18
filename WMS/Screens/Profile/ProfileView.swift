@@ -4,19 +4,22 @@ struct ProfileView: View {
     private var avatarTempUrl: URL = URL(string: "https://sun9-1.userapi.com/s/v1/ig2/oNxDkf_sAkoTnFVCU3gjLTbvgc-7Luo-lyR5FUTw_fkBoaen9C0Xb7-Th1Q4LL45vPH99A_nQFMPx8nLlE6V_dO5.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=lxaomKbnmjX0juMyksVX_k_G5PuVDWboDWSd7FDbhy0&cs=1920x0")!
     private var name: String = "Гвазава Максим Александрович"
     private var id: String = "1 023 780"
+    private var iconBackground: Color { ColorPalette.accentPrimary.opacity(0.18) }
     var body: some View {
         NavigationStack {
             ZStack {
                 background
-                VStack(alignment: .leading, spacing: 24) {
-                    Text("Профиль")
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundStyle(ColorPalette.surfacePrimary)
-                    profileCard
-                   //ye financeStack
-                    Spacer()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        Text("Профиль")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundStyle(ColorPalette.surfacePrimary)
+                        profileCard
+                        financeStack
+                        Spacer()
+                    }
+                    .padding(20)
                 }
-                .padding(20)
             }
         }
     }
@@ -52,7 +55,7 @@ struct ProfileView: View {
                         .foregroundStyle(ColorPalette.brandPrimary)
                     }
                     .padding(5)
-                    .background(ColorPalette.accentPrimary.opacity(0.18))
+                    .background(iconBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                 }
                 Spacer()
@@ -84,18 +87,10 @@ struct ProfileView: View {
     
     private var financeStack: some View {
         VStack(spacing: 16) {
-            HStack(spacing: 16) {
-                financeBlock(value: 5000, type: "Ожидается")
-                financeBlock(value: 10000, type: "На балансе")
+            HStack(spacing: 8) {
+                financeBlock(value: 5000, type: "Ожидается", icon: "creditcard")
+                financeBlock(value: 10000, type: "Баланс", icon: "rublesign.circle")
             }
-            NavigationLink() {
-            } label: {
-                subRow(title: "Подробнее", icon: nil)
-            }
-            .buttonStyle(.plain)
-            
-            profileRow(title: "Кнопка-коробка", icon: "shippingbox")
-                .padding(.top, 24)
         }
     }
     private func profileRow(title: String, icon: String?, value: String? = nil, ) -> some View {
@@ -133,18 +128,29 @@ struct ProfileView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
     
-    private func financeBlock(value: Int, type: String) -> some View {
-        VStack(alignment: .center, spacing: 6) {
-            Text(String(value) + " ₽")
-                .bold()
-            Text(type)
+    private func financeBlock(value: Int, type: String, icon: String) -> some View {
+        HStack() {
+            Image(systemName: icon)
+                .frame(width: 40, height: 40)
+                .background(iconBackground)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(type)
+                    .font(.system(size: 13))
+                    .foregroundStyle(ColorPalette.brandMuted)
+                Text(String(value) + " ₽")
+                    .font(.system(size: 22, weight: .semibold))
+            }
+            Spacer()
         }
-        .padding(24)
+        .padding(16)
         .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 24)
-            .fill(ColorPalette.backgroundPrimary)
-        )
+        .background(ColorPalette.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .overlay {
+            RoundedRectangle(cornerRadius: 24, style: .continuous)
+                .stroke(.gray.opacity(0.15), lineWidth: 1)
+        }
     }
     
     private var profileImage: some View {
