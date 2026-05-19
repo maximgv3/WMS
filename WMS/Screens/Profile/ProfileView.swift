@@ -18,6 +18,24 @@ struct ProfileView: View {
                         section(header: "Финансы") {
                             financeStack
                         }
+                        section(header: "Подробнее")
+                        {
+                            VStack(spacing: .zero) {
+                                profileRow(title: "Финансы", icon: "creditcard")
+                                Divider().padding(.horizontal, 16)
+                                profileRow(title: "Рейтинг", icon: "star", value: "29")
+                                Divider().padding(.horizontal, 16)
+                                profileRow(title: "Документы", icon: "doc.text")
+                                Divider().padding(.horizontal, 16)
+                                profileRow(title: "WMS-профиль", icon: "shippingbox")
+                            }
+                            .background(ColorPalette.surfacePrimary)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .stroke(.gray.opacity(0.15), lineWidth: 1)
+                            }
+                        }
                         Spacer()
                     }
                     .padding(20)
@@ -112,36 +130,43 @@ struct ProfileView: View {
         HStack(spacing: 16) {
             if let icon {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundStyle(ColorPalette.accentPrimary)
+                    .font(.system(size: 18))
+                    .padding(8)
+                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .background(iconBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             Text(title)
-                .font(.system(size: 20))
+                .foregroundStyle(ColorPalette.brandPrimary)
             Spacer()
+            if let value {
+                Text(value)
+                    .foregroundStyle(ColorPalette.brandMuted)
+            }
             Image(systemName: "chevron.right")
                 .foregroundStyle(.gray.opacity(0.5))
         }
-        .padding(12)
-        .background(.gray.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(8)
+        .frame(height: 56)
+        .background(ColorPalette.surfacePrimary)
     }
     
-    private func subRow(title: String, icon: String?) -> some View {
-        HStack(spacing: 16) {
-            if let icon {
-                Image(systemName: icon)
-                    .font(.system(size: 28))
-            }
-            Text(title)
-                .font(.system(size: 20))
-                .foregroundStyle(.primary)
-            Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.gray.opacity(0.5))
-        }
-        .padding(.horizontal, 16)
-        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-    }
+//    private func subRow(title: String, icon: String?) -> some View {
+//        HStack(spacing: 16) {
+//            if let icon {
+//                Image(systemName: icon)
+//                    .font(.system(size: 28))
+//            }
+//            Text(title)
+//                .font(.system(size: 20))
+//                .foregroundStyle(.primary)
+//            Spacer()
+//            Image(systemName: "chevron.right")
+//                .foregroundStyle(.gray.opacity(0.5))
+//        }
+//        .padding(.horizontal, 16)
+//        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+//    }
     
     private func financeBlock(value: Int, type: String, icon: String) -> some View {
         HStack() {
@@ -177,10 +202,13 @@ struct ProfileView: View {
                     .scaledToFill()
                     .transition(.opacity)
             default:
-                Image(systemName: "person.crop.circle.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(ColorPalette.brandMuted)
+                ZStack {
+                    Circle()
+                        .fill(iconBackground)
+                    Image(systemName: "person.circle")
+                        .font(.system(size: 66, weight: .light))
+                        .foregroundStyle(ColorPalette.brandPrimary)
+                }
             }
         }
         .frame(width: 90, height: 90)
