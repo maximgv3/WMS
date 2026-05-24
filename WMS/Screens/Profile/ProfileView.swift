@@ -1,10 +1,19 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @State private var lastUpdateDate = Date.now
+
     private var avatarTempUrl: URL = URL(string: "https://sun9-1.userapi.com/s/v1/ig2/oNxDkf_sAkoTnFVCU3gjLTbvgc-7Luo-lyR5FUTw_fkBoaen9C0Xb7-Th1Q4LL45vPH99A_nQFMPx8nLlE6V_dO5.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=lxaomKbnmjX0juMyksVX_k_G5PuVDWboDWSd7FDbhy0&cs=1920x0")!
     private var name: String = "Гвазава Максим Александрович"
     private var id: String = "1 023 780"
     private var iconBackground: Color { ColorPalette.accentPrimary.opacity(0.18) }
+    private let detailsItems: [ProfileMenuItem] = [
+        .init(title: "Финансы", icon: "creditcard"),
+        .init(title: "Рейтинг", icon: "star", value: "29"),
+        .init(title: "Документы", icon: "doc.text"),
+        .init(title: "Тарифы", icon: "shippingbox")
+    ]
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -18,28 +27,44 @@ struct ProfileView: View {
                         section(header: "Финансы") {
                             financeStack
                         }
-                        section(header: "Подробнее")
-                        {
-                            VStack(spacing: .zero) {
-                                profileRow(title: "Финансы", icon: "creditcard")
-                                Divider().padding(.horizontal, 16)
-                                profileRow(title: "Рейтинг", icon: "star", value: "29")
-                                Divider().padding(.horizontal, 16)
-                                profileRow(title: "Документы", icon: "doc.text")
-                                Divider().padding(.horizontal, 16)
-                                profileRow(title: "WMS-профиль", icon: "shippingbox")
-                            }
-                            .background(ColorPalette.surfacePrimary)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .stroke(.gray.opacity(0.15), lineWidth: 1)
-                            }
-                        }
+                        detailsSection
                         Spacer()
                     }
                     .padding(20)
                 }
+                .refreshable {
+                    await refreshProfile()
+                }
+            }
+        }
+    }
+
+    private var detailsSection: some View {
+        section(header: "Подробнее") {
+            VStack(spacing: .zero) {
+                ForEach(detailsItems) { item in
+                    NavigationLink {
+                        Text("Nothing here yet, go back")
+                    } label: {
+                        profileRow(
+                            title: item.title,
+                            icon: item.icon,
+                            value: item.value
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    if item.id != detailsItems.last?.id {
+                        Divider().padding(.horizontal, 16)
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+            .background(ColorPalette.surfacePrimary)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(.gray.opacity(0.15), lineWidth: 1)
             }
         }
     }
@@ -54,7 +79,7 @@ struct ProfileView: View {
         }
         .background(ColorPalette.backgroundPrimary)
     }
-    
+
     private func section<Content: View>(
         header: String,
         @ViewBuilder content: () -> Content
@@ -67,7 +92,7 @@ struct ProfileView: View {
             content()
         }
     }
-    
+
     private var profileCard: some View {
         VStack {
             HStack(spacing: 20) {
@@ -99,7 +124,7 @@ struct ProfileView: View {
             HStack {
                 Group {
                     Image(systemName: "clock")
-                    Text("17 мая 2026, 15:12")
+                    Text(formattedDate(lastUpdateDate))
                 }
                 .font(.system(size: 13))
                 .foregroundStyle(ColorPalette.brandMuted)
@@ -117,7 +142,7 @@ struct ProfileView: View {
                 .stroke(.gray.opacity(0.15), lineWidth: 1)
         }
     }
-    
+
     private var financeStack: some View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
@@ -131,7 +156,7 @@ struct ProfileView: View {
             if let icon {
                 Image(systemName: icon)
                     .font(.system(size: 18))
-                    .padding(8)
+                    .frame(width: 36, height: 36)
                     .foregroundStyle(ColorPalette.brandPrimary)
                     .background(iconBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -150,24 +175,7 @@ struct ProfileView: View {
         .frame(height: 56)
         .background(ColorPalette.surfacePrimary)
     }
-    
-//    private func subRow(title: String, icon: String?) -> some View {
-//        HStack(spacing: 16) {
-//            if let icon {
-//                Image(systemName: icon)
-//                    .font(.system(size: 28))
-//            }
-//            Text(title)
-//                .font(.system(size: 20))
-//                .foregroundStyle(.primary)
-//            Spacer()
-//            Image(systemName: "chevron.right")
-//                .foregroundStyle(.gray.opacity(0.5))
-//        }
-//        .padding(.horizontal, 16)
-//        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-//    }
-    
+
     private func financeBlock(value: Int, type: String, icon: String) -> some View {
         HStack() {
             Image(systemName: icon)
@@ -178,8 +186,11 @@ struct ProfileView: View {
                 Text(type)
                     .font(.system(size: 13))
                     .foregroundStyle(ColorPalette.brandMuted)
-                Text(String(value) + " ₽")
+                Text(formattedRubles(value))
                     .font(.system(size: 22, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .layoutPriority(1)
             }
             Spacer()
         }
@@ -192,7 +203,7 @@ struct ProfileView: View {
                 .stroke(.gray.opacity(0.15), lineWidth: 1)
         }
     }
-    
+
     private var profileImage: some View {
         AsyncImage(url: avatarTempUrl, transaction: Transaction(animation: .easeInOut(duration: 0.25))) { phase in
             switch phase {
@@ -202,20 +213,63 @@ struct ProfileView: View {
                     .scaledToFill()
                     .transition(.opacity)
             default:
-                ZStack {
-                    Circle()
-                        .fill(iconBackground)
-                    Image(systemName: "person.circle")
-                        .font(.system(size: 66, weight: .light))
-                        .foregroundStyle(ColorPalette.brandPrimary)
-                }
+                avatarPlaceholder
             }
         }
         .frame(width: 90, height: 90)
         .clipShape(Circle())
     }
+
+    private var avatarPlaceholder: some View {
+        ZStack {
+            Circle()
+                .fill(iconBackground)
+            Image(systemName: "person.circle")
+                .font(.system(size: 66, weight: .light))
+                .foregroundStyle(ColorPalette.brandPrimary)
+        }
+    }
+
+    private func refreshProfile() async {
+        try? await Task.sleep(for: .seconds(1))
+        lastUpdateDate = .now
+    }
+
+    private func formattedRubles(_ value: Int) -> String {
+        value.formatted(
+            .number
+                .locale(Locale(identifier: "ru_RU"))
+                .grouping(.automatic)
+        ) + " ₽"
+    }
+
+    private func formattedDate(_ date: Date) -> String {
+        date.formatted(
+            .dateTime
+                .locale(Locale(identifier: "ru_RU"))
+                .day()
+                .month(.wide)
+                .year()
+                .hour()
+                .minute()
+        )
+    }
+
 }
 
 #Preview {
     ProfileView()
+}
+
+private struct ProfileMenuItem: Identifiable {
+    var id: String { title }
+    let title: String
+    let icon: String
+    let value: String?
+
+    init(title: String, icon: String, value: String? = nil) {
+        self.title = title
+        self.icon = icon
+        self.value = value
+    }
 }
