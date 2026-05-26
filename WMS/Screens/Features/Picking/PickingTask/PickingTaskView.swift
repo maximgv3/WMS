@@ -76,9 +76,8 @@ struct PickingTaskView: View {
         .onAppear {
             isOnboardingPresented = !isPickingOnboardingComplete
         }
-        .sheet(isPresented: $isOnboardingPresented) {
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
             PickingOnboardingView()
-                .interactiveDismissDisabled()
         }
         .alert("Уверены?", isPresented: $isSkipConfirmationPresented) {
             Button("Отмена", role: .cancel) { }
@@ -283,7 +282,7 @@ struct PickingTaskView: View {
             } label: {
                 Label(
                     "Пройти обучение",
-                    systemImage: "book.pages"
+                    systemImage: "book.closed"
                 )
             }
             Button {
