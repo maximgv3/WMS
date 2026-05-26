@@ -3,9 +3,11 @@ import SwiftUI
 
 struct PickingTaskView: View {
     // MARK: - State
+    @AppStorage("isPickingOnboardingComplete") private var isPickingOnboardingComplete = false
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [PickingRoute]
     @State private var isSkipConfirmationPresented = false
+    @State private var isOnboardingPresented = false
     @State private var isDemoModeOn = false
     @State private var isReplacementModeOn = false
 
@@ -70,6 +72,13 @@ struct PickingTaskView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task {
             await viewModel.preloadImages()
+        }
+        .onAppear {
+            isOnboardingPresented = !isPickingOnboardingComplete
+        }
+        .sheet(isPresented: $isOnboardingPresented) {
+            PickingOnboardingView()
+                .interactiveDismissDisabled()
         }
         .alert("Уверены?", isPresented: $isSkipConfirmationPresented) {
             Button("Отмена", role: .cancel) { }
@@ -263,6 +272,18 @@ struct PickingTaskView: View {
                 Label(
                     "Демо-режим",
                     systemImage: "arrow.trianglehead.2.clockwise.rotate.90.camera"
+                )
+            }
+            Button {
+                isPickingOnboardingComplete = false
+                isOnboardingPresented = true
+                isDemoModeOn = false
+                isReplacementModeOn = false
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Пройти обучение",
+                    systemImage: "book.pages"
                 )
             }
             Button {
