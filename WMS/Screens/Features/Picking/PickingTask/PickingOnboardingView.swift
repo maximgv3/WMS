@@ -5,33 +5,31 @@ struct PickingOnboardingView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("isPickingOnboardingComplete") private var isPickingOnboardingComplete = false
     @State private var selectedPage = 0
+    private let pages: [PickingOnboardingPage] = [
+        .init(id: 0, image: .goToPlace, text: "Пройдите к ячейке, указанной на экране"),
+        .init(id: 1, image: .checkItemId, text: "Найдите вещь с соответствующим штрих-кодом"),
+        .init(id: 2, image: .checkIsItemRight, text: "Проверьте соответствие характеристик товара"),
+        .init(id: 3, image: .scanItem, text: "Отсканируйте штрих-код"),
+        .init(id: 4, image: .collectOtherItems, text: "Таким же образом соберите оставшиеся предметы"),
+        .init(id: 5, image: .scanFinishPlace, text: "Пройдите к точке сброса вещей, отсканируйте QR места"),
+        .init(id: 6, image: .scanFinishContainer, text: "Отсканируйте контейнер"),
+        .init(id: 7, image: .placeItemsInContainer, text: "Сложите вещи в контейнер")
+    ]
 
     var body: some View {
         TabView(selection: $selectedPage) {
-            page(image: .goToPlace, text: "Пройдите к ячейке, указанной на экране")
-                .tag(0)
-            page(image: .checkItemId, text: "Найдите вещь с соответствующим штрих-кодом")
-                .tag(1)
-            page(image: .checkIsItemRight, text: "Проверьте соответствие характеристик товара")
-                .tag(2)
-            page(image: .scanItem, text: "Отсканируйте штрих-код")
-                .tag(3)
-            page(image: .collectOtherItems, text: "Таким же образом соберите оставшиеся предметы")
-                .tag(4)
-            page(image: .scanFinishPlace, text: "Пройдите к точке сброса вещей, отсканируйте QR места")
-                .tag(5)
-            page(image: .scanFinishContainer, text: "Отсканируйте контейнер")
-                .tag(6)
-            page(image: .placeItemsInContainer, text: "Сложите вещи в контейнер")
-                .tag(7)
-            finalPage
+            ForEach(pages) { page in
+                onboardingPage(image: page.image, text: page.text)
+                    .tag(page.id)
+            }
+            completionPage
                 .tag(8)
         }
         .tabViewStyle(.page(indexDisplayMode: .always))
         .ignoresSafeArea()
     }
 
-    private var finalPage: some View {
+    private var completionPage: some View {
         VStack {
             Spacer()
             Image(.pickingOnboardingEnd)
@@ -61,7 +59,7 @@ struct PickingOnboardingView: View {
         .background(ColorPalette.backgroundPrimary)
     }
 
-    private func page(image: ImageResource, text: String) -> some View {
+    private func onboardingPage(image: ImageResource, text: String) -> some View {
         VStack {
             Spacer()
             Text(text)
@@ -85,6 +83,12 @@ struct PickingOnboardingView: View {
         .clipped()
         .ignoresSafeArea()
     }
+}
+
+private struct PickingOnboardingPage: Identifiable {
+    let id: Int
+    let image: ImageResource
+    let text: String
 }
 
 #Preview {
