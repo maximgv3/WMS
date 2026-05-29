@@ -1,360 +1,353 @@
 import Foundation
 
 struct MockData {
-    static let mockItems: [Item] = [
+    static let itemsMock: [Item] = [
         Item(
-            id: 7839201741,
+            id: 7_839_201_741,
             barcode: "4620187349056",
             article: "THRM-8821",
             brand: nil,
             title: "Термокружка",
             size: "350мл",
             color: "Чёрный",
-            imageUrl: URL(string: "https://s.a-5.ru/i/file/161/7/f2/32/f2327ecacc88862f.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://s.a-5.ru/i/file/161/7/f2/32/f2327ecacc88862f.jpg"
+            )!,
             placement: "АЛ21.05.03.12.03.04",
             price: 1290,
             stock: 18
         ),
         Item(
-            id: 3147859206,
+            id: 3_147_859_206,
             barcode: "4601122334455",
             article: "GLV-1204",
             brand: "Outventure",
             title: "Перчатки",
             size: "M",
             color: "Чёрный",
-            imageUrl: URL(string: "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/6a9/768_1024_e548/141110850299.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/6a9/768_1024_e548/141110850299.jpg"
+            )!,
             placement: "АЛ21.05.03.12.03.04",
             price: 1599,
             stock: 27
         ),
         Item(
-            id: 5862149037,
+            id: 5_862_149_037,
             barcode: "5909988776655",
             article: "BAG-1211",
             brand: "Nike",
             title: "Сумка",
             size: nil,
             color: "Серый",
-            imageUrl: URL(string: "https://cdn.4stand.com/large/67/b1/67b1fb59f7f4fac0c9d3a4f674fac101e38c11eb.webp")!,
+            imageUrl: URL(
+                string:
+                    "https://cdn.4stand.com/large/67/b1/67b1fb59f7f4fac0c9d3a4f674fac101e38c11eb.webp"
+            )!,
             placement: "АЛ21.05.03.12.03.03",
             price: 3490,
             stock: 9
         ),
         Item(
-            id: 6481059327,
+            id: 6_481_059_327,
             barcode: "8710398521462",
             article: "JNS-4453",
             brand: "Zara",
             title: "Джинсы",
             size: "32",
             color: "Синий",
-            imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-13/847/668/404/231/38/100051616967b0.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-13/847/668/404/231/38/100051616967b0.jpg"
+            )!,
             placement: "АЛ21.05.03.27.01.04",
             price: 4299,
             stock: 13
         ),
         Item(
-            id: 9027461835,
+            id: 9_027_461_835,
             barcode: "4006381333931",
             article: "CAP-3301",
             brand: "Reebok",
             title: "Кепка",
             size: nil,
             color: "Чёрный",
-            imageUrl: URL(string: "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg"
+            )!,
             placement: "АЛ21.05.03.45.02.04",
             price: 1790,
             stock: 31
         ),
         Item(
-            id: 9027461833,
+            id: 9_027_461_833,
             barcode: "4006381333931",
             article: "CAP-3301",
             brand: "Reebok",
             title: "Кепка",
             size: nil,
             color: "Чёрный",
-            imageUrl: URL(string: "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg"
+            )!,
             placement: "АЛ21.05.03.45.02.04",
             price: 1790,
             stock: 31
         ),
         Item(
-            id: 9027461831,
+            id: 9_027_461_831,
             barcode: "4006381333931",
             article: "CAP-3301",
             brand: "Reebok",
             title: "Кепка",
             size: nil,
             color: "Чёрный",
-            imageUrl: URL(string: "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg"
+            )!,
             placement: "АЛ21.05.03.45.02.04",
             price: 1790,
             stock: 31
         ),
         Item(
-            id: 7401938562,
+            id: 7_401_938_562,
             barcode: "4712233445566",
             article: "HAT-4501",
             brand: "Adidas",
             title: "Шапка",
             size: "One Size",
             color: "Синий",
-            imageUrl: URL(string: "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/b25/768_1024_ae09/81292710299.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/b25/768_1024_ae09/81292710299.jpg"
+            )!,
             placement: "АЛ21.05.03.45.02.02",
             price: 2299,
             stock: 16
         ),
         Item(
-            id: 5193847602,
+            id: 5_193_847_602,
             barcode: "5901234123457",
             article: "MPAD-7734",
             brand: nil,
             title: "Коврик для мыши",
             size: nil,
             color: "Чёрный",
-            imageUrl: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdbHmxNfPDfJzz5i5FKN8nkfmJZN3-fXjpAA&s")!,
+            imageUrl: URL(
+                string:
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdbHmxNfPDfJzz5i5FKN8nkfmJZN3-fXjpAA&s"
+            )!,
             placement: "АЛ21.05.03.58.01.04",
             price: 490,
             stock: 46
         ),
         Item(
-            id: 3748291056,
+            id: 3_748_291_056,
             barcode: "5012345678900",
             article: "SNK-9920",
             brand: "Nike",
             title: "Кроссовки",
             size: "42",
             color: "Белый",
-            imageUrl: URL(string: "https://static.rendez-vous.ru/files/catalog_models/resize_640x630/3/3462742_kedy_nike_dm0211_belyy_natural_naya_kozha.JPG")!,
+            imageUrl: URL(
+                string:
+                    "https://static.rendez-vous.ru/files/catalog_models/resize_640x630/3/3462742_kedy_nike_dm0211_belyy_natural_naya_kozha.JPG"
+            )!,
             placement: "АЛ21.05.03.63.04.04",
             price: 8990,
             stock: 7
         ),
         Item(
-            id: 8365019274,
+            id: 8_365_019_274,
             barcode: "7612345678901",
             article: "ORG-5512",
             brand: "Ikea",
             title: "Органайзер",
             size: nil,
             color: "Белый",
-            imageUrl: URL(string: "https://ir.ozone.ru/s3/multimedia-1-w/c1000/7087702532.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://ir.ozone.ru/s3/multimedia-1-w/c1000/7087702532.jpg"
+            )!,
             placement: "АЛ21.05.03.74.02.04",
             price: 790,
             stock: 24
         ),
         Item(
-            id: 1059384726,
+            id: 1_059_384_726,
             barcode: "8806090312458",
             article: "SHRT-2287",
             brand: "Puma",
             title: "Шорты",
             size: "M",
             color: "Красный",
-            imageUrl: URL(string: "https://static.insales-cdn.com/images/products/1/5761/2379585153/705752-01_1.webp")!,
+            imageUrl: URL(
+                string:
+                    "https://static.insales-cdn.com/images/products/1/5761/2379585153/705752-01_1.webp"
+            )!,
             placement: "АЛ21.05.03.81.03.04",
             price: 2690,
             stock: 12
         ),
         Item(
-            id: 6940275813,
+            id: 6_940_275_813,
             barcode: "4719876543210",
             article: "PNC-2046",
             brand: "Kite",
             title: "Пенал",
             size: nil,
             color: "Синий",
-            imageUrl: URL(string: "https://akvarel.com/storage/products/2025_06_02/products_other_528160_1_1748856353.2669.webp")!,
+            imageUrl: URL(
+                string:
+                    "https://akvarel.com/storage/products/2025_06_02/products_other_528160_1_1748856353.2669.webp"
+            )!,
             placement: "АЛ21.05.03.95.01.04",
             price: 390,
             stock: 52
         ),
         Item(
-            id: 2574189036,
+            id: 2_574_189_036,
             barcode: "4897036692921",
             article: "SWT-6643",
             brand: "Uniqlo",
             title: "Свитер",
             size: "L",
             color: "Бежевый",
-            imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-78/705/966/823/192/7/100047646246b0.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-78/705/966/823/192/7/100047646246b0.jpg"
+            )!,
             placement: "АЛ21.05.03.108.02.04",
             price: 3990,
             stock: 11
         ),
         Item(
-            id: 8614720395,
+            id: 8_614_720_395,
             barcode: "7610099887766",
             article: "BLT-1082",
             brand: "Levi's",
             title: "Ремень",
             size: "110",
             color: "Коричневый",
-            imageUrl: URL(string: "https://a.lmcdn.ru/img600x866/R/T/RTLADK803601_23374474_1_v1.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://a.lmcdn.ru/img600x866/R/T/RTLADK803601_23374474_1_v1.jpg"
+            )!,
             placement: "АЛ21.05.03.108.02.01",
             price: 2490,
             stock: 19
         ),
         Item(
-            id: 9283746150,
+            id: 9_283_746_150,
             barcode: "8437015829004",
             article: "TSH-1134",
             brand: "Adidas",
             title: "Футболка",
             size: "L",
             color: "Чёрный",
-            imageUrl: URL(string: "https://fridaywear.ru/upload/dev2fun.imagecompress/webp/resize_cache/iblock/7f6/676_1352_1/7f64bb09cb21b36f177e86e6d7ba0423.webp")!,
+            imageUrl: URL(
+                string:
+                    "https://fridaywear.ru/upload/dev2fun.imagecompress/webp/resize_cache/iblock/7f6/676_1352_1/7f64bb09cb21b36f177e86e6d7ba0423.webp"
+            )!,
             placement: "АЛ21.05.03.119.01.04",
             price: 2190,
             stock: 22
         ),
         Item(
-            id: 4716209385,
+            id: 4_716_209_385,
             barcode: "3701234567893",
             article: "SHRT-8820",
             brand: "Levi's",
             title: "Рубашка",
             size: "S",
             color: "Голубой",
-            imageUrl: URL(string: "https://media.partner.frgroup.kz/images/3d/50/da4c7c9999a35b20c8fa29c2c0c6.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://media.partner.frgroup.kz/images/3d/50/da4c7c9999a35b20c8fa29c2c0c6.jpg"
+            )!,
             placement: "АЛ21.05.03.133.04.04",
             price: 3490,
             stock: 8
         ),
         Item(
-            id: 6309582147,
+            id: 6_309_582_147,
             barcode: "6971408152364",
             article: "PWR-3309",
             brand: "Xiaomi",
             title: "Повербанк",
             size: "10000мАч",
             color: "Серый",
-            imageUrl: URL(string: "https://avatars.mds.yandex.net/get-mpic/5219318/img_id6508126417426035281.png/orig")!,
+            imageUrl: URL(
+                string:
+                    "https://avatars.mds.yandex.net/get-mpic/5219318/img_id6508126417426035281.png/orig"
+            )!,
             placement: "АЛ21.05.03.147.02.04",
             price: 1990,
             stock: 25
         ),
         Item(
-            id: 1894763025,
+            id: 1_894_763_025,
             barcode: "4603728491058",
             article: "SCK-4471",
             brand: nil,
             title: "Носки",
             size: "40-42",
             color: "Белый",
-            imageUrl: URL(string: "https://static.markformelle.ru/site/master/catalog/536149/desktop/card/6625115.webp")!,
+            imageUrl: URL(
+                string:
+                    "https://static.markformelle.ru/site/master/catalog/536149/desktop/card/6625115.webp"
+            )!,
             placement: "АЛ21.05.03.162.01.04",
             price: 290,
             stock: 68
         ),
         Item(
-            id: 7529104638,
+            id: 7_529_104_638,
             barcode: "7332468013579",
             article: "JKT-7756",
             brand: "H&M",
             title: "Куртка",
             size: "XL",
             color: "Серый",
-            imageUrl: URL(string: "https://ir.ozone.ru/s3/multimedia-1-y/c1000/7286834086.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://ir.ozone.ru/s3/multimedia-1-y/c1000/7286834086.jpg"
+            )!,
             placement: "АЛ21.05.03.178.03.04",
             price: 6990,
             stock: 5
         ),
         Item(
-            id: 2907346185,
+            id: 2_907_346_185,
             barcode: "8430099881122",
             article: "UMB-1784",
             brand: nil,
             title: "Зонт",
             size: nil,
             color: "Чёрный",
-            imageUrl: URL(string: "https://s.a-5.ru/i/file/161/7/d6/2c/d62ca109c20e171a.jpg")!,
+            imageUrl: URL(
+                string:
+                    "https://s.a-5.ru/i/file/161/7/d6/2c/d62ca109c20e171a.jpg"
+            )!,
             placement: "АЛ21.05.03.178.03.01",
             price: 1190,
             stock: 33
         ),
     ]
 
-    static let realLifeMock: [Item] = [
-        Item(
-            id: 8761236971,
-            barcode: "",
-            article: "AQT-1000",
-            brand: "Sera",
-            title: "Aquatan кондиционер для аквариумной воды",
-            size: "1 л",
-            color: nil,
-            imageUrl: URL(string: "https://shoplineimg.com/62b4292fbba6b80017657b5e/62c7f85976f1b50017dd16a3/800x.jpg?")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-        Item(
-            id: 7887732138,
-            barcode: "",
-            article: "LPT-GRN-1500",
-            brand: "Lipton",
-            title: "Зелёный чай",
-            size: "1.5 л",
-            color: nil,
-            imageUrl: URL(string: "https://main-cdn.sbermegamarket.ru/big1/hlr-system/16906021028/100024030073b0.jpg")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-        Item(
-            id: 1639360707,
-            barcode: "",
-            article: "LPT-LMN-1000",
-            brand: "Lipton",
-            title: "Чай с лимоном",
-            size: "1 л",
-            color: nil,
-            imageUrl: URL(string: "https://rosal24.ru/upload/iblock/ddd/wy4kjy9lxfopxnrm64n88ign1r9zlgjd.webp")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-        Item(
-            id: 4933512907,
-            barcode: "",
-            article: "RDB-PEACH-025",
-            brand: "Red Bull",
-            title: "Энергетический напиток Персик",
-            size: "0.25 л",
-            color: nil,
-            imageUrl: URL(string: "https://images-foodtech.magnit.ru/NY_Dx7tfQBwSLqYCnuAvO48dGlp9fXYW23edDWZQ7Sg/rs:fit:1600:1600/plain/s3://img-dostavka/catalog/uf/5f8/5f84f80e2bfa0b5ea4fe37558574c33c/7e1cb29a1af49c5a8d10e1d260b1157f.jpeg@webp")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-        Item(
-            id: 6271800197,
-            barcode: "",
-            article: "OMG3-90",
-            brand: nil,
-            title: "Омега-3 капсулы",
-            size: "90 шт",
-            color: nil,
-            imageUrl: URL(string: "https://images.apteka.ru/original_f206e159-3300-42dc-ac47-d6b12dd7b793.jpeg")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-        Item(
-            id: 9323507236,
-            barcode: "",
-            article: "FRP-PEACH-1",
-            brand: "Fresh Pie",
-            title: "Пирожное Персик",
-            size: "1 шт",
-            color: nil,
-            imageUrl: URL(string: "https://basket-14.wbbasket.ru/vol2105/part210515/210515529/images/big/1.webp")!,
-            placement: "",
-            price: 0,
-            stock: 1
-        ),
-    ]
+    static let profileMock: Profile = Profile(
+        name: "Гвазава Максим Александрович",
+        imageUrl: URL(
+            string:
+                "https://sun9-1.userapi.com/s/v1/ig2/oNxDkf_sAkoTnFVCU3gjLTbvgc-7Luo-lyR5FUTw_fkBoaen9C0Xb7-Th1Q4LL45vPH99A_nQFMPx8nLlE6V_dO5.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=lxaomKbnmjX0juMyksVX_k_G5PuVDWboDWSd7FDbhy0&cs=1920x0"
+        )!,
+        pendingFunds: 5000,
+        balanceFunds: 10000,
+        rating: 27
+    )
 }

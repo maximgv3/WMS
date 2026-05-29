@@ -1,40 +1,108 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var lastUpdateDate = Date.now
-
-    private var avatarTempUrl: URL = URL(string: "https://sun9-1.userapi.com/s/v1/ig2/oNxDkf_sAkoTnFVCU3gjLTbvgc-7Luo-lyR5FUTw_fkBoaen9C0Xb7-Th1Q4LL45vPH99A_nQFMPx8nLlE6V_dO5.jpg?quality=95&as=32x43,48x64,72x96,108x144,160x213,240x320,360x480,480x640,540x720,640x853,720x960,1080x1440,1280x1707,1440x1920,1920x2560&from=bu&u=lxaomKbnmjX0juMyksVX_k_G5PuVDWboDWSd7FDbhy0&cs=1920x0")!
-    private var name: String = "Гвазава Максим Александрович"
+    @State private var viewModel: ProfileViewModel
     private var id: String = "1 023 780"
-    private var iconBackground: Color { ColorPalette.accentPrimary.opacity(0.18) }
-    private let detailsItems: [ProfileMenuItem] = [
-        .init(title: "Финансы", icon: "creditcard"),
-        .init(title: "Рейтинг", icon: "star", value: "29"),
-        .init(title: "Документы", icon: "doc.text"),
-        .init(title: "Тарифы", icon: "shippingbox")
-    ]
+    private var iconBackground: Color {
+        ColorPalette.accentPrimary.opacity(0.18)
+    }
+    private var detailsItems: [ProfileMenuItem] {
+        [
+            .init(title: "Финансы", icon: "creditcard"),
+            .init(
+                title: "Рейтинг",
+                icon: "star",
+                value: viewModel.profile?.rating.formatted()
+            ),
+            .init(title: "Документы", icon: "doc.text"),
+            .init(title: "Тарифы", icon: "shippingbox"),
+        ]
+    }
+
+    init(profileService: ProfileServiceProtocol) {
+        self.viewModel = .init(profileService: profileService)
+    }
 
     var body: some View {
         NavigationStack {
             ZStack {
-                background
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        Text("Профиль")
-                            .font(.system(size: 32, weight: .bold))
-                            .foregroundStyle(ColorPalette.surfacePrimary)
-                        profileCard
-                        section(header: "Финансы") {
-                            financeStack
-                        }
-                        detailsSection
-                        Spacer()
+                if viewModel.isLoading && viewModel.profile == nil {
+                    loadingState
+                        .transition(.opacity)
+                } else if viewModel.errorMessage != nil
+                    && viewModel.profile == nil
+                {
+                    errorState
+                        .transition(
+                            .opacity.combined(with: .scale(scale: 0.98))
+                        )
+                } else {
+                    loadedProfileStack
+                        .transition(.opacity)
+                }
+            }
+            .animation(.easeInOut(duration: 0.25), value: viewModel.isLoading)
+            .animation(
+                .easeInOut(duration: 0.25),
+                value: viewModel.errorMessage
+            )
+            .animation(
+                .easeInOut(duration: 0.25),
+                value: viewModel.profile != nil
+            )
+        }
+        .task {
+            await viewModel.loadProfile()
+        }
+    }
+
+    private var loadedProfileStack: some View {
+        ZStack {
+            background
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    Text("Профиль")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundStyle(ColorPalette.surfacePrimary)
+                    profileCard
+                    section(header: "Финансы") {
+                        financeStack
                     }
-                    .padding(20)
+                    detailsSection
+                    Spacer()
                 }
-                .refreshable {
-                    await refreshProfile()
+                .padding(20)
+            }
+            .refreshable {
+                await viewModel.loadProfile()
+            }
+        }
+    }
+
+    private var loadingState: some View {
+        ZStack {
+            ColorPalette.backgroundPrimary.ignoresSafeArea()
+            ProgressView()
+                .controlSize(.large)
+                .tint(ColorPalette.brandMuted)
+        }
+    }
+
+    private var errorState: some View {
+        ZStack {
+            ColorPalette.backgroundPrimary.ignoresSafeArea()
+            VStack(spacing: 32) {
+                Text("Не удалось загрузить профиль")
+                    .font(.system(size: 22, weight: .semibold))
+                Button("Попробовать снова") {
+                    Task {
+                        await viewModel.loadProfile()
+                    }
                 }
+                .buttonStyle(.borderedProminent)
+                .tint(ColorPalette.accentPrimary)
+                .foregroundStyle(ColorPalette.brandPrimary)
+                .bold()
             }
         }
     }
@@ -44,7 +112,12 @@ struct ProfileView: View {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink {
-                        Text("Nothing here yet, go back")
+                        VStack(spacing: 12) {
+                            Image(systemName: "clock")
+                                .bold()
+                            Text("Раздел в разработке")
+                                .bold()
+                        }
                     } label: {
                         profileRow(
                             title: item.title,
@@ -71,10 +144,16 @@ struct ProfileView: View {
 
     private var background: some View {
         VStack {
-            UnevenRoundedRectangle(topLeadingRadius: 0, bottomLeadingRadius: 24, bottomTrailingRadius: 16, topTrailingRadius: 0, style: .continuous)
-                .foregroundStyle(ColorPalette.brandPrimary)
-                .ignoresSafeArea()
-                .frame(maxHeight: 200)
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 24,
+                bottomTrailingRadius: 16,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+            .foregroundStyle(ColorPalette.brandPrimary)
+            .ignoresSafeArea()
+            .frame(maxHeight: 200)
             Spacer()
         }
         .background(ColorPalette.backgroundPrimary)
@@ -98,7 +177,7 @@ struct ProfileView: View {
             HStack(spacing: 20) {
                 profileImage
                 VStack(alignment: .leading, spacing: 8) {
-                    Text(name)
+                    Text(viewModel.profile?.name ?? "")
                         .font(.system(size: 21, weight: .bold))
                         .foregroundStyle(ColorPalette.brandPrimary)
                         .lineLimit(2)
@@ -124,7 +203,7 @@ struct ProfileView: View {
             HStack {
                 Group {
                     Image(systemName: "clock")
-                    Text(formattedDate(lastUpdateDate))
+                    Text(formattedDate(viewModel.lastUpdateDate))
                 }
                 .font(.system(size: 13))
                 .foregroundStyle(ColorPalette.brandMuted)
@@ -146,12 +225,22 @@ struct ProfileView: View {
     private var financeStack: some View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
-                financeBlock(value: 5000, type: "Ожидается", icon: "creditcard")
-                financeBlock(value: 10000, type: "Баланс", icon: "rublesign.circle")
+                financeBlock(
+                    value: viewModel.profile?.pendingFunds ?? 0,
+                    type: "Ожидается",
+                    icon: "creditcard"
+                )
+                financeBlock(
+                    value: viewModel.profile?.balanceFunds ?? 0,
+                    type: "Баланс",
+                    icon: "rublesign.circle"
+                )
             }
         }
     }
-    private func profileRow(title: String, icon: String?, value: String? = nil, ) -> some View {
+    private func profileRow(title: String, icon: String?, value: String? = nil)
+        -> some View
+    {
         HStack(spacing: 16) {
             if let icon {
                 Image(systemName: icon)
@@ -176,8 +265,10 @@ struct ProfileView: View {
         .background(ColorPalette.surfacePrimary)
     }
 
-    private func financeBlock(value: Int, type: String, icon: String) -> some View {
-        HStack() {
+    private func financeBlock(value: Int, type: String, icon: String)
+        -> some View
+    {
+        HStack {
             Image(systemName: icon)
                 .frame(width: 40, height: 40)
                 .background(iconBackground)
@@ -205,7 +296,10 @@ struct ProfileView: View {
     }
 
     private var profileImage: some View {
-        AsyncImage(url: avatarTempUrl, transaction: Transaction(animation: .easeInOut(duration: 0.25))) { phase in
+        AsyncImage(
+            url: viewModel.profile?.imageUrl,
+            transaction: Transaction(animation: .easeInOut(duration: 0.25))
+        ) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -228,11 +322,6 @@ struct ProfileView: View {
                 .font(.system(size: 66, weight: .light))
                 .foregroundStyle(ColorPalette.brandPrimary)
         }
-    }
-
-    private func refreshProfile() async {
-        try? await Task.sleep(for: .seconds(1))
-        lastUpdateDate = .now
     }
 
     private func formattedRubles(_ value: Int) -> String {
@@ -258,7 +347,7 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView()
+    ProfileView(profileService: ProfileServiceMock())
 }
 
 private struct ProfileMenuItem: Identifiable {

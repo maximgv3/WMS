@@ -529,7 +529,7 @@ struct PickingTaskView: View {
 
     NavigationStack(path: $path) {
         PickingTaskView(
-            pickingTask: PickingTask(allItems: MockData.mockItems),
+            pickingTask: PickingTask(allItems: MockData.itemsMock),
             pickingTaskService: PickingListServiceMock(),
             path: $path
         )

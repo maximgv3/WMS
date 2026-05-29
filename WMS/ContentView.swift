@@ -9,7 +9,7 @@ struct ContentView: View {
                     Label("Операции", systemImage: "shippingbox")
                 }
 
-            ProfileView()
+            ProfileView(profileService: ProfileServiceMock())
                 .tint(nil)
                 .tabItem {
                     Label("Профиль", systemImage: "person.crop.circle")
