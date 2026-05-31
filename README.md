@@ -2,7 +2,7 @@
 
 A mini warehouse management app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task.
 
-Picking is the first implemented module. The app also includes a profile tab draft and is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
+Picking is the first implemented module. The app also includes a Profile tab with asynchronously loaded mock data and is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
 
 ## Project Status
 
@@ -36,9 +36,9 @@ Screenshots and a short demo GIF are planned:
 - Missing item flow with confirmation and skipped item summary.
 - Replacement item mode for collecting an allowed analog item.
 - Manual demo controls for testing successful and failed collection without the camera.
-- Profile screen draft with AsyncImage avatar, finance cards, detail rows, and pull-to-refresh date update.
+- Profile screen with AsyncImage avatar, finance cards, detail rows, async mock loading, loading/error states, and pull-to-refresh.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
-- Swift Testing coverage for core picking ViewModel/result behavior.
+- Swift Testing coverage for core picking ViewModel/result behavior and Profile ViewModel loading states.
 
 ## Main Flow
 
@@ -94,8 +94,12 @@ Key files:
 - `PickingFinishView.swift` - Task completion screen.
 - `PickingResult.swift` - Summary model for collected, skipped, and replacement items.
 - `PickingTaskService.swift` - Service protocol and mock implementation.
-- `ProfileView.swift` - Profile tab draft.
-- `WMSTests.swift` - Swift Testing tests for Picking logic.
+- `Profile.swift` - Profile data model.
+- `ProfileView.swift` - Profile tab UI.
+- `ProfileViewModel.swift` - Profile loading state and refresh logic.
+- `ProfileService.swift` - Profile service protocol and mock implementation.
+- `PickingTaskViewModelTests.swift` - Swift Testing tests for Picking logic.
+- `ProfileViewModelTests.swift` - Swift Testing tests for Profile loading behavior.
 
 ## How to Run
 
@@ -119,4 +123,5 @@ Minimum iOS version: iOS 17.
 - Add an explicit empty task state.
 - Add a camera switcher for 0.5x / 1x camera modes.
 - Add UI handling for denied/restricted camera permissions.
-- Replace hardcoded Profile data with a mock/real profile service.
+- Decode mock Profile data from JSON to better simulate an API response.
+- Add detail screens for Profile menu items.
