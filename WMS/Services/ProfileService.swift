@@ -5,9 +5,26 @@ protocol ProfileServiceProtocol {
 }
 
 final class ProfileServiceMock: ProfileServiceProtocol {
+    var errorThrowType: ProfileServiceMockError?
+
+    init(errorThrowType: ProfileServiceMockError? = nil) {
+        self.errorThrowType = errorThrowType
+    }
 
     func getProfile() async throws -> Profile {
-        try await Task.sleep(for: .seconds(1))
-        return MockData.profileMock
+        switch errorThrowType {
+        case .loadingFailed:
+            throw ProfileServiceMockError.loadingFailed
+        case .cancellation:
+            throw CancellationError()
+        case nil:
+            try await Task.sleep(for: .seconds(1))
+            return MockData.profileMock
+        }
+    }
+
+    enum ProfileServiceMockError: Error {
+        case loadingFailed
+        case cancellation
     }
 }
