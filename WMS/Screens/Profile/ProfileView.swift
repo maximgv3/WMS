@@ -63,22 +63,10 @@ struct ProfileView: View {
     private var loadedProfileStack: some View {
         ZStack {
             background
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    
-                    HStack(alignment: .center) {
-                        Text("Профиль")
-                            .font(.system(size: 32, weight: .bold))
-                            .foregroundStyle(ColorPalette.surfacePrimary)
-                        Spacer()
-                        Button {
-                            isSettingsPresented = true
-                        } label: {
-                            Image(systemName: "gearshape")
-                                .font(.system(size: 22, weight: .medium))
-                                .foregroundStyle(ColorPalette.surfacePrimary)
-                        }
-                    }
+                    profileHeader
                     profileCard
                     section(header: "Финансы") {
                         financeStack
@@ -90,6 +78,32 @@ struct ProfileView: View {
             }
             .refreshable {
                 await viewModel.loadProfile()
+            }
+        }
+    }
+
+    private var profileHeader: some View {
+        HStack(alignment: .center) {
+            Text("Профиль")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundStyle(ColorPalette.surfacePrimary)
+                .shadow(
+                    color: ColorPalette.brandPrimary.opacity(0.35),
+                    radius: 4,
+                    y: 2
+                )
+            Spacer()
+            Button {
+                isSettingsPresented = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .shadow(
+                        color: ColorPalette.brandPrimary.opacity(0.35),
+                        radius: 4,
+                        y: 2
+                    )
             }
         }
     }
