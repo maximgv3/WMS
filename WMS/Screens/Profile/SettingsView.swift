@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ReceivingModuleView: View {
+struct SettingsView: View {
     var body: some View {
         InDevelopmentView()
     }

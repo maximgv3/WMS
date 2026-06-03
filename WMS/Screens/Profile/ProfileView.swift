@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileView: View {
     @State private var viewModel: ProfileViewModel
+    @State private var isSettingsPresented = false
     private var id: String = "1 023 780"
     private var iconBackground: Color {
         ColorPalette.accentPrimary.opacity(0.18)
@@ -54,6 +55,9 @@ struct ProfileView: View {
         .task {
             await viewModel.loadProfile()
         }
+        .sheet(isPresented: $isSettingsPresented) {
+            SettingsView()
+        }
     }
 
     private var loadedProfileStack: some View {
@@ -61,9 +65,20 @@ struct ProfileView: View {
             background
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    Text("Профиль")
-                        .font(.system(size: 32, weight: .bold))
-                        .foregroundStyle(ColorPalette.surfacePrimary)
+                    
+                    HStack(alignment: .center) {
+                        Text("Профиль")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundStyle(ColorPalette.surfacePrimary)
+                        Spacer()
+                        Button {
+                            isSettingsPresented = true
+                        } label: {
+                            Image(systemName: "gearshape")
+                                .font(.system(size: 22, weight: .medium))
+                                .foregroundStyle(ColorPalette.surfacePrimary)
+                        }
+                    }
                     profileCard
                     section(header: "Финансы") {
                         financeStack
@@ -112,12 +127,7 @@ struct ProfileView: View {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink {
-                        VStack(spacing: 12) {
-                            Image(systemName: "clock")
-                                .bold()
-                            Text("Раздел в разработке")
-                                .bold()
-                        }
+                        InDevelopmentView()
                     } label: {
                         profileRow(
                             title: item.title,

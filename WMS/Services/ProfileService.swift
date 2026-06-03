@@ -18,7 +18,7 @@ final class ProfileServiceMock: ProfileServiceProtocol {
         case .cancellation:
             throw CancellationError()
         case nil:
-            try await Task.sleep(for: .seconds(1))
+            try await Task.sleep(for: .seconds(0.25))
             return MockData.profileMock
         }
     }
