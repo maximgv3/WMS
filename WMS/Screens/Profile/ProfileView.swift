@@ -1,8 +1,13 @@
 import SwiftUI
 
 struct ProfileView: View {
+    // MARK: - State
+
     @State private var viewModel: ProfileViewModel
     @State private var isSettingsPresented = false
+
+    // MARK: - Constants
+
     private var id: String = "1 023 780"
     private var iconBackground: Color {
         ColorPalette.accentPrimary.opacity(0.18)
@@ -20,9 +25,13 @@ struct ProfileView: View {
         ]
     }
 
+    // MARK: - Init
+
     init(profileService: ProfileServiceProtocol) {
         self.viewModel = .init(profileService: profileService)
     }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationStack {
@@ -60,6 +69,8 @@ struct ProfileView: View {
         }
     }
 
+    // MARK: - Screen States
+
     private var loadedProfileStack: some View {
         ZStack {
             background
@@ -78,32 +89,6 @@ struct ProfileView: View {
             }
             .refreshable {
                 await viewModel.loadProfile()
-            }
-        }
-    }
-
-    private var profileHeader: some View {
-        HStack(alignment: .center) {
-            Text("Профиль")
-                .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(ColorPalette.surfacePrimary)
-                .shadow(
-                    color: ColorPalette.brandPrimary.opacity(0.35),
-                    radius: 4,
-                    y: 2
-                )
-            Spacer()
-            Button {
-                isSettingsPresented = true
-            } label: {
-                Image(systemName: "gearshape")
-                    .font(.system(size: 22, weight: .medium))
-                    .foregroundStyle(ColorPalette.surfacePrimary)
-                    .shadow(
-                        color: ColorPalette.brandPrimary.opacity(0.35),
-                        radius: 4,
-                        y: 2
-                    )
             }
         }
     }
@@ -132,6 +117,66 @@ struct ProfileView: View {
                 .tint(ColorPalette.accentPrimary)
                 .foregroundStyle(ColorPalette.brandPrimary)
                 .bold()
+            }
+        }
+    }
+
+    // MARK: - Layout
+
+    private var background: some View {
+        VStack {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: 24,
+                bottomTrailingRadius: 16,
+                topTrailingRadius: 0,
+                style: .continuous
+            )
+            .foregroundStyle(ColorPalette.brandPrimary)
+            .ignoresSafeArea()
+            .frame(maxHeight: 200)
+            Spacer()
+        }
+        .background(ColorPalette.backgroundPrimary)
+    }
+
+    private func section<Content: View>(
+        header: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(header.uppercased())
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(ColorPalette.brandMuted)
+                .padding(.horizontal, 12)
+            content()
+        }
+    }
+
+    // MARK: - Sections
+
+    private var profileHeader: some View {
+        HStack(alignment: .center) {
+            Text("Профиль")
+                .font(.system(size: 32, weight: .bold))
+                .foregroundStyle(ColorPalette.surfacePrimary)
+                .shadow(
+                    color: ColorPalette.brandPrimary.opacity(0.35),
+                    radius: 4,
+                    y: 2
+                )
+            Spacer()
+            Button {
+                isSettingsPresented = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 22, weight: .medium))
+                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .shadow(
+                        color: ColorPalette.brandPrimary.opacity(0.35),
+                        radius: 4,
+                        y: 2
+                    )
             }
         }
     }
@@ -166,35 +211,7 @@ struct ProfileView: View {
         }
     }
 
-    private var background: some View {
-        VStack {
-            UnevenRoundedRectangle(
-                topLeadingRadius: 0,
-                bottomLeadingRadius: 24,
-                bottomTrailingRadius: 16,
-                topTrailingRadius: 0,
-                style: .continuous
-            )
-            .foregroundStyle(ColorPalette.brandPrimary)
-            .ignoresSafeArea()
-            .frame(maxHeight: 200)
-            Spacer()
-        }
-        .background(ColorPalette.backgroundPrimary)
-    }
-
-    private func section<Content: View>(
-        header: String,
-        @ViewBuilder content: () -> Content
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(header.uppercased())
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(ColorPalette.brandMuted)
-                .padding(.horizontal, 12)
-            content()
-        }
-    }
+    // MARK: - Profile Card
 
     private var profileCard: some View {
         VStack {
@@ -246,6 +263,37 @@ struct ProfileView: View {
         }
     }
 
+    private var profileImage: some View {
+        AsyncImage(
+            url: viewModel.profile?.imageUrl,
+            transaction: Transaction(animation: .easeInOut(duration: 0.25))
+        ) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .scaledToFill()
+                    .transition(.opacity)
+            default:
+                avatarPlaceholder
+            }
+        }
+        .frame(width: 90, height: 90)
+        .clipShape(Circle())
+    }
+
+    private var avatarPlaceholder: some View {
+        ZStack {
+            Circle()
+                .fill(iconBackground)
+            Image(systemName: "person.circle")
+                .font(.system(size: 66, weight: .light))
+                .foregroundStyle(ColorPalette.brandPrimary)
+        }
+    }
+
+    // MARK: - Finance
+
     private var financeStack: some View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
@@ -261,32 +309,6 @@ struct ProfileView: View {
                 )
             }
         }
-    }
-    private func profileRow(title: String, icon: String?, value: String? = nil)
-        -> some View
-    {
-        HStack(spacing: 16) {
-            if let icon {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .frame(width: 36, height: 36)
-                    .foregroundStyle(ColorPalette.brandPrimary)
-                    .background(iconBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            Text(title)
-                .foregroundStyle(ColorPalette.brandPrimary)
-            Spacer()
-            if let value {
-                Text(value)
-                    .foregroundStyle(ColorPalette.brandMuted)
-            }
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.gray.opacity(0.5))
-        }
-        .padding(8)
-        .frame(height: 56)
-        .background(ColorPalette.surfacePrimary)
     }
 
     private func financeBlock(value: Int, type: String, icon: String)
@@ -319,34 +341,36 @@ struct ProfileView: View {
         }
     }
 
-    private var profileImage: some View {
-        AsyncImage(
-            url: viewModel.profile?.imageUrl,
-            transaction: Transaction(animation: .easeInOut(duration: 0.25))
-        ) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-                    .transition(.opacity)
-            default:
-                avatarPlaceholder
+    // MARK: - Rows
+
+    private func profileRow(title: String, icon: String?, value: String? = nil)
+        -> some View
+    {
+        HStack(spacing: 16) {
+            if let icon {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .frame(width: 36, height: 36)
+                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .background(iconBackground)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
             }
+            Text(title)
+                .foregroundStyle(ColorPalette.brandPrimary)
+            Spacer()
+            if let value {
+                Text(value)
+                    .foregroundStyle(ColorPalette.brandMuted)
+            }
+            Image(systemName: "chevron.right")
+                .foregroundStyle(.gray.opacity(0.5))
         }
-        .frame(width: 90, height: 90)
-        .clipShape(Circle())
+        .padding(8)
+        .frame(height: 56)
+        .background(ColorPalette.surfacePrimary)
     }
 
-    private var avatarPlaceholder: some View {
-        ZStack {
-            Circle()
-                .fill(iconBackground)
-            Image(systemName: "person.circle")
-                .font(.system(size: 66, weight: .light))
-                .foregroundStyle(ColorPalette.brandPrimary)
-        }
-    }
+    // MARK: - Formatting
 
     private func formattedRubles(_ value: Int) -> String {
         value.formatted(
@@ -367,7 +391,6 @@ struct ProfileView: View {
                 .minute()
         )
     }
-
 }
 
 #Preview {
