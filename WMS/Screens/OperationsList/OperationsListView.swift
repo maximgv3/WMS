@@ -89,6 +89,7 @@ struct OperationsListView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
         }
+        .scrollDisabled(true)
     }
     
     @ViewBuilder
