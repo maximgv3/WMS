@@ -47,6 +47,8 @@ final class PreviewView: UIView {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
+        // rectOfInterest depends on final preview bounds, so it is updated after layout.
         onLayout?(self)
     }
 }
@@ -57,10 +59,12 @@ extension ScannerPreviewView {
         var onScan: (String) -> Void
 
         private let session = AVCaptureSession()
+        // AVCaptureSession work is kept off the main thread to avoid blocking SwiftUI updates.
         private let sessionQueue = DispatchQueue(label: "scanner.session.queue")
         private var metadataOutput: AVCaptureMetadataOutput?
         private var pendingRectOfInterest: CGRect?
         private var captureDevice: AVCaptureDevice?
+        // One long press should collect only one code, even if AVFoundation reports it repeatedly.
         private var didScanDuringCurrentPress = false
 
         init(isScanningEnabled: Bool, onScan: @escaping (String) -> Void) {
@@ -156,6 +160,7 @@ extension ScannerPreviewView {
         }
 
         private func preferredVideoDevice() -> AVCaptureDevice? {
+            // Ultra wide gives warehouse users more framing room when scanning labels up close.
             AVCaptureDevice.default(
                 .builtInUltraWideCamera,
                 for: .video,
