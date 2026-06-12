@@ -19,7 +19,7 @@ final class ProfileServiceMock: ProfileServiceProtocol {
             throw CancellationError()
         case nil:
             try await Task.sleep(for: .seconds(0.25))
-            return MockData.profileMock
+            return try MockJSONLoader.decode(Profile.self, from: "profile")
         }
     }
 
