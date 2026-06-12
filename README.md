@@ -36,7 +36,8 @@ Screenshots and a short demo GIF are planned:
 - Missing item flow with confirmation and skipped item summary.
 - Replacement item mode for collecting an allowed analog item.
 - Manual demo controls for testing successful and failed collection without the camera.
-- Profile screen with AsyncImage avatar, finance cards, detail rows, async mock loading, loading/error states, and pull-to-refresh.
+- Profile screen with AsyncImage avatar, finance cards, detail rows, async mock loading, loading/error states, pull-to-refresh, and a settings entry point.
+- Shared temporary placeholder screen for modules and profile sections that are still in development.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
 - Swift Testing coverage for core picking ViewModel/result behavior and Profile ViewModel loading states.
 
@@ -75,11 +76,11 @@ WMS/
 ├── Screens/
 │   ├── OperationsList/
 │   ├── Profile/
+│   ├── Shared/
 │   └── Features/
 │       ├── Picking/
 │       ├── Receiving/
-│       ├── Inventory/
-│       └── Shared/
+│       └── Inventory/
 └── Services/
 ```
 
@@ -97,6 +98,8 @@ Key files:
 - `Profile.swift` - Profile data model.
 - `ProfileView.swift` - Profile tab UI.
 - `ProfileViewModel.swift` - Profile loading state and refresh logic.
+- `SettingsView.swift` - Profile settings entry point.
+- `InDevelopmentView.swift` - Shared placeholder for unfinished sections.
 - `ProfileService.swift` - Profile service protocol and mock implementation.
 - `PickingTaskViewModelTests.swift` - Swift Testing tests for Picking logic.
 - `ProfileViewModelTests.swift` - Swift Testing tests for Profile loading behavior.
@@ -115,6 +118,7 @@ Minimum iOS version: iOS 17.
 - The mock service includes a test user ID for checking the task fetching error state.
 - Picking onboarding completion is stored locally with `@AppStorage`.
 - The task menu includes demo controls and an onboarding replay action for local testing.
+- Profile detail rows and settings currently use a shared in-development placeholder.
 - Receiving, Putaway, Inventory, and other warehouse operations are planned as future modules.
 
 ## Future Improvements
