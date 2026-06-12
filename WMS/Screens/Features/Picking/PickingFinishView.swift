@@ -2,26 +2,20 @@ import SwiftUI
 
 struct PickingFinishView: View {
     @Binding private var path: [PickingRoute]
-    private let result: PickingResult
-    private let taskService: PickingTaskServiceProtocol
-    @State private var isFinishingTask = false
-    @State private var errorMessage: String?
-    private var resultText: String {
-        if result.skippedCount > 0 {
-            return "Собрано товаров: \(result.collectedCount)\nПропущено: \(result.skippedCount)"
-        } else {
-            return "Собрано товаров: \(result.collectedCount)"
-        }
-    }
+    @State private var viewModel: PickingFinishViewModel
 
     init(
         path: Binding<[PickingRoute]>,
         result: PickingResult,
+        userId: Int,
         taskService: PickingTaskServiceProtocol
     ) {
         self._path = path
-        self.result = result
-        self.taskService = taskService
+        self.viewModel = .init(
+            result: result,
+            userId: userId,
+            taskService: taskService
+        )
     }
 
     var body: some View {
@@ -43,7 +37,7 @@ struct PickingFinishView: View {
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.brandPrimary)
 
-                Text(resultText)
+                Text(viewModel.resultText)
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(ColorPalette.brandMuted)
             }
@@ -59,14 +53,14 @@ struct PickingFinishView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
         .overlay(alignment: .top) {
-            if errorMessage != nil {
+            if viewModel.errorMessage != nil {
                 errorBanner
                     .padding(.horizontal, 6)
                     .padding(.vertical, 16)
                     .transition(.move(edge: .top))
             }
         }
-        .animation(.easeInOut(duration: 0.4), value: errorMessage)
+        .animation(.easeInOut(duration: 0.4), value: viewModel.errorMessage)
     }
 
     private var finishButton: some View {
@@ -78,12 +72,12 @@ struct PickingFinishView: View {
             ZStack {
                 ProgressView()
                     .tint(ColorPalette.brandPrimary)
-                    .opacity(isFinishingTask ? 1 : 0)
+                    .opacity(viewModel.isFinishingTask ? 1 : 0)
 
                 Text("Завершить задание")
                     .font(.system(size: 20, weight: .medium))
                     .foregroundStyle(ColorPalette.brandPrimary)
-                    .opacity(isFinishingTask ? 0 : 1)
+                    .opacity(viewModel.isFinishingTask ? 0 : 1)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 14)
@@ -93,30 +87,21 @@ struct PickingFinishView: View {
             )
         }
         .buttonStyle(.plain)
-        .disabled(isFinishingTask)
-        .animation(.easeInOut(duration: 0.2), value: isFinishingTask)
+        .disabled(viewModel.isFinishingTask)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isFinishingTask)
     }
 
     private func finish() async {
-        isFinishingTask = true
-        defer {
-            isFinishingTask = false
-        }
-
-        do {
-            try await taskService.finishTask(result: result, userId: 1)
+        let isFinished = await viewModel.finishTask()
+        if isFinished {
             path.removeAll()
-        } catch {
-            errorMessage = error.localizedDescription
-            try? await Task.sleep(for: .seconds(3))
-            errorMessage = nil
         }
     }
 
     private var errorBanner: some View {
         ErrorBannerView(
             title: "Не удалось завершить задание",
-            message: errorMessage
+            message: viewModel.errorMessage
         )
     }
 }

@@ -36,7 +36,12 @@ struct PickingModuleView: View {
                 case .task(let task):
                     PickingTaskView(pickingTask: task, pickingTaskService: pickingTaskService, path: $path)
                 case .finish(let result):
-                    PickingFinishView(path: $path, result: result, taskService: pickingTaskService)
+                    PickingFinishView(
+                        path: $path,
+                        result: result,
+                        userId: userId,
+                        taskService: pickingTaskService
+                    )
                 }
             }
         }
