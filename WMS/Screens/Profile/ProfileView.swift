@@ -21,6 +21,7 @@ struct ProfileView: View {
             ),
             .init(title: "Документы", icon: "doc.text"),
             .init(title: "Тарифы", icon: "shippingbox"),
+            .init(title: "Поддержка", icon: "questionmark.bubble")
         ]
     }
 
