@@ -4,7 +4,6 @@ struct ProfileView: View {
     // MARK: - State
 
     @State private var viewModel: ProfileViewModel
-    @State private var isSettingsPresented = false
 
     // MARK: - Constants
 
@@ -64,9 +63,7 @@ struct ProfileView: View {
         .task {
             await viewModel.loadProfile()
         }
-        .sheet(isPresented: $isSettingsPresented) {
-            SettingsView()
-        }
+
     }
 
     // MARK: - Screen States
@@ -166,8 +163,9 @@ struct ProfileView: View {
                     y: 2
                 )
             Spacer()
-            Button {
-                isSettingsPresented = true
+            NavigationLink {
+                SettingsView()
+                    .toolbar(.hidden, for: .tabBar)
             } label: {
                 Image(systemName: "gearshape")
                     .font(.system(size: 22, weight: .medium))
@@ -178,6 +176,7 @@ struct ProfileView: View {
                         y: 2
                     )
             }
+            .hidden()  // Settings are postponed until the app has configurable options.
         }
     }
 
@@ -188,7 +187,7 @@ struct ProfileView: View {
                     NavigationLink {
                         InDevelopmentView()
                     } label: {
-                        profileRow(
+                        MenuRow(
                             title: item.title,
                             icon: item.icon,
                             value: item.value
@@ -339,35 +338,6 @@ struct ProfileView: View {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .stroke(.gray.opacity(0.15), lineWidth: 1)
         }
-    }
-
-    // MARK: - Rows
-
-    private func profileRow(title: String, icon: String?, value: String? = nil)
-        -> some View
-    {
-        HStack(spacing: 16) {
-            if let icon {
-                Image(systemName: icon)
-                    .font(.system(size: 18))
-                    .frame(width: 36, height: 36)
-                    .foregroundStyle(ColorPalette.brandPrimary)
-                    .background(iconBackground)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            Text(title)
-                .foregroundStyle(ColorPalette.brandPrimary)
-            Spacer()
-            if let value {
-                Text(value)
-                    .foregroundStyle(ColorPalette.brandMuted)
-            }
-            Image(systemName: "chevron.right")
-                .foregroundStyle(.gray.opacity(0.5))
-        }
-        .padding(8)
-        .frame(height: 56)
-        .background(ColorPalette.surfacePrimary)
     }
 
     // MARK: - Formatting
