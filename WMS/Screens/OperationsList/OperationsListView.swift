@@ -1,10 +1,13 @@
 import SwiftUI
 
 struct OperationsListView: View {
+    @Environment(\.scenePhase) private var scenePhase
     
     private let operations = OperationType.allCases
     @State private var selectedOperation: OperationType?
-    
+    private let cameraPermissionService = CameraPermissionService()
+    @State private var cameraBlockReason: CameraAccessBlockReason?
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -30,6 +33,26 @@ struct OperationsListView: View {
                 destination(for: operation)
             }
         }
+        .onAppear {
+            cameraBlockReason = cameraPermissionService.blockReason()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            cameraBlockReason = cameraPermissionService.blockReason()
+        }
+        .fullScreenCover(item: $cameraBlockReason) { reason in
+            CameraAccessBlockedView(
+                blockReason: reason,
+                onAccessGranted: {
+                    cameraBlockReason = nil
+                },
+                onAccessDenied: {
+                    cameraBlockReason = .denied
+                },
+                permissionService: cameraPermissionService
+            )
+        }
+        .interactiveDismissDisabled()
     }
 
     private var customTopBar: some View {
@@ -50,14 +73,18 @@ struct OperationsListView: View {
     private var operationsList: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(Array(operations.enumerated()), id: \.element.id) { index, operation in
+                ForEach(Array(operations.enumerated()), id: \.element.id) {
+                    index,
+                    operation in
                     Button {
                         selectedOperation = operation
                     } label: {
                         HStack(spacing: 12) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(ColorPalette.accentPrimary.opacity(0.18))
+                                    .fill(
+                                        ColorPalette.accentPrimary.opacity(0.18)
+                                    )
                                     .frame(width: 44, height: 44)
 
                                 Image(systemName: operation.iconName)
@@ -72,7 +99,9 @@ struct OperationsListView: View {
                                 .fontWeight(.medium)
 
                             Image(systemName: "chevron.right")
-                                .foregroundStyle(ColorPalette.brandMuted.opacity(0.75))
+                                .foregroundStyle(
+                                    ColorPalette.brandMuted.opacity(0.75)
+                                )
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 18)
@@ -91,7 +120,7 @@ struct OperationsListView: View {
         }
         .scrollDisabled(true)
     }
-    
+
     @ViewBuilder
     private func destination(for operation: OperationType) -> some View {
         switch operation {
