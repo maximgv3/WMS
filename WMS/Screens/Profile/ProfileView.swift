@@ -186,7 +186,7 @@ struct ProfileView: View {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink {
-                        InDevelopmentView()
+                        SimpleBlockerView(type: .inDevelopment)
                     } label: {
                         MenuRow(
                             title: item.title,

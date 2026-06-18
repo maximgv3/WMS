@@ -2,6 +2,6 @@ import SwiftUI
 
 struct ReceivingModuleView: View {
     var body: some View {
-        InDevelopmentView()
+        SimpleBlockerView(type: .inDevelopment)
     }
 }
