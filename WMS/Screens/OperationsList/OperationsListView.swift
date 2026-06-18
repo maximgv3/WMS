@@ -3,7 +3,11 @@ import SwiftUI
 struct OperationsListView: View {
     @Environment(\.scenePhase) private var scenePhase
     
-    private let operations = OperationType.allCases
+    private let operations: [OperationMenuItem] = [
+        .init(operation: .picking, isEnabled: true),
+        .init(operation: .receiving, isEnabled: false),
+        .init(operation: .inventory, isEnabled: false)
+    ]
     @State private var selectedOperation: OperationType?
     private let cameraPermissionService = CameraPermissionService()
     @State private var cameraBlockReason: CameraAccessBlockReason?
@@ -31,13 +35,16 @@ struct OperationsListView: View {
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(item: $selectedOperation) { operation in
                 destination(for: operation)
+                    .interactiveDismissDisabled()
             }
         }
         .onAppear {
+            guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return } // disable blocker for canvas work
             cameraBlockReason = cameraPermissionService.blockReason()
         }
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active else { return }
+            guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return }
             cameraBlockReason = cameraPermissionService.blockReason()
         }
         .fullScreenCover(item: $cameraBlockReason) { reason in
@@ -51,8 +58,8 @@ struct OperationsListView: View {
                 },
                 permissionService: cameraPermissionService
             )
+            .interactiveDismissDisabled()
         }
-        .interactiveDismissDisabled()
     }
 
     private var customTopBar: some View {
@@ -75,7 +82,8 @@ struct OperationsListView: View {
             VStack(spacing: 0) {
                 ForEach(Array(operations.enumerated()), id: \.element.id) {
                     index,
-                    operation in
+                    item in
+                    let operation = item.operation
                     Button {
                         selectedOperation = operation
                     } label: {
@@ -98,7 +106,7 @@ struct OperationsListView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.medium)
 
-                            Image(systemName: "chevron.right")
+                            Image(systemName: item.isEnabled ? "chevron.right" : "lock")
                                 .foregroundStyle(
                                     ColorPalette.brandMuted.opacity(0.75)
                                 )
@@ -108,6 +116,7 @@ struct OperationsListView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .disabled(!item.isEnabled)
 
                     if index < operations.count - 1 {
                         Divider()
