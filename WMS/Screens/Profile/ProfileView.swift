@@ -186,7 +186,11 @@ struct ProfileView: View {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink {
-                        SimpleBlockerView(type: .inDevelopment)
+                        if item.title == "Финансы" {
+                            ProfileFinanceView(service: ProfileFinanceServiceMock())
+                        } else {
+                            SimpleBlockerView(type: .inDevelopment)
+                        }
                     } label: {
                         MenuRow(
                             title: item.title,
