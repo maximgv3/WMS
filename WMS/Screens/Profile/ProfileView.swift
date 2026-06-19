@@ -188,6 +188,7 @@ struct ProfileView: View {
                     NavigationLink {
                         if item.title == "Финансы" {
                             ProfileFinanceView(service: ProfileFinanceServiceMock())
+                                .toolbar(.hidden, for: .tabBar)
                         } else {
                             SimpleBlockerView(type: .inDevelopment)
                         }
@@ -199,7 +200,6 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
-
                     if item.id != detailsItems.last?.id {
                         Divider().padding(.horizontal, 16)
                     }
