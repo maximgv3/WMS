@@ -14,7 +14,9 @@ struct ProfileFinanceView: View {
         if scrollOffset >= fadeStartOffset { return 1 }
         if scrollOffset <= fadeEndOffset { return 0 }
 
-        return Double((scrollOffset - fadeEndOffset) / (fadeStartOffset - fadeEndOffset))
+        return Double(
+            (scrollOffset - fadeEndOffset) / (fadeStartOffset - fadeEndOffset)
+        )
     }
 
     var body: some View {
@@ -48,8 +50,10 @@ struct ProfileFinanceView: View {
                     GeometryReader { scrollProxy in
                         Color.clear
                             .onChange(
-                                of: scrollProxy.frame(in: .named("financeScroll"))
-                                    .minY
+                                of: scrollProxy.frame(
+                                    in: .named("financeScroll")
+                                )
+                                .minY
                             ) { _, value in
                                 scrollOffset = value
                             }
@@ -69,70 +73,26 @@ struct ProfileFinanceView: View {
                         .fill(ColorPalette.backgroundPrimary)
                         .frame(minHeight: screenProxy.size.height - 220)
 
-                        LazyVStack(spacing: 24) {
-                            Text("+1 250 ₽ — За задание PICK-1042")
-                                .bold()
-                            Text("+981 ₽ — За задание PICK-1041")
-                                .bold()
-                            Text("-320 ₽ — Покупка в столовой")
-                                .bold()
-                            Text("+1 541 ₽ — За задание PICK-1038")
-                                .bold()
-                            Text("+2 100 ₽ — За вечернюю смену")
-                                .bold()
-                            Text("+150 ₽ — Компенсация проезда")
-                                .bold()
-                            Text("+1 320 ₽ — За задание PICK-1035")
-                                .bold()
-                            Text("+875 ₽ — За задание PICK-1034")
-                                .bold()
-                            Text("-180 ₽ — Кофе и перекус")
-                                .bold()
-                            Text("+1 760 ₽ — За задание PICK-1031")
-                                .bold()
-                            Text("+2 450 ₽ — Доплата за смену")
-                                .bold()
-                            Text("+990 ₽ — За задание PICK-1029")
-                                .bold()
-                            Text("-260 ₽ — Обед в столовой")
-                                .bold()
-                            Text("+1 430 ₽ — За задание PICK-1027")
-                                .bold()
-                            Text("+1 080 ₽ — За задание PICK-1026")
-                                .bold()
-                            Text("+1 900 ₽ — За задание PICK-1024")
-                                .bold()
-                            Text("-210 ₽ — Покупка в столовой")
-                                .bold()
-                            Text("+1 115 ₽ — За задание PICK-1022")
-                                .bold()
-                            Text("+2 300 ₽ — Закрытие срочного задания")
-                                .bold()
-                            Text("+780 ₽ — За задание PICK-1019")
-                                .bold()
-                            Text("-95 ₽ — Напиток")
-                                .bold()
-                            Text("+1 640 ₽ — За задание PICK-1017")
-                                .bold()
-                            Text("+1 250 ₽ — За задание PICK-1016")
-                                .bold()
-                            Text("+500 ₽ — Бонус за скорость")
-                                .bold()
-                            Text("-340 ₽ — Обед в столовой")
-                                .bold()
-                            Text("+1 470 ₽ — За задание PICK-1014")
-                                .bold()
-                            Text("+1 050 ₽ — За задание PICK-1013")
-                                .bold()
-                            Text("+2 000 ₽ — Доплата за переработку")
-                                .bold()
-                            Text("+920 ₽ — За задание PICK-1011")
-                                .bold()
-                            Text("-150 ₽ — Кофе")
-                                .bold()
+                        LazyVStack(alignment: .leading, spacing: 24) {
+                            transactionRow(
+                                title: "За оказанные услуги",
+                                amountKopecks: 1_200_05,
+                                category: .pending
+                            )
+                            transactionRow(
+                                title: "Столовая",
+                                amountKopecks: -400_00,
+                                category: .pending
+                            )
+                            transactionRow(
+                                title: "Компенсация проезда",
+                                amountKopecks: 200_00,
+                                category: .pending
+                            )
                             Spacer(minLength: 32)
                         }
                         .padding(.top, 32)
+                        .padding(.horizontal, 24)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -152,20 +112,42 @@ struct ProfileFinanceView: View {
         }
     }
 
-    private func formattedRubles(_ kopecks: Int) -> String {
+    private func transactionRow(
+        title: String,
+        amountKopecks: Int,
+        category: FinanceTransactionCategory
+    ) -> some View {
+        let isAmountPositive = amountKopecks >= 0
+        let amountPrefix = isAmountPositive ? "+" : ""
+        let amount = amountPrefix + String(formattedRubles(amountKopecks, symbolsCount: 2))
+
+        return VStack(alignment: .leading, spacing: 4) {
+            Text(amount)
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(isAmountPositive ? ColorPalette.success : ColorPalette.error)
+            Text(title)
+                .font(.system(size: 16))
+                .foregroundStyle(ColorPalette.brandMuted)
+        }
+        .lineLimit(1)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func formattedRubles(_ kopecks: Int, symbolsCount: Int = 0) -> String {
         let rubles = Decimal(kopecks) / 100
 
         return rubles.formatted(
             .currency(code: "RUB")
                 .locale(Locale(identifier: "ru_RU"))
-                .precision(.fractionLength(0))
+                .precision(.fractionLength(symbolsCount))
         )
     }
 
     private func fundsCard(title: String, funds: Int) -> some View {
-        return VStack(spacing: 8) {
+        return VStack(spacing: 6) {
             Group {
                 Text(formattedRubles(funds))
+                    .font(.system(size: 19))
                     .bold()
                 Text(title)
                     .font(.system(size: 16))
