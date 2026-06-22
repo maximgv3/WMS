@@ -35,10 +35,16 @@ struct ProfileFinanceView: View {
             ColorPalette.brandPrimary
                 .frame(maxHeight: .infinity)
             HStack(spacing: 16) {
-                fundsCard(title: "За 30 дней", funds: 65_000_00)
-                    .frame(maxWidth: .infinity)
-                fundsCard(title: "За год", funds: 450_000_00)
-                    .frame(maxWidth: .infinity)
+                fundsCard(
+                    title: "За 30 дней",
+                    funds: viewModel.summary?.incomeLast30Days ?? 0
+                )
+                .frame(maxWidth: .infinity)
+                fundsCard(
+                    title: "За год",
+                    funds: viewModel.summary?.incomeLastYear ?? 0
+                )
+                .frame(maxWidth: .infinity)
             }
             .padding(.top, 120)
             .padding(.horizontal, 24)
@@ -74,21 +80,13 @@ struct ProfileFinanceView: View {
                         .frame(minHeight: screenProxy.size.height - 220)
 
                         LazyVStack(alignment: .leading, spacing: 24) {
-                            transactionRow(
-                                title: "За оказанные услуги",
-                                amountKopecks: 1_200_05,
-                                category: .pending
-                            )
-                            transactionRow(
-                                title: "Столовая",
-                                amountKopecks: -400_00,
-                                category: .pending
-                            )
-                            transactionRow(
-                                title: "Компенсация проезда",
-                                amountKopecks: 200_00,
-                                category: .pending
-                            )
+                            ForEach(transactionSections, id: \.date) {
+                                section in
+                                transactionSection(
+                                    date: section.date,
+                                    transactions: section.transactions
+                                )
+                            }
                             Spacer(minLength: 32)
                         }
                         .padding(.top, 32)
@@ -112,20 +110,74 @@ struct ProfileFinanceView: View {
         }
     }
 
-    private func transactionRow(
-        title: String,
-        amountKopecks: Int,
-        category: FinanceTransactionCategory
+    private var transactionSections:
+        [(date: Date, transactions: [FinanceTransaction])]
+    {
+        let transactions = viewModel.summary?.transactions ?? []
+        let calendar = Calendar.current
+
+        let groupedTransactions = Dictionary(grouping: transactions) {
+            transaction in
+            calendar.startOfDay(for: transaction.date)
+        }
+
+        return
+            groupedTransactions
+            .map { date, transactions in
+                (date: date, transactions: transactions)
+            }
+            .sorted { $0.date > $1.date }
+    }
+
+    private func transactionSection(
+        date: Date,
+        transactions: [FinanceTransaction]
     ) -> some View {
-        let isAmountPositive = amountKopecks >= 0
+        VStack(alignment: .leading, spacing: 16) {
+            Text(formattedSectionDate(date))
+                .font(.system(size: 19, weight: .semibold))
+                .foregroundStyle(ColorPalette.brandPrimary)
+            LazyVStack(alignment: .leading, spacing: 20) {
+                ForEach(transactions) { transaction in
+                    transactionRow(transaction)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private func formattedSectionDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(date) {
+            return "Сегодня"
+        }
+        if calendar.isDateInYesterday(date) {
+            return "Вчера"
+        }
+        return date.formatted(
+            .dateTime
+                .day()
+                .month(.wide)
+        )
+    }
+
+    private func transactionRow(_ transaction: FinanceTransaction) -> some View
+    {
+        let isAmountPositive = transaction.amountKopecks >= 0
         let amountPrefix = isAmountPositive ? "+" : ""
-        let amount = amountPrefix + String(formattedRubles(amountKopecks, symbolsCount: 2))
+        let amount =
+            amountPrefix
+            + String(
+                formattedRubles(transaction.amountKopecks, symbolsCount: 2)
+            )
 
         return VStack(alignment: .leading, spacing: 4) {
             Text(amount)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(isAmountPositive ? ColorPalette.success : ColorPalette.error)
-            Text(title)
+                .foregroundStyle(
+                    isAmountPositive ? ColorPalette.success : ColorPalette.error
+                )
+            Text(transaction.title)
                 .font(.system(size: 16))
                 .foregroundStyle(ColorPalette.brandMuted)
         }
@@ -133,7 +185,9 @@ struct ProfileFinanceView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func formattedRubles(_ kopecks: Int, symbolsCount: Int = 0) -> String {
+    private func formattedRubles(_ kopecks: Int, symbolsCount: Int = 0)
+        -> String
+    {
         let rubles = Decimal(kopecks) / 100
 
         return rubles.formatted(
@@ -147,7 +201,7 @@ struct ProfileFinanceView: View {
         return VStack(spacing: 6) {
             Group {
                 Text(formattedRubles(funds))
-                    .font(.system(size: 19))
+                    .font(.system(size: 20))
                     .bold()
                 Text(title)
                     .font(.system(size: 16))

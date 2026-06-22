@@ -4,7 +4,7 @@ struct FinanceTransaction: Identifiable, Hashable, Sendable {
     let id: UUID
     let title: String
     let date: Date
-    let amount: Double
+    let amountKopecks: Int
     let category: FinanceTransactionCategory
 }
 
