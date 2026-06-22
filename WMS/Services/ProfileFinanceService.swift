@@ -8,8 +8,6 @@ final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
     func getFinanceSummary() async throws -> ProfileFinanceSummary {
         try await Task.sleep(for: .seconds(0.3))
         return ProfileFinanceSummary(
-            pendingFundsKopecks: 814_941,
-            totalBalanceKopecks: 1_000_000,
             incomeLast30Days: 39_666_06,
             incomeLastYear: 212_341_17,
             transactions: [

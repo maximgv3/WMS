@@ -137,7 +137,7 @@ struct ProfileFinanceView: View {
             Text(formattedSectionDate(date))
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(ColorPalette.brandPrimary)
-            LazyVStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 20) {
                 ForEach(transactions) { transaction in
                     transactionRow(transaction)
                 }
@@ -167,9 +167,7 @@ struct ProfileFinanceView: View {
         let amountPrefix = isAmountPositive ? "+" : ""
         let amount =
             amountPrefix
-            + String(
-                formattedRubles(transaction.amountKopecks, symbolsCount: 2)
-            )
+            + formattedRubles(transaction.amountKopecks, symbolsCount: 2)
 
         return VStack(alignment: .leading, spacing: 4) {
             Text(amount)
@@ -198,7 +196,7 @@ struct ProfileFinanceView: View {
     }
 
     private func fundsCard(title: String, funds: Int) -> some View {
-        return VStack(spacing: 6) {
+        VStack(spacing: 6) {
             Group {
                 Text(formattedRubles(funds))
                     .font(.system(size: 20))
