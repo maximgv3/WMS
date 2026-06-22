@@ -200,6 +200,7 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    .disabled(item.title != "Финансы")
                     if item.id != detailsItems.last?.id {
                         Divider().padding(.horizontal, 16)
                     }
