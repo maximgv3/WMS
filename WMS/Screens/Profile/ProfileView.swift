@@ -60,6 +60,9 @@ struct ProfileView: View {
                 .easeInOut(duration: 0.25),
                 value: viewModel.profile != nil
             )
+            .navigationTitle("Профиль")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar(.hidden, for: .navigationBar)
         }
         .task {
             await viewModel.loadProfile()
