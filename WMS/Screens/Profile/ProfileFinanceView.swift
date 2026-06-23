@@ -37,12 +37,12 @@ struct ProfileFinanceView: View {
             HStack(spacing: 16) {
                 fundsCard(
                     title: "За 30 дней",
-                    funds: viewModel.summary?.incomeLast30Days ?? 0
+                    funds: viewModel.summary?.incomeLast30Days
                 )
                 .frame(maxWidth: .infinity)
                 fundsCard(
                     title: "За год",
-                    funds: viewModel.summary?.incomeLastYear ?? 0
+                    funds: viewModel.summary?.incomeLastYear
                 )
                 .frame(maxWidth: .infinity)
             }
@@ -79,9 +79,51 @@ struct ProfileFinanceView: View {
                         .fill(ColorPalette.backgroundPrimary)
                         .frame(minHeight: screenProxy.size.height - 220)
 
-                        if viewModel.isLoading && viewModel.transactionSections.isEmpty {
+                        if let error = viewModel.errorMessage,
+                            viewModel.transactionSections.isEmpty
+                        {
+                            VStack(spacing: 40) {
+                                Text(error)
+                                    .font(.system(size: 24, weight: .semibold))
+                                    .foregroundStyle(ColorPalette.brandPrimary)
+                                Button {
+                                    Task {
+                                        await viewModel.loadFinances()
+                                    }
+                                } label: {
+                                    Text("Попробовать снова")
+                                        .bold()
+                                        .background(Rectangle().fill(Color.red))
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 160)
+                            .frame(
+                                maxWidth: .infinity,
+                                maxHeight: .infinity,
+                                alignment: .center
+                            )
+                        } else if viewModel.isLoading
+                            && viewModel.transactionSections.isEmpty
+                        {
                             ProgressView()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                                .frame(
+                                    maxWidth: .infinity,
+                                    maxHeight: .infinity,
+                                    alignment: .center
+                                )
+                        } else if viewModel.transactionSections.isEmpty
+                            && !viewModel.isLoading
+                        {
+                            Text("Транзакций нет")
+                                .padding(16)
+                                .frame(
+                                    maxWidth: .infinity,
+                                    maxHeight: .infinity,
+                                    alignment: .center
+                                )
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundStyle(ColorPalette.brandPrimary)
                         } else {
                             LazyVStack(alignment: .leading, spacing: 24) {
                                 ForEach(viewModel.transactionSections) {
@@ -186,13 +228,17 @@ struct ProfileFinanceView: View {
         )
     }
 
-    private func fundsCard(title: String, funds: Int) -> some View {
+    private func fundsCard(title: String, funds: Int?) -> some View {
         VStack(spacing: 6) {
             Group {
-                if viewModel.isLoading {
+                if viewModel.isLoading && viewModel.summary == nil {
                     ProgressView()
-                } else {
+                } else if let funds {
                     Text(formattedRubles(funds))
+                        .font(.system(size: 20))
+                        .bold()
+                } else {
+                    Text("—")
                         .font(.system(size: 20))
                         .bold()
                 }
