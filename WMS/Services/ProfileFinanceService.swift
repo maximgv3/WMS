@@ -34,6 +34,13 @@ final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
                 ),
                 FinanceTransaction(
                     id: UUID(),
+                    title: "Вывод зарплаты на карту",
+                    date: daysAgo(0),
+                    amountKopecks: 8_000_00,
+                    category: .balance
+                ),
+                FinanceTransaction(
+                    id: UUID(),
                     title: "Оплата задания сборки PICK-1042",
                     date: daysAgo(1),
                     amountKopecks: 1_250_00,
@@ -59,6 +66,13 @@ final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
                     date: daysAgo(3),
                     amountKopecks: 1_540_75,
                     category: .pending
+                ),
+                FinanceTransaction(
+                    id: UUID(),
+                    title: "Вывод зарплаты на карту",
+                    date: daysAgo(3),
+                    amountKopecks: 12_500_00,
+                    category: .balance
                 ),
                 FinanceTransaction(
                     id: UUID(),
@@ -122,6 +136,13 @@ final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
                     date: daysAgo(8),
                     amountKopecks: 1_090_00,
                     category: .pending
+                ),
+                FinanceTransaction(
+                    id: UUID(),
+                    title: "Вывод зарплаты на карту",
+                    date: daysAgo(8),
+                    amountKopecks: 6_500_00,
+                    category: .balance
                 ),
                 FinanceTransaction(
                     id: UUID(),

@@ -124,7 +124,15 @@ struct ProfileFinanceView: View {
         return
             groupedTransactions
             .map { date, transactions in
-                (date: date, transactions: transactions)
+                (
+                    date: date,
+                    transactions: transactions.sorted { lhs, rhs in
+                        if lhs.category == rhs.category {
+                            return lhs.date > rhs.date
+                        }
+                        return lhs.category == .pending
+                    }
+                )
             }
             .sorted { $0.date > $1.date }
     }
@@ -163,21 +171,26 @@ struct ProfileFinanceView: View {
 
     private func transactionRow(_ transaction: FinanceTransaction) -> some View
     {
+        let isPending = transaction.category == .pending
         let isAmountPositive = transaction.amountKopecks >= 0
-        let amountPrefix = isAmountPositive ? "+" : ""
+        let amountPrefix = isPending && isAmountPositive ? "+" : ""
         let amount =
             amountPrefix
             + formattedRubles(transaction.amountKopecks, symbolsCount: 2)
+        let amountColor =
+            isPending
+            ? (isAmountPositive ? ColorPalette.success : ColorPalette.error)
+            : ColorPalette.brandPrimary
+        let titleColor =
+            isPending ? ColorPalette.brandMuted : ColorPalette.brandSecondary
 
         return VStack(alignment: .leading, spacing: 4) {
             Text(amount)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(
-                    isAmountPositive ? ColorPalette.success : ColorPalette.error
-                )
+                .foregroundStyle(amountColor)
             Text(transaction.title)
                 .font(.system(size: 16))
-                .foregroundStyle(ColorPalette.brandMuted)
+                .foregroundStyle(titleColor)
         }
         .lineLimit(1)
         .frame(maxWidth: .infinity, alignment: .leading)
