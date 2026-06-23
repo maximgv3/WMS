@@ -86,14 +86,19 @@ struct ProfileFinanceView: View {
                                 Text(error)
                                     .font(.system(size: 24, weight: .semibold))
                                     .foregroundStyle(ColorPalette.brandPrimary)
+                                    .multilineTextAlignment(.center)
                                 Button {
                                     Task {
                                         await viewModel.loadFinances()
                                     }
                                 } label: {
                                     Text("Попробовать снова")
-                                        .bold()
-                                        .background(Rectangle().fill(Color.red))
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundStyle(ColorPalette.brandPrimary)
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 12)
+                                        .background(ColorPalette.accentPrimary)
+                                        .clipShape(Capsule())
                                 }
                             }
                             .padding(.horizontal, 16)
@@ -251,13 +256,6 @@ struct ProfileFinanceView: View {
         .frame(height: 80)
         .background(ColorPalette.backgroundPrimary)
         .clipShape(RoundedRectangle(cornerRadius: 20))
-    }
-
-    private var loadingState: some View {
-        ProgressView()
-    }
-    private var errorState: some View {
-        Text("Error")
     }
 }
 
