@@ -1,6 +1,6 @@
 import Foundation
 
-struct FinanceTransaction: Identifiable, Hashable, Sendable {
+struct FinanceTransaction: Identifiable, Hashable, Sendable, Decodable {
     let id: UUID
     let title: String
     let date: Date
@@ -8,7 +8,7 @@ struct FinanceTransaction: Identifiable, Hashable, Sendable {
     let category: FinanceTransactionCategory
 }
 
-enum FinanceTransactionCategory {
+enum FinanceTransactionCategory: Decodable {
     case pending
     case balance
 }

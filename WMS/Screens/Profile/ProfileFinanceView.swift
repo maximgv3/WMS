@@ -79,18 +79,23 @@ struct ProfileFinanceView: View {
                         .fill(ColorPalette.backgroundPrimary)
                         .frame(minHeight: screenProxy.size.height - 220)
 
-                        LazyVStack(alignment: .leading, spacing: 24) {
-                            ForEach(transactionSections, id: \.date) {
-                                section in
-                                transactionSection(
-                                    date: section.date,
-                                    transactions: section.transactions
-                                )
+                        if viewModel.isLoading && viewModel.transactionSections.isEmpty {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                        } else {
+                            LazyVStack(alignment: .leading, spacing: 24) {
+                                ForEach(viewModel.transactionSections) {
+                                    section in
+                                    transactionSection(
+                                        date: section.date,
+                                        transactions: section.transactions
+                                    )
+                                }
+                                Spacer(minLength: 32)
                             }
-                            Spacer(minLength: 32)
+                            .padding(.top, 32)
+                            .padding(.horizontal, 24)
                         }
-                        .padding(.top, 32)
-                        .padding(.horizontal, 24)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -108,33 +113,6 @@ struct ProfileFinanceView: View {
                 }
             }
         }
-    }
-
-    private var transactionSections:
-        [(date: Date, transactions: [FinanceTransaction])]
-    {
-        let transactions = viewModel.summary?.transactions ?? []
-        let calendar = Calendar.current
-
-        let groupedTransactions = Dictionary(grouping: transactions) {
-            transaction in
-            calendar.startOfDay(for: transaction.date)
-        }
-
-        return
-            groupedTransactions
-            .map { date, transactions in
-                (
-                    date: date,
-                    transactions: transactions.sorted { lhs, rhs in
-                        if lhs.category == rhs.category {
-                            return lhs.date > rhs.date
-                        }
-                        return lhs.category == .pending
-                    }
-                )
-            }
-            .sorted { $0.date > $1.date }
     }
 
     private func transactionSection(
@@ -211,9 +189,13 @@ struct ProfileFinanceView: View {
     private func fundsCard(title: String, funds: Int) -> some View {
         VStack(spacing: 6) {
             Group {
-                Text(formattedRubles(funds))
-                    .font(.system(size: 20))
-                    .bold()
+                if viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    Text(formattedRubles(funds))
+                        .font(.system(size: 20))
+                        .bold()
+                }
                 Text(title)
                     .font(.system(size: 16))
             }

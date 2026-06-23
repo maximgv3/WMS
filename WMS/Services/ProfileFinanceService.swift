@@ -6,7 +6,7 @@ protocol ProfileFinanceServiceProtocol: AnyObject {
 
 final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
     func getFinanceSummary() async throws -> ProfileFinanceSummary {
-        try await Task.sleep(for: .seconds(0.3))
+        try await Task.sleep(for: .seconds(3.3))
         return ProfileFinanceSummary(
             incomeLast30Days: 39_666_06,
             incomeLastYear: 212_341_17,
