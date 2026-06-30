@@ -40,7 +40,7 @@ struct PickingProgressMenu: View {
         .padding(.leading, 9)
         .padding(.trailing, 11)
         .padding(.vertical, 5)
-        .background(ColorPalette.surfacePrimary)
+        .background(.clear)
         .clipShape(Capsule())
         .fixedSize(horizontal: true, vertical: false)
         .animation(
