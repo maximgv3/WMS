@@ -14,13 +14,15 @@ In development. The Picking module is the most complete part of the app; Receivi
 
 ## Screenshots
 
-Screenshots and a short demo GIF are planned:
+A demo GIF of the picking flow is shown above.
 
-- Operations menu and profile tab
-- Picking onboarding flow
-- Scanner and error state
-- Camera permission blocker
-- Task finish screen
+| Operations menu | Get task | Item & scanner |
+|:---:|:---:|:---:|
+| <img src="assets/operations-list.png" width="230"> | <img src="assets/picking-get-task.png" width="230"> | <img src="assets/picking-task.png" width="230"> |
+
+| Task complete | Profile | Finance history |
+|:---:|:---:|:---:|
+| <img src="assets/picking-finish.png" width="230"> | <img src="assets/profile.png" width="230"> | <img src="assets/profile-operations.png" width="230"> |
 
 ## Features
 
