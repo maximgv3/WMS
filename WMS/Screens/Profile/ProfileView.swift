@@ -109,15 +109,11 @@ struct ProfileView: View {
             VStack(spacing: 32) {
                 Text("Не удалось загрузить профиль")
                     .font(.system(size: 22, weight: .semibold))
-                Button("Попробовать снова") {
+                PrimaryButton("Попробовать снова", variant: .capsule) {
                     Task {
                         await viewModel.loadProfile()
                     }
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(ColorPalette.accentPrimary)
-                .foregroundStyle(ColorPalette.brandPrimary)
-                .bold()
             }
         }
     }
