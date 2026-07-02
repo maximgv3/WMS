@@ -68,18 +68,16 @@ struct PickingModuleView: View {
 
     private var content: some View {
         VStack(spacing: 60) {
+            #if DEBUG
             Button {
-                if userId == 1 {
-                    userId = 666
-                } else {
-                    userId = 1
-                }
+                toggleTestUserId()
             } label: {
-                Image(.pickingList)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 140, height: 140)
+                pickingListImage
             }
+            .buttonStyle(.plain)
+            #else
+            pickingListImage
+            #endif
             
             Button {
                 Task {
@@ -120,6 +118,24 @@ struct PickingModuleView: View {
         }
         .animation(.easeInOut(duration: 0.4), value: errorMessage)
     }
+
+    private var pickingListImage: some View {
+        Image(.pickingList)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 140, height: 140)
+    }
+
+    #if DEBUG
+    private func toggleTestUserId() {
+        if userId == 1 {
+            userId = 666
+        } else {
+            userId = 1
+        }
+    }
+    #endif
+
     private var customTopBar: some View {
         HStack(alignment: .center, spacing: 12) {
             Button {
