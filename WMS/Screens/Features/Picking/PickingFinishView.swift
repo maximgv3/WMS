@@ -64,31 +64,11 @@ struct PickingFinishView: View {
     }
 
     private var finishButton: some View {
-        Button {
+        PrimaryButton("Завершить задание", isLoading: viewModel.isFinishingTask) {
             Task {
                 await finish()
             }
-        } label: {
-            ZStack {
-                ProgressView()
-                    .tint(ColorPalette.brandPrimary)
-                    .opacity(viewModel.isFinishingTask ? 1 : 0)
-
-                Text("Завершить задание")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(ColorPalette.brandPrimary)
-                    .opacity(viewModel.isFinishingTask ? 0 : 1)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 14)
-            .background(ColorPalette.accentPrimary)
-            .clipShape(
-                RoundedRectangle(cornerRadius: 24, style: .continuous)
-            )
         }
-        .buttonStyle(.plain)
-        .disabled(viewModel.isFinishingTask)
-        .animation(.easeInOut(duration: 0.2), value: viewModel.isFinishingTask)
     }
 
     private func finish() async {

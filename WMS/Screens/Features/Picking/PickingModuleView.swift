@@ -78,33 +78,12 @@ struct PickingModuleView: View {
             #else
             pickingListImage
             #endif
-            
-            Button {
+            PrimaryButton("Получить задание", isLoading: isLoadingTask) {
                 Task {
                     await getTaskTapped()
                 }
-            } label: {
-                ZStack {
-                    ProgressView()
-                        .tint(ColorPalette.brandPrimary)
-                        .opacity(isLoadingTask ? 1 : 0)
-
-                    Text("Получить задание")
-                        .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(ColorPalette.brandPrimary)
-                        .opacity(isLoadingTask ? 0 : 1)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(ColorPalette.accentPrimary)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                )
             }
             .padding(.horizontal, 64)
-            .buttonStyle(.plain)
-            .disabled(isLoadingTask)
-            .animation(.easeInOut(duration: 0.2), value: isLoadingTask)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)

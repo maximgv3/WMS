@@ -87,18 +87,13 @@ struct ProfileFinanceView: View {
                                     .font(.system(size: 24, weight: .semibold))
                                     .foregroundStyle(ColorPalette.brandPrimary)
                                     .multilineTextAlignment(.center)
-                                Button {
+                                PrimaryButton(
+                                    "Попробовать снова",
+                                    variant: .capsule
+                                ) {
                                     Task {
                                         await viewModel.loadFinances()
                                     }
-                                } label: {
-                                    Text("Попробовать снова")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundStyle(ColorPalette.brandPrimary)
-                                        .padding(.horizontal, 20)
-                                        .padding(.vertical, 12)
-                                        .background(ColorPalette.accentPrimary)
-                                        .clipShape(Capsule())
                                 }
                             }
                             .padding(.horizontal, 16)
