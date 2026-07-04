@@ -36,74 +36,49 @@ struct PrimaryButton: View {
                     .opacity(isLoading ? 1 : 0)
 
                 Text(title)
-                    .font(font)
+                    .font(style.font)
                     .foregroundStyle(ColorPalette.brandPrimary)
                     .opacity(isLoading ? 0 : 1)
             }
-            .frame(maxWidth: maxWidth)
-            .padding(.horizontal, horizontalPadding)
-            .padding(.vertical, verticalPadding)
+            .frame(maxWidth: style.maxWidth)
+            .padding(.horizontal, style.horizontalPadding)
+            .padding(.vertical, style.verticalPadding)
             .background(ColorPalette.accentPrimary)
-            .clipShape(shape)
+            .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
         .disabled(isDisabled || isLoading)
         .animation(.easeInOut(duration: 0.2), value: isLoading)
     }
 
-    private var font: Font {
+    private var style: Style {
         switch variant {
         case .fullWidth:
-            return .system(size: 20, weight: .medium)
+            Style(
+                font: .system(size: 20, weight: .medium),
+                maxWidth: .infinity,
+                horizontalPadding: 0,
+                verticalPadding: 14,
+                cornerRadius: 24
+            )
         case .capsule:
-            return .system(size: 17, weight: .semibold)
-        }
-    }
-
-    private var maxWidth: CGFloat? {
-        switch variant {
-        case .fullWidth:
-            return .infinity
-        case .capsule:
-            return nil
-        }
-    }
-
-    private var horizontalPadding: CGFloat {
-        switch variant {
-        case .fullWidth:
-            return 0
-        case .capsule:
-            return 20
-        }
-    }
-
-    private var verticalPadding: CGFloat {
-        switch variant {
-        case .fullWidth:
-            return 14
-        case .capsule:
-            return 12
-        }
-    }
-
-    private var shape: PrimaryButtonShape {
-        switch variant {
-        case .fullWidth:
-            return PrimaryButtonShape(cornerRadius: 24)
-        case .capsule:
-            return PrimaryButtonShape(cornerRadius: 999)
+            Style(
+                font: .system(size: 17, weight: .semibold),
+                maxWidth: nil,
+                horizontalPadding: 20,
+                verticalPadding: 12,
+                cornerRadius: 999
+            )
         }
     }
 }
 
-private struct PrimaryButtonShape: Shape {
+private struct Style {
+    let font: Font
+    let maxWidth: CGFloat?
+    let horizontalPadding: CGFloat
+    let verticalPadding: CGFloat
     let cornerRadius: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .path(in: rect)
-    }
 }
 
 #Preview {
