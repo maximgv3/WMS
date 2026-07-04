@@ -43,8 +43,6 @@ final class PickingFinishViewModel {
             return true
         } catch {
             errorMessage = error.localizedDescription
-            try? await Task.sleep(for: .seconds(3))
-            errorMessage = nil
             return false
         }
     }

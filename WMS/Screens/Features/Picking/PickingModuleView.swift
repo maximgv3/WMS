@@ -87,15 +87,7 @@ struct PickingModuleView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .overlay(alignment: .top) {
-            if errorMessage != nil {
-                errorBanner
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 16)
-                    .transition(.move(edge: .top))
-            }
-        }
-        .animation(.easeInOut(duration: 0.4), value: errorMessage)
+        .errorBanner(title: "Не удалось получить сборочный лист", message: $errorMessage)
     }
 
     private var pickingListImage: some View {
@@ -151,16 +143,7 @@ struct PickingModuleView: View {
             path.append(.task(result))
         } catch {
             errorMessage = error.localizedDescription
-            try? await Task.sleep(for: .seconds(3))
-            errorMessage = nil
         }
-    }
-
-    private var errorBanner: some View {
-        ErrorBannerView(
-            title: "Не удалось получить сборочный лист",
-            message: errorMessage
-        )
     }
 
 }

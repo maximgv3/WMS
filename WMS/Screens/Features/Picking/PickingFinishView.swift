@@ -52,15 +52,7 @@ struct PickingFinishView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .overlay(alignment: .top) {
-            if viewModel.errorMessage != nil {
-                errorBanner
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 16)
-                    .transition(.move(edge: .top))
-            }
-        }
-        .animation(.easeInOut(duration: 0.4), value: viewModel.errorMessage)
+        .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
     }
 
     private var finishButton: some View {
@@ -76,12 +68,5 @@ struct PickingFinishView: View {
         if isFinished {
             path.removeAll()
         }
-    }
-
-    private var errorBanner: some View {
-        ErrorBannerView(
-            title: "Не удалось завершить задание",
-            message: viewModel.errorMessage
-        )
     }
 }
