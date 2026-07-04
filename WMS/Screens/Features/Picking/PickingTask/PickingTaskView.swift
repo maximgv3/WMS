@@ -15,14 +15,8 @@ struct PickingTaskView: View {
     @State private var isDemoConfirmationPresented = false
     #endif
 
-    // Error banner state
-    @State private var errorMessage: String?
-    @State private var errorDismissTask: Task<Void, Never>?
-    @State private var isErrorToolbarPresented = false
-    @State private var isErrorBannerVisible = false
-    @State private var isErrorBannerPulsing = false
-    @State private var areToolbarSideItemsPresented = true
-    @State private var areToolbarSideItemsVisible = true
+    // Error banner
+    @State private var banner = ToolbarErrorBanner()
 
     // Scanner state
     @State private var isScanningEnabled = false
@@ -102,11 +96,7 @@ struct PickingTaskView: View {
             )
         }
         .onDisappear {
-            errorDismissTask?.cancel()
-            isErrorBannerVisible = false
-            isErrorToolbarPresented = false
-            areToolbarSideItemsPresented = true
-            areToolbarSideItemsVisible = true
+            banner.reset()
             isScanningEnabled = false
             isReplacementModeOn = false
             disableDemoMode()
@@ -126,48 +116,48 @@ struct PickingTaskView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if isErrorToolbarPresented {
+            if banner.isPresented {
                 ToolbarItem(placement: .principal) {
-                    errorBanner(errorMessage ?? "Это не тот товар")
+                    errorBanner(banner.message ?? "")
                         .scaleEffect(
-                            isErrorBannerVisible
-                                ? (isErrorBannerPulsing ? 1.08 : 1) : 0.96
+                            banner.isVisible
+                                ? (banner.isPulsing ? 1.08 : 1) : 0.96
                         )
                         .opacity(
-                            isErrorBannerVisible
-                                ? (isErrorBannerPulsing ? 0.65 : 1) : 0
+                            banner.isVisible
+                                ? (banner.isPulsing ? 0.65 : 1) : 0
                         )
                         .animation(
                             .easeInOut(duration: 0.18),
-                            value: isErrorBannerVisible
+                            value: banner.isVisible
                         )
                         .animation(
                             .spring(response: 0.22, dampingFraction: 0.55),
-                            value: isErrorBannerPulsing
+                            value: banner.isPulsing
                         )
-                        .allowsHitTesting(isErrorBannerVisible)
+                        .allowsHitTesting(banner.isVisible)
                 }
             }
-            if areToolbarSideItemsPresented {
+            if banner.areSideItemsPresented {
                 ToolbarItem(placement: .topBarLeading) {
                     progressMenu
-                        .opacity(areToolbarSideItemsVisible ? 1 : 0)
-                        .scaleEffect(areToolbarSideItemsVisible ? 1 : 0.92)
+                        .opacity(banner.areSideItemsVisible ? 1 : 0)
+                        .scaleEffect(banner.areSideItemsVisible ? 1 : 0.92)
                         .animation(
                             .easeInOut(duration: 0.18),
-                            value: areToolbarSideItemsVisible
+                            value: banner.areSideItemsVisible
                         )
-                        .allowsHitTesting(areToolbarSideItemsVisible)
+                        .allowsHitTesting(banner.areSideItemsVisible)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     topMenu
-                        .opacity(areToolbarSideItemsVisible ? 1 : 0)
-                        .scaleEffect(areToolbarSideItemsVisible ? 1 : 0.92)
+                        .opacity(banner.areSideItemsVisible ? 1 : 0)
+                        .scaleEffect(banner.areSideItemsVisible ? 1 : 0.92)
                         .animation(
                             .easeInOut(duration: 0.18),
-                            value: areToolbarSideItemsVisible
+                            value: banner.areSideItemsVisible
                         )
-                        .allowsHitTesting(areToolbarSideItemsVisible)
+                        .allowsHitTesting(banner.areSideItemsVisible)
                 }
             }
         }
@@ -401,63 +391,21 @@ struct PickingTaskView: View {
 
     // MARK: - Error Banner
     private func showError(_ error: Error) {
-        if let pickingError = error as? PickingTaskError {
-            switch pickingError {
-            case .wrongId:
-                errorMessage = "Это не тот товар"
-            case .alreadyCollected:
-                errorMessage = "Этот ШК уже собран"
-            case .cantUseForReplacement:
-                errorMessage = "Замена не подходит"
-            }
-        } else {
-            errorMessage = error.localizedDescription
-        }
-        errorDismissTask?.cancel()
-        areToolbarSideItemsVisible = false
-        isErrorToolbarPresented = true
-        isErrorBannerVisible = false
-
-        Task {
-            try? await Task.sleep(for: .milliseconds(50))
-            guard !Task.isCancelled else { return }
-            await MainActor.run {
-                areToolbarSideItemsPresented = false
-                isErrorBannerVisible = true
-                pulseErrorBanner()
-            }
-        }
-
-        errorDismissTask = Task {
-            try? await Task.sleep(for: .seconds(2))
-            guard !Task.isCancelled else { return }
-            await hideErrorBanner()
-        }
+        banner.show(message: message(for: error))
     }
 
-    private func pulseErrorBanner() {
-        isErrorBannerPulsing = true
-        Task { @MainActor in
-            try? await Task.sleep(for: .milliseconds(180))
-            isErrorBannerPulsing = false
+    private func message(for error: Error) -> String {
+        guard let pickingError = error as? PickingTaskError else {
+            return error.localizedDescription
         }
-    }
-
-    @MainActor
-    private func hideErrorBanner() async {
-        isErrorBannerVisible = false
-
-        try? await Task.sleep(for: .milliseconds(180))
-        guard !Task.isCancelled else { return }
-
-        errorMessage = nil
-        isErrorToolbarPresented = false
-        areToolbarSideItemsPresented = true
-
-        try? await Task.sleep(for: .milliseconds(50))
-        guard !Task.isCancelled else { return }
-
-        areToolbarSideItemsVisible = true
+        switch pickingError {
+        case .wrongId:
+            return "Это не тот товар"
+        case .alreadyCollected:
+            return "Этот ШК уже собран"
+        case .cantUseForReplacement:
+            return "Замена не подходит"
+        }
     }
 
     private func errorBanner(_ message: String) -> some View {
