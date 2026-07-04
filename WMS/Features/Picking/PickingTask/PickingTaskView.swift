@@ -333,15 +333,22 @@ struct PickingTaskView: View {
         }
     }
 
+    @ViewBuilder
     private func errorBanner(_ message: String) -> some View {
-        Text(message)
+        let label = Text(message)
             .font(.system(size: 16, weight: .semibold))
             .foregroundStyle(ColorPalette.surfacePrimary)
+            .lineLimit(1)
             .padding(.horizontal, 18)
             .padding(.vertical, 10)
-            .background(ColorPalette.error)
-            .clipShape(Capsule())
-            .lineLimit(1)
+
+        if #available(iOS 26.0, *) {
+            label.glassEffect(.regular.tint(ColorPalette.error), in: Capsule())
+        } else {
+            label
+                .background(ColorPalette.error)
+                .clipShape(Capsule())
+        }
     }
 
     // MARK: - Bottom Controls
