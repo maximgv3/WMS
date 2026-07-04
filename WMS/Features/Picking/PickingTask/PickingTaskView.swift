@@ -280,9 +280,9 @@ struct PickingTaskView: View {
     private func tryToCollect(itemId: Int) {
         do {
             try viewModel.tryToCollect(itemId: itemId)
-            SoundFeedback.playSuccess()
+            FeedbackService.playSuccess()
         } catch {
-            SoundFeedback.playError()
+            FeedbackService.playError()
             showError(error)
         }
     }
@@ -290,9 +290,9 @@ struct PickingTaskView: View {
     private func tryToCollect(scannedCode: String) {
         do {
             try viewModel.tryToCollect(scannedCode: scannedCode)
-            SoundFeedback.playSuccess()
+            FeedbackService.playSuccess()
         } catch {
-            SoundFeedback.playError()
+            FeedbackService.playError()
             showError(error)
         }
     }
@@ -306,9 +306,9 @@ struct PickingTaskView: View {
 
                 try await viewModel.tryToReplace(replacementId: replacementId)
                 isReplacementModeOn = false
-                SoundFeedback.playSuccess()
+                FeedbackService.playSuccess()
             } catch {
-                SoundFeedback.playError()
+                FeedbackService.playError()
                 showError(error)
             }
         }

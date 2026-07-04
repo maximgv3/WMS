@@ -1,7 +1,7 @@
 import AudioToolbox
 import UIKit
 
-enum SoundFeedback {
+enum FeedbackService {
     static func playSuccess() {
         AudioServicesPlaySystemSound(1057)
     }

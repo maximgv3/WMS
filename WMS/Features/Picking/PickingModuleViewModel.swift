@@ -21,7 +21,7 @@ final class PickingModuleViewModel {
         do {
             return try await taskService.fetchTask(userId: userId)
         } catch {
-            SoundFeedback.playErrorHaptic()
+            FeedbackService.playErrorHaptic()
             errorMessage = error.localizedDescription
             return nil
         }
