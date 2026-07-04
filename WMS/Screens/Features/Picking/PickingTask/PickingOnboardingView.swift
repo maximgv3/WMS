@@ -66,23 +66,12 @@ struct PickingOnboardingView: View {
                 .clipShape(Circle())
                 .padding(48)
             Spacer()
-            Button {
+            PrimaryButton("Завершить обучение") {
                 isPickingOnboardingComplete = true
                 dismiss()
-            } label: {
-                Text("Завершить обучение")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(ColorPalette.brandPrimary)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 24)
-                    .background(ColorPalette.accentPrimary)
-                    .clipShape(
-                        RoundedRectangle(cornerRadius: 36, style: .continuous)
-                    )
             }
             .padding(.horizontal, 64)
             .padding(.bottom, 16)
-            .buttonStyle(.plain)
         }
         .background(ColorPalette.backgroundPrimary)
     }
