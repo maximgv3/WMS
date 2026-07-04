@@ -29,9 +29,16 @@ struct PickingFinishView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 72, weight: .semibold))
-                    .foregroundStyle(ColorPalette.accentPrimary)
+                #if DEBUG
+                Button {
+                    viewModel.toggleTestUserId()
+                } label: {
+                    checkmarkImage
+                }
+                .buttonStyle(.plain)
+                #else
+                checkmarkImage
+                #endif
 
                 Text("Сборка завершена")
                     .font(.system(size: 30, weight: .bold))
@@ -55,6 +62,12 @@ struct PickingFinishView: View {
         .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
     }
 
+    private var checkmarkImage: some View {
+        Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 72, weight: .semibold))
+            .foregroundStyle(ColorPalette.accentPrimary)
+    }
+
     private var finishButton: some View {
         PrimaryButton("Завершить задание", isLoading: viewModel.isFinishingTask) {
             Task {
@@ -70,3 +83,5 @@ struct PickingFinishView: View {
         }
     }
 }
+
+

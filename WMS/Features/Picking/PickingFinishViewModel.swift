@@ -4,7 +4,7 @@ import Observation
 @Observable
 final class PickingFinishViewModel {
     private let result: PickingResult
-    private let userId: Int
+    private var userId: Int
     private let taskService: PickingTaskServiceProtocol
 
     var isFinishingTask = false
@@ -46,4 +46,10 @@ final class PickingFinishViewModel {
             return false
         }
     }
+
+    #if DEBUG
+    func toggleTestUserId() {
+        userId = userId == 1 ? 666 : 1
+    }
+    #endif
 }

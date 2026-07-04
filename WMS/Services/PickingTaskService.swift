@@ -37,6 +37,18 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
     }
 
     func finishTask(result: PickingResult, userId: Int) async throws {
+        if userId == 666 {
+            try await Task.sleep(for: .seconds(0.5))
+            throw NSError(
+                domain: "PickingTask",
+                code: 666,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Не удалось отправить результат для данного пользователя"
+                ]
+            )
+        }
+
         let request = makeFinishRequest(from: result, userId: userId)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
