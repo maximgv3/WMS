@@ -42,6 +42,7 @@ final class PickingFinishViewModel {
             try await taskService.finishTask(result: result, userId: userId)
             return true
         } catch {
+            SoundFeedback.playErrorHaptic()
             errorMessage = error.localizedDescription
             return false
         }

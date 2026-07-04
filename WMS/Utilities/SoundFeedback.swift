@@ -1,4 +1,5 @@
 import AudioToolbox
+import UIKit
 
 enum SoundFeedback {
     static func playSuccess() {
@@ -7,5 +8,9 @@ enum SoundFeedback {
 
     static func playError() {
         AudioServicesPlaySystemSound(1051)
+    }
+
+    static func playErrorHaptic() {
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
     }
 }
