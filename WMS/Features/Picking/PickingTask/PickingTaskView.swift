@@ -55,7 +55,7 @@ struct PickingTaskView: View {
             if let currentItem {
                 ScrollView {
                     VStack {
-                        image
+                        ItemImage(url: currentItem.imageUrl)
                         VStack(spacing: 6) {
                             Text(currentItem.title)
                                 .font(.system(size: 22, weight: .bold))
@@ -160,36 +160,6 @@ struct PickingTaskView: View {
                 }
             }
         }
-    }
-
-    // MARK: - Image
-    @ViewBuilder
-    private var image: some View {
-        Group {
-            if let url = currentItem?.imageUrl {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFit()
-                    case .empty:
-                        ProgressView()
-                            .tint(ColorPalette.brandSecondary)
-                            .controlSize(.large)
-                    case .failure:
-                        noImage
-                    @unknown default:
-                        noImage
-                    }
-                }
-                .id(url)
-            } else {
-                noImage
-            }
-        }
-        .frame(height: 240)
-        .frame(maxWidth: .infinity)
     }
 
     // MARK: - Item Info
@@ -485,12 +455,6 @@ struct PickingTaskView: View {
         }
     }
 
-    // MARK: - Placeholders
-    private var noImage: some View {
-        Image(systemName: "photo.badge.exclamationmark")
-            .font(.system(size: 44))
-            .foregroundStyle(ColorPalette.brandMuted)
-    }
 }
 
 // MARK: - Preview
