@@ -12,10 +12,10 @@ struct ErrorBannerModifier: ViewModifier {
                     ErrorBannerView(title: title, message: message)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 16)
-                        .transition(.move(edge: .top))
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
-            .animation(.easeInOut(duration: 0.4), value: message)
+            .animation(.bouncy, value: message)
             .task(id: message) {
                 guard message != nil else { return }
                 try? await Task.sleep(for: autoDismissAfter)
