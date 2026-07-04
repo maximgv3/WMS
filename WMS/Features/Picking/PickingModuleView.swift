@@ -2,14 +2,11 @@ import SwiftUI
 
 struct PickingModuleView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var isLoadingTask = false
-    private let pickingTaskService: PickingTaskServiceProtocol
-    @State private var errorMessage: String?
-    @State private var userId: Int = 1
+    @State private var viewModel: PickingModuleViewModel
     @State private var path: [PickingRoute] = []
-    
+
     init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
-        self.pickingTaskService = taskService
+        self.viewModel = PickingModuleViewModel(taskService: taskService)
     }
     var body: some View {
         NavigationStack(path: $path) {
@@ -34,13 +31,13 @@ struct PickingModuleView: View {
             .navigationDestination(for: PickingRoute.self) { route in
                 switch route {
                 case .task(let task):
-                    PickingTaskView(pickingTask: task, pickingTaskService: pickingTaskService, path: $path)
+                    PickingTaskView(pickingTask: task, pickingTaskService: viewModel.taskService, path: $path)
                 case .finish(let result):
                     PickingFinishView(
                         path: $path,
                         result: result,
-                        userId: userId,
-                        taskService: pickingTaskService
+                        userId: viewModel.userId,
+                        taskService: viewModel.taskService
                     )
                 }
             }
@@ -70,7 +67,7 @@ struct PickingModuleView: View {
         VStack(spacing: 60) {
             #if DEBUG
             Button {
-                toggleTestUserId()
+                viewModel.toggleTestUserId()
             } label: {
                 pickingListImage
             }
@@ -78,7 +75,7 @@ struct PickingModuleView: View {
             #else
             pickingListImage
             #endif
-            PrimaryButton("Получить задание", isLoading: isLoadingTask) {
+            PrimaryButton("Получить задание", isLoading: viewModel.isLoadingTask) {
                 Task {
                     await getTaskTapped()
                 }
@@ -87,7 +84,7 @@ struct PickingModuleView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .errorBanner(title: "Не удалось получить сборочный лист", message: $errorMessage)
+        .errorBanner(title: "Не удалось получить сборочный лист", message: $viewModel.errorMessage)
     }
 
     private var pickingListImage: some View {
@@ -96,16 +93,6 @@ struct PickingModuleView: View {
             .scaledToFit()
             .frame(width: 140, height: 140)
     }
-
-    #if DEBUG
-    private func toggleTestUserId() {
-        if userId == 1 {
-            userId = 666
-        } else {
-            userId = 1
-        }
-    }
-    #endif
 
     private var customTopBar: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -134,15 +121,8 @@ struct PickingModuleView: View {
     }
 
     private func getTaskTapped() async {
-        isLoadingTask = true
-        defer {
-            isLoadingTask = false
-        }
-        do {
-            let result = try await pickingTaskService.fetchTask(userId: userId)
-            path.append(.task(result))
-        } catch {
-            errorMessage = error.localizedDescription
+        if let task = await viewModel.fetchTask() {
+            path.append(.task(task))
         }
     }
 
