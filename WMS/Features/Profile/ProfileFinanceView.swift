@@ -196,7 +196,7 @@ struct ProfileFinanceView: View {
         let amountPrefix = isPending && isAmountPositive ? "+" : ""
         let amount =
             amountPrefix
-            + formattedRubles(transaction.amountKopecks, symbolsCount: 2)
+            + transaction.amountKopecks.formattedAsRubles(fractionDigits: 2)
         let amountColor =
             isPending
             ? (isAmountPositive ? ColorPalette.success : ColorPalette.error)
@@ -216,25 +216,13 @@ struct ProfileFinanceView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func formattedRubles(_ kopecks: Int, symbolsCount: Int = 0)
-        -> String
-    {
-        let rubles = Decimal(kopecks) / 100
-
-        return rubles.formatted(
-            .currency(code: "RUB")
-                .locale(Locale(identifier: "ru_RU"))
-                .precision(.fractionLength(symbolsCount))
-        )
-    }
-
     private func fundsCard(title: String, funds: Int?) -> some View {
         VStack(spacing: 6) {
             Group {
                 if viewModel.isLoading && viewModel.summary == nil {
                     ProgressView()
                 } else if let funds {
-                    Text(formattedRubles(funds))
+                    Text(funds.formattedAsRubles())
                         .font(.system(size: 20))
                         .bold()
                 } else {

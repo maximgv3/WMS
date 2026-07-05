@@ -302,12 +302,12 @@ struct ProfileView: View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
                 financeBlock(
-                    value: viewModel.profile?.pendingFunds ?? 0,
+                    value: viewModel.profile?.pendingFundsKopecks ?? 0,
                     type: "Ожидается",
                     icon: "creditcard"
                 )
                 financeBlock(
-                    value: viewModel.profile?.balanceFunds ?? 0,
+                    value: viewModel.profile?.balanceFundsKopecks ?? 0,
                     type: "Баланс",
                     icon: "rublesign.circle"
                 )
@@ -327,7 +327,7 @@ struct ProfileView: View {
                 Text(type)
                     .font(.system(size: 13))
                     .foregroundStyle(ColorPalette.brandMuted)
-                Text(formattedRubles(value))
+                Text(value.formattedAsRubles())
                     .font(.system(size: 22, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
@@ -346,14 +346,6 @@ struct ProfileView: View {
     }
 
     // MARK: - Formatting
-
-    private func formattedRubles(_ value: Int) -> String {
-        value.formatted(
-            .number
-                .locale(Locale(identifier: "ru_RU"))
-                .grouping(.automatic)
-        ) + " ₽"
-    }
 
     private func formattedDate(_ date: Date) -> String {
         date.formatted(
