@@ -132,6 +132,13 @@ Key files:
 
 Minimum iOS version: iOS 17.
 
+## Demo Guide
+
+The repository includes a short picking demo guide with test item IDs and scanning instructions:
+
+- [English demo guide](assets/Guide_Picking_Flow_EN.pdf)
+- [Russian demo guide](assets/Guide_Picking_Flow_RU.pdf)
+
 ## Demo Notes
 
 - The mock service includes a test user ID for checking the task fetching error state.
