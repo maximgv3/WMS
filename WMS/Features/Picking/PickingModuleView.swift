@@ -15,7 +15,8 @@ struct PickingModuleView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    customTopBar
+                    ModuleHeader(title: "Сборка", onBack: { dismiss() })
+
                     content
                         .clipShape(
                             UnevenRoundedRectangle(
@@ -92,32 +93,6 @@ struct PickingModuleView: View {
             .resizable()
             .scaledToFit()
             .frame(width: 140, height: 140)
-    }
-
-    private var customTopBar: some View {
-        HStack(alignment: .center, spacing: 12) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "chevron.backward")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 24, height: 24)
-                    .offset(y: 1.5)
-            }
-            .buttonStyle(.plain)
-
-            Text("Сборка")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(.white)
-
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 20)
-        .background(ColorPalette.brandPrimary)
     }
 
     private func getTaskTapped() async {

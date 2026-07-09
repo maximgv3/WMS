@@ -19,7 +19,7 @@ struct OperationsListView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    customTopBar
+                    ModuleHeader(title: "Операции")
 
                     operationsList
                         .background(ColorPalette.surfacePrimary)
@@ -60,21 +60,6 @@ struct OperationsListView: View {
             )
             .interactiveDismissDisabled()
         }
-    }
-
-    private var customTopBar: some View {
-        HStack {
-            Text("Операции")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(.white)
-
-            Spacer()
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 20)
-        .background(ColorPalette.brandPrimary)
     }
 
     private var operationsList: some View {
