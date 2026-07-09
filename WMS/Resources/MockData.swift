@@ -19,4 +19,18 @@ struct MockData {
         balanceFundsKopecks: 10000_00,
         rating: 27
     )
+    
+    static let ratingHistory: [RatingPoint] = {
+        let values: [Double] = [
+            4.9, 17.2, 18.0, 18.4, 19.1, 19.6, 20.0, 20.3, 19.9, 20.5,
+            21.0, 21.3, 21.1, 18.6, 15.0, 16.8, 23.2, 25.4, 22.1, 22.6,
+            22.3, 22.7, 22.5, 22.9, 22.6, 23.0, 22.8, 22.4, 22.7, 22.56
+        ]
+        let today = Calendar.current.startOfDay(for: .now)
+        return values.enumerated().map { index, value in
+            let daysAgo = values.count - 1 - index
+            let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: today)!
+            return RatingPoint(date: date, value: value)
+        }
+    }()
 }
