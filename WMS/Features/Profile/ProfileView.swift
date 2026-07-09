@@ -188,6 +188,8 @@ struct ProfileView: View {
                         if item.title == "Финансы" {
                             ProfileFinanceView(service: ProfileFinanceServiceMock())
                                 .toolbar(.hidden, for: .tabBar)
+                        } else if item.title == "Рейтинг" {
+                            ProfileRatingView()
                         } else {
                             SimpleBlockerView(type: .inDevelopment)
                         }
@@ -199,7 +201,7 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .disabled(item.title != "Финансы")
+                    .disabled((item.title != "Финансы") && (item.title != "Рейтинг"))
                     if item.id != detailsItems.last?.id {
                         Divider().padding(.horizontal, 16)
                     }
