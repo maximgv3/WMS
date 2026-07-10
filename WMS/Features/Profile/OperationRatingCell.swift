@@ -4,11 +4,11 @@ struct OperationRatingCell: View {
     let operation: OperationRating
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(spacing: 12) {
             IconChip(systemName: operation.iconName, size: 40)
-                .padding(8)
                 .overlay(alignment: .topTrailing) {
                     image
+                        .offset(x: 6, y: -6)
                 }
             VStack(alignment: .leading) {
                 Text(operation.name)

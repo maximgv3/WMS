@@ -190,6 +190,7 @@ struct ProfileView: View {
                                 .toolbar(.hidden, for: .tabBar)
                         } else if item.title == "Рейтинг" {
                             ProfileRatingView()
+                                .toolbar(.hidden, for: .tabBar)
                         } else {
                             SimpleBlockerView(type: .inDevelopment)
                         }
