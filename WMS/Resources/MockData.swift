@@ -33,4 +33,15 @@ struct MockData {
             return RatingPoint(date: date, value: value)
         }
     }()
+    
+    static let operationsRatings: [OperationRating] = [
+        .init(name: "Сборка",         value: 24.20, iconName: "cart",                  didGoUp: true),
+        .init(name: "Приёмка",        value: 11.43, iconName: "tray.and.arrow.down",   didGoUp: false),
+        .init(name: "Инвент",         value: 0.00,  iconName: "checklist",             didGoUp: nil),
+        .init(name: "Упаковка",       value: 8.10,  iconName: "archivebox",            didGoUp: true),
+        .init(name: "Раскладка",      value: 5.32,  iconName: "square.grid.3x3",       didGoUp: true),
+        .init(name: "Обмеры",          value: 3.14,  iconName: "ruler",                 didGoUp: false),
+        .init(name: "Сортировка",     value: 1.20,  iconName: "arrow.up.arrow.down",   didGoUp: nil),
+        .init(name: "Брак",           value: 0.00,  iconName: "exclamationmark.triangle", didGoUp: nil)
+    ]
 }

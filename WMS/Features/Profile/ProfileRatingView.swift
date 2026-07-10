@@ -4,6 +4,8 @@ import SwiftUI
 struct ProfileRatingView: View {
 
     @State private var selectedDate: Date?
+    @State private var showAboutRating = false
+    
     private var selectedPoint: RatingPoint? {
         guard let selectedDate else { return nil }
         return ratingHistory.min {
@@ -11,6 +13,7 @@ struct ProfileRatingView: View {
                 < abs($1.date.timeIntervalSince(selectedDate))
         }
     }
+    
     private let ratingHistory = MockData.ratingHistory
 
     var body: some View {
@@ -20,7 +23,7 @@ struct ProfileRatingView: View {
                 chart
                     .frame(height: 200)
                     .padding()
-                ZStack {
+                ZStack(alignment: .top) {
                     Color.white
                         .clipShape(
                             UnevenRoundedRectangle(
@@ -31,14 +34,45 @@ struct ProfileRatingView: View {
                             )
                         )
                         .ignoresSafeArea(edges: .bottom)
-                    VStack {
-                        Text(selectedDate?.formatted() ?? "ничего не выбрано")
-                    }
+                    operationsGrid
                 }
             }
         }
     }
 
+    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
+    
+    private var operationsGrid: some View {
+        
+        ScrollView {
+            VStack(spacing: 40) {
+                Text("Рейтинг по операциям")
+                    .font(.title3).bold()
+                LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
+                    ForEach(MockData.operationsRatings) { operation in
+                        OperationRatingCell(operation: operation)
+                    }
+                }
+            }
+        }
+        .contentMargins(.bottom, 80, for: .scrollContent)
+        .padding(.horizontal)
+        .padding(.top, 32)
+        .overlay(alignment: .bottom) {
+            PrimaryButton("О рейтинге", variant: .capsule, action: { showAboutRating = true })
+                .glassIfAvailable()
+                .popover(isPresented: $showAboutRating) {
+                    Text("Рейтинг — это оценка вашей работы на складе. Он складывается из скорости и качества выполнения операций: сборки, приёмки, раскладки и других.\nЧем меньше ошибок и простоев, тем выше рейтинг. Значение пересчитывается каждый день по итогам смен за последний месяц.\nРейтинг влияет на приоритет при выдаче заданий и на расчёт премий.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .padding()
+                        .frame(width: 300)
+                        .presentationCompactAdaptation(.popover)
+                }
+        }
+        
+    }
+    
     private var chart: some View {
         Chart(ratingHistory) { point in
             LineMark(
