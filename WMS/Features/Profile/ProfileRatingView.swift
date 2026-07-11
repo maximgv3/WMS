@@ -14,27 +14,31 @@ struct ProfileRatingView: View {
         }
     }
     
-    private let ratingHistory = MockData.ratingHistory
+    private let ratingHistory: [RatingPoint] = MockData.ratingHistory
 
     var body: some View {
-        ZStack {
-            ColorPalette.brandPrimary.ignoresSafeArea()
-            VStack {
-                chart
-                    .frame(height: 200)
-                    .padding()
-                ZStack(alignment: .top) {
-                    Color.white
-                        .clipShape(
-                            UnevenRoundedRectangle(
-                                topLeadingRadius: 32,
-                                bottomLeadingRadius: 0,
-                                bottomTrailingRadius: 0,
-                                topTrailingRadius: 32
+        if ratingHistory.isEmpty {
+            ErrorView(type: .other(icon: "chart.xyaxis.line", title: "Недостаточно данных о рейтинге.\nПроверьте спустя несколько дней.", autoDismiss: false))
+        } else {
+            ZStack {
+                ColorPalette.brandPrimary.ignoresSafeArea()
+                VStack {
+                    chart
+                        .frame(height: 200)
+                        .padding()
+                    ZStack(alignment: .top) {
+                        Color.white
+                            .clipShape(
+                                UnevenRoundedRectangle(
+                                    topLeadingRadius: 32,
+                                    bottomLeadingRadius: 0,
+                                    bottomTrailingRadius: 0,
+                                    topTrailingRadius: 32
+                                )
                             )
-                        )
-                        .ignoresSafeArea(edges: .bottom)
-                    operationsGrid
+                            .ignoresSafeArea(edges: .bottom)
+                        operationsGrid
+                    }
                 }
             }
         }
@@ -146,7 +150,8 @@ struct ProfileRatingView: View {
             }
         }
         .chartXScale(
-            domain: ratingHistory.first!.date...ratingHistory.last!.date
+            domain:
+                (ratingHistory.first?.date ?? .now.addingTimeInterval(-30 * 24 * 60 * 60))...(ratingHistory.last?.date ?? .now) // The empty state already prevents the chart from rendering without data. ".now" only provides a safe fallback required to avoid force unwrapping
         )
         .chartYScale(domain: ratingYDomain.0...ratingYDomain.1)
         .chartXSelection(value: $selectedDate)

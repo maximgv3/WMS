@@ -192,7 +192,7 @@ struct ProfileView: View {
                             ProfileRatingView()
                                 .toolbar(.hidden, for: .tabBar)
                         } else {
-                            SimpleBlockerView(type: .inDevelopment)
+                            ErrorView(type: .inDevelopment)
                         }
                     } label: {
                         MenuRow(

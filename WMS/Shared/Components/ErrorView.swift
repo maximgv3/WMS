@@ -1,22 +1,28 @@
 import SwiftUI
 
-/// Temporary placeholder: closes itself after showing that the section is unavailable.
-struct SimpleBlockerView: View {
+struct ErrorView: View {
     @Environment(\.dismiss) private var dismiss
-    let type: SimpleBlockerType
+    let type: ErrorViewType
     private var iconName: String {
-        if type == .noAccess {
-            return "lock"
-        } else {
+        switch type {
+        case .inDevelopment:
             return "clock"
+        case .noAccess:
+            return "lock"
+        case .other(let icon, _, _):
+            return icon
         }
     }
+
     private var text: String {
-        if type == .noAccess {
+        switch type {
+        case .inDevelopment:
+            return "Раздел в разработке"
+        case .noAccess:
             return
                 "Доступ к операции ограничен.\n\nОбратитесь к руководителю для получения разрешения."
-        } else {
-            return "Раздел в разработке"
+        case .other(_, let title, _):
+            return title
         }
     }
 
@@ -33,23 +39,31 @@ struct SimpleBlockerView: View {
             }
             .foregroundStyle(ColorPalette.brandPrimary)
         }
-        .onAppear {
-            Task {
-                try? await Task.sleep(for: .seconds(2))
-                dismiss()
-            }
+        .task {
+            if case .other(_, _, let autoDismiss) = type,
+                !autoDismiss
+            { return }
+            do {
+                try await Task.sleep(for: .seconds(2))
+            } catch { return }
+            
+            dismiss()
         }
     }
 }
 
-enum SimpleBlockerType {
+enum ErrorViewType {
     case noAccess
     case inDevelopment
+    case other(icon: String, title: String, autoDismiss: Bool)
 }
 
 #Preview {
-    SimpleBlockerView(type: .inDevelopment)
+    ErrorView(type: .inDevelopment)
 }
 #Preview {
-    SimpleBlockerView(type: .noAccess)
+    ErrorView(type: .noAccess)
+}
+#Preview {
+    ErrorView(type: .other(icon: "shippingbox", title: "Error", autoDismiss: false))
 }
