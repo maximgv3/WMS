@@ -24,6 +24,8 @@ final class ProfileRatingViewModel {
 
         do {
             summary = try await service.getRatingSummary()
+        } catch is CancellationError {
+            return
         } catch {
             errorMessage = error.localizedDescription
         }
