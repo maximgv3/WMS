@@ -6,18 +6,9 @@ struct MenuRow: View {
     var value: String?
     var showsChevron = true
 
-    private var iconBackground: Color {
-        ColorPalette.accentPrimary.opacity(0.18)
-    }
-
     var body: some View {
         HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.system(size: 18))
-                .foregroundStyle(ColorPalette.brandPrimary)
-                .frame(width: 36, height: 36)
-                .background(iconBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            IconChip(systemName: icon, size: 36)
 
             Text(title)
                 .foregroundStyle(ColorPalette.brandPrimary)

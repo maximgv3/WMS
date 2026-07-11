@@ -322,10 +322,7 @@ struct ProfileView: View {
         -> some View
     {
         HStack {
-            Image(systemName: icon)
-                .frame(width: 40, height: 40)
-                .background(iconBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+            IconChip(systemName: icon, size: 40)
             VStack(alignment: .leading, spacing: 2) {
                 Text(type)
                     .font(.system(size: 13))

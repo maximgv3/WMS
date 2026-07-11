@@ -73,17 +73,7 @@ struct OperationsListView: View {
                         selectedOperation = operation
                     } label: {
                         HStack(spacing: 12) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(
-                                        ColorPalette.accentPrimary.opacity(0.18)
-                                    )
-                                    .frame(width: 44, height: 44)
-
-                                Image(systemName: operation.iconName)
-                                    .foregroundStyle(ColorPalette.brandPrimary)
-                                    .font(.system(size: 22))
-                            }
+                            IconChip(systemName: operation.iconName, size: 44)
 
                             Text(operation.title)
                                 .foregroundStyle(ColorPalette.brandPrimary)
