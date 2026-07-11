@@ -84,14 +84,16 @@ struct ProfileRatingView: View {
     }
     
     private var chart: some View {
-        Chart(ratingHistory) { point in
-            LineMark(
-                x: .value("Дата", point.date),
-                y: .value("Рейтинг", point.value)
-            )
-            .foregroundStyle(ColorPalette.accentPrimary)
-            .lineStyle(.init(lineWidth: 4, lineCap: .round))
-            .interpolationMethod(.catmullRom)
+        Chart {
+            ForEach(ratingHistory) { point in
+                LineMark(
+                    x: .value("Дата", point.date),
+                    y: .value("Рейтинг", point.value)
+                )
+                .foregroundStyle(ColorPalette.accentPrimary)
+                .lineStyle(.init(lineWidth: 4, lineCap: .round))
+                .interpolationMethod(.catmullRom)
+            }
 
             if let selectedPoint {
                 RuleMark(x: .value("Дата", selectedPoint.date))
@@ -122,6 +124,10 @@ struct ProfileRatingView: View {
                     .foregroundStyle(ColorPalette.brandPrimary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
+                    .background(
+                        ColorPalette.surfacePrimary.opacity(0.9),
+                        in: Capsule()
+                    )
                     .glassIfAvailable()
                 }
             }

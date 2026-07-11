@@ -19,7 +19,6 @@ struct OperationRatingCell: View {
                     .font(.callout)
             }
         }
-//        .background(.red)
     }
     
     private var trend: (icon: String, color: Color) {
