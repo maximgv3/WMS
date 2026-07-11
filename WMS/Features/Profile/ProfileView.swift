@@ -13,11 +13,12 @@ struct ProfileView: View {
     }
     private var detailsItems: [ProfileMenuItem] {
         [
-            .init(title: "Финансы", icon: "creditcard"),
+            .init(title: "Финансы", icon: "creditcard", destination: .finances),
             .init(
                 title: "Рейтинг",
                 icon: "star",
-                value: viewModel.profile?.rating.formatted()
+                value: viewModel.profile?.rating.formatted(),
+                destination: .rating
             ),
             .init(title: "Документы", icon: "doc.text"),
             .init(title: "Тарифы", icon: "shippingbox"),
@@ -194,7 +195,7 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .disabled((item.title != "Финансы") && (item.title != "Рейтинг"))
+                    .disabled(item.destination == nil)
                     if item.id != detailsItems.last?.id {
                         Divider().padding(.horizontal, 16)
                     }
@@ -212,13 +213,14 @@ struct ProfileView: View {
 
     @ViewBuilder
     private func destination(for item: ProfileMenuItem) -> some View {
-        if item.title == "Финансы" {
+        switch item.destination {
+        case .finances:
             ProfileFinanceView(service: ProfileFinanceServiceMock())
                 .toolbar(.hidden, for: .tabBar)
-        } else if item.title == "Рейтинг" {
+        case .rating:
             ProfileRatingView(service: ProfileRatingServiceMock())
                 .toolbar(.hidden, for: .tabBar)
-        } else {
+        case nil:
             ErrorView(type: .inDevelopment)
         }
     }
@@ -369,15 +371,27 @@ struct ProfileView: View {
     ProfileView(profileService: ProfileServiceMock())
 }
 
+private enum ProfileDestination {
+    case finances
+    case rating
+}
+
 private struct ProfileMenuItem: Identifiable {
     var id: String { title }
     let title: String
     let icon: String
     let value: String?
+    let destination: ProfileDestination?
 
-    init(title: String, icon: String, value: String? = nil) {
+    init(
+        title: String,
+        icon: String,
+        value: String? = nil,
+        destination: ProfileDestination? = nil
+    ) {
         self.title = title
         self.icon = icon
         self.value = value
+        self.destination = destination
     }
 }
