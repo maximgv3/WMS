@@ -2,58 +2,87 @@ import Charts
 import SwiftUI
 
 struct ProfileRatingView: View {
+    @State private var viewModel: ProfileRatingViewModel
+    init(service: ProfileRatingServiceProtocol) {
+        self.viewModel = ProfileRatingViewModel(service: service)
+    }
 
     @State private var selectedDate: Date?
     @State private var showAboutRating = false
-    
+
     private var selectedPoint: RatingPoint? {
         guard let selectedDate else { return nil }
-        return ratingHistory.min {
-            abs($0.date.timeIntervalSince(selectedDate))
-                < abs($1.date.timeIntervalSince(selectedDate))
-        }
+        return viewModel.nearestPoint(to: selectedDate)
     }
-    
-    private let ratingHistory: [RatingPoint] = MockData.ratingHistory
 
     var body: some View {
-        if ratingHistory.isEmpty {
+        ZStack {
+            ColorPalette.brandPrimary.ignoresSafeArea()
+            content
+        }
+        .task {
+            await viewModel.loadRating()
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.isLoading && viewModel.summary == nil {
+            ProgressView()
+                .tint(ColorPalette.surfacePrimary)
+        } else if let error = viewModel.errorMessage, viewModel.history.isEmpty {
+            errorState(error)
+        } else if viewModel.history.isEmpty {
             ErrorView(type: .other(icon: "chart.xyaxis.line", title: "Недостаточно данных о рейтинге.\nПроверьте спустя несколько дней.", autoDismiss: false))
         } else {
-            ZStack {
-                ColorPalette.brandPrimary.ignoresSafeArea()
-                VStack {
-                    chart
-                        .frame(height: 200)
-                        .padding()
-                    ZStack(alignment: .top) {
-                        Color.white
-                            .clipShape(
-                                UnevenRoundedRectangle(
-                                    topLeadingRadius: 32,
-                                    bottomLeadingRadius: 0,
-                                    bottomTrailingRadius: 0,
-                                    topTrailingRadius: 32
-                                )
-                            )
-                            .ignoresSafeArea(edges: .bottom)
-                        operationsGrid
-                    }
-                }
+            loadedState
+        }
+    }
+
+    private func errorState(_ message: String) -> some View {
+        VStack(spacing: 40) {
+            Text(message)
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(ColorPalette.surfacePrimary)
+                .multilineTextAlignment(.center)
+            PrimaryButton("Попробовать снова", variant: .capsule) {
+                Task { await viewModel.loadRating() }
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private var loadedState: some View {
+        VStack {
+            chart
+                .frame(height: 200)
+                .padding()
+            ZStack(alignment: .top) {
+                Color.white
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 32,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 32
+                        )
+                    )
+                    .ignoresSafeArea(edges: .bottom)
+                operationsGrid
             }
         }
     }
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
-    
+
     private var operationsGrid: some View {
-        
+
         ScrollView {
             VStack(spacing: 40) {
                 Text("Рейтинг по операциям")
                     .font(.title3).bold()
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
-                    ForEach(MockData.operationsRatings) { operation in
+                    ForEach(viewModel.operations) { operation in
                         OperationRatingCell(operation: operation)
                     }
                 }
@@ -74,22 +103,12 @@ struct ProfileRatingView: View {
                         .presentationCompactAdaptation(.popover)
                 }
         }
-        
-    }
-    private var ratingYDomain: (Double, Double) {
-        guard
-            let minimum = ratingHistory.map(\.value).min(),
-            let maximum = ratingHistory.map(\.value).max()
-        else {
-            return (0, 1)
-        }
 
-        return (max(0, (minimum - 2)), (maximum + 2))
     }
-    
+
     private var chart: some View {
         Chart {
-            ForEach(ratingHistory) { point in
+            ForEach(viewModel.history) { point in
                 LineMark(
                     x: .value("Дата", point.date),
                     y: .value("Рейтинг", point.value)
@@ -149,11 +168,8 @@ struct ProfileRatingView: View {
 
             }
         }
-        .chartXScale(
-            domain:
-                (ratingHistory.first?.date ?? .now.addingTimeInterval(-30 * 24 * 60 * 60))...(ratingHistory.last?.date ?? .now) // The empty state already prevents the chart from rendering without data. ".now" only provides a safe fallback required to avoid force unwrapping
-        )
-        .chartYScale(domain: ratingYDomain.0...ratingYDomain.1)
+        .chartXScale(domain: viewModel.xDomain)
+        .chartYScale(domain: viewModel.yDomain)
         .chartXSelection(value: $selectedDate)
         .chartGesture { proxy in
             DragGesture(minimumDistance: 0)
@@ -166,5 +182,5 @@ struct ProfileRatingView: View {
 }
 
 #Preview {
-    ProfileRatingView()
+    ProfileRatingView(service: ProfileRatingServiceMock())
 }

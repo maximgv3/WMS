@@ -185,15 +185,7 @@ struct ProfileView: View {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink {
-                        if item.title == "Финансы" {
-                            ProfileFinanceView(service: ProfileFinanceServiceMock())
-                                .toolbar(.hidden, for: .tabBar)
-                        } else if item.title == "Рейтинг" {
-                            ProfileRatingView()
-                                .toolbar(.hidden, for: .tabBar)
-                        } else {
-                            ErrorView(type: .inDevelopment)
-                        }
+                        destination(for: item)
                     } label: {
                         MenuRow(
                             title: item.title,
@@ -215,6 +207,19 @@ struct ProfileView: View {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(.gray.opacity(0.15), lineWidth: 1)
             }
+        }
+    }
+
+    @ViewBuilder
+    private func destination(for item: ProfileMenuItem) -> some View {
+        if item.title == "Финансы" {
+            ProfileFinanceView(service: ProfileFinanceServiceMock())
+                .toolbar(.hidden, for: .tabBar)
+        } else if item.title == "Рейтинг" {
+            ProfileRatingView(service: ProfileRatingServiceMock())
+                .toolbar(.hidden, for: .tabBar)
+        } else {
+            ErrorView(type: .inDevelopment)
         }
     }
 
