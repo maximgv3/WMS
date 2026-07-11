@@ -72,6 +72,16 @@ struct ProfileRatingView: View {
         }
         
     }
+    private var ratingYDomain: (Double, Double) {
+        guard
+            let minimum = ratingHistory.map(\.value).min(),
+            let maximum = ratingHistory.map(\.value).max()
+        else {
+            return (0, 1)
+        }
+
+        return (max(0, (minimum - 2)), (maximum + 2))
+    }
     
     private var chart: some View {
         Chart(ratingHistory) { point in
@@ -132,7 +142,7 @@ struct ProfileRatingView: View {
         .chartXScale(
             domain: ratingHistory.first!.date...ratingHistory.last!.date
         )
-        .chartYScale(domain: 4...25)
+        .chartYScale(domain: ratingYDomain.0...ratingYDomain.1)
         .chartXSelection(value: $selectedDate)
         .chartGesture { proxy in
             DragGesture(minimumDistance: 0)
