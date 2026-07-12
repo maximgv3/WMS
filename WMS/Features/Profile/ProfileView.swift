@@ -258,7 +258,7 @@ struct ProfileView: View {
             HStack {
                 Group {
                     Image(systemName: "clock")
-                    Text(formattedDate(viewModel.lastUpdateDate))
+                    Text(viewModel.lastUpdateDate.formattedAsProfileTimestamp())
                 }
                 .font(.system(size: 13))
                 .foregroundStyle(ColorPalette.brandMuted)
@@ -350,20 +350,6 @@ struct ProfileView: View {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .stroke(.gray.opacity(0.15), lineWidth: 1)
         }
-    }
-
-    // MARK: - Formatting
-
-    private func formattedDate(_ date: Date) -> String {
-        date.formatted(
-            .dateTime
-                .locale(Locale(identifier: "ru_RU"))
-                .day()
-                .month(.wide)
-                .year()
-                .hour()
-                .minute()
-        )
     }
 }
 

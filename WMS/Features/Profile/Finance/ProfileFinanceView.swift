@@ -162,7 +162,7 @@ struct ProfileFinanceView: View {
         transactions: [FinanceTransaction]
     ) -> some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text(formattedSectionDate(date))
+            Text(date.formattedAsSectionHeader())
                 .font(.system(size: 19, weight: .semibold))
                 .foregroundStyle(ColorPalette.brandPrimary)
             VStack(alignment: .leading, spacing: 20) {
@@ -172,21 +172,6 @@ struct ProfileFinanceView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-
-    private func formattedSectionDate(_ date: Date) -> String {
-        let calendar = Calendar.current
-        if calendar.isDateInToday(date) {
-            return "Сегодня"
-        }
-        if calendar.isDateInYesterday(date) {
-            return "Вчера"
-        }
-        return date.formatted(
-            .dateTime
-                .day()
-                .month(.wide)
-        )
     }
 
     private func transactionRow(_ transaction: FinanceTransaction) -> some View
