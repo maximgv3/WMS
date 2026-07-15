@@ -44,4 +44,31 @@ struct MockData {
         .init(name: "Сортировка",     value: 1.20,  iconName: "arrow.up.arrow.down",   didGoUp: nil),
         .init(name: "Брак",           value: 0.00,  iconName: "exclamationmark.triangle", didGoUp: nil)
     ]
+
+    static let operationTariffs: [OperationTariff] = [
+        .init(operation: "Сборка",    zone: "Блок 1", rateKopecks: 1250),
+        .init(operation: "Приёмка",   zone: "Блок 1", rateKopecks: 980),
+        .init(operation: "Раскладка", zone: "Блок 1", rateKopecks: 740),
+        .init(operation: "Упаковка",  zone: "Блок 1", rateKopecks: 620),
+
+        .init(operation: "Сборка",    zone: "Блок 2", rateKopecks: 1400),
+        .init(operation: "Приёмка",   zone: "Блок 2", rateKopecks: 1120),
+        .init(operation: "Раскладка", zone: "Блок 2", rateKopecks: 860),
+        .init(operation: "Упаковка",  zone: "Блок 2", rateKopecks: 700),
+
+        .init(operation: "Сборка",    zone: "Блок 3", rateKopecks: 1650),
+        .init(operation: "Приёмка",   zone: "Блок 3", rateKopecks: 1300),
+        .init(operation: "Раскладка", zone: "Блок 3", rateKopecks: 1010),
+        .init(operation: "Упаковка",  zone: "Блок 3", rateKopecks: 840),
+
+        .init(operation: "Сборка",    zone: "Блок 4", rateKopecks: 1800),
+        .init(operation: "Приёмка",   zone: "Блок 4", rateKopecks: 1450),
+        .init(operation: "Раскладка", zone: "Блок 4", rateKopecks: 1150),
+        .init(operation: "Упаковка",  zone: "Блок 4", rateKopecks: 960),
+
+        .init(operation: "Сборка",    zone: "Блок 5", rateKopecks: 1950),
+        .init(operation: "Приёмка",   zone: "Блок 5", rateKopecks: 1580),
+        .init(operation: "Раскладка", zone: "Блок 5", rateKopecks: 1260),
+        .init(operation: "Упаковка",  zone: "Блок 5", rateKopecks: 1080)
+    ]
 }
