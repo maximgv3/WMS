@@ -6,6 +6,8 @@ struct TariffsView: View {
         self.viewModel = TariffsViewModel(service: service)
     }
 
+    @State private var showFilters = false
+
     var body: some View {
         ZStack {
             ColorPalette.brandPrimary.ignoresSafeArea()
@@ -14,6 +16,84 @@ struct TariffsView: View {
         .task {
             await viewModel.loadTariffs()
         }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showFilters = true
+                } label: {
+                    Image(
+                        systemName: viewModel.hasActiveFilters
+                            ? "line.3.horizontal.decrease.circle.fill"
+                            : "line.3.horizontal.decrease.circle"
+                    )
+                }
+                .popover(isPresented: $showFilters) {
+                    filterList
+                }
+            }
+        }
+    }
+
+    private var filterList: some View {
+        List {
+            Section("Блок") {
+                ForEach(viewModel.allZones, id: \.self) { zone in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.toggleZone(zone)
+                        }
+                    } label: {
+                        HStack {
+                            Text(zone)
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if viewModel.selectedZones.contains(zone) {
+                                Image(systemName: "checkmark")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(ColorPalette.brandPrimary)
+                            }
+                        }
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            Section("Операция") {
+                ForEach(viewModel.allOperations, id: \.self) { operation in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.toggleOperation(operation)
+                        }
+                    } label: {
+                        HStack {
+                            Text(operation)
+                                .foregroundStyle(.primary)
+                            Spacer()
+                            if viewModel.selectedOperations.contains(operation) {
+                                Image(systemName: "checkmark")
+                                    .font(.subheadline.weight(.semibold))
+                                    .foregroundStyle(ColorPalette.brandPrimary)
+                            }
+                        }
+                        .contentShape(.rect)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            if viewModel.hasActiveFilters {
+                Section {
+                    Button("Сбросить", role: .destructive) {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            viewModel.resetFilters()
+                        }
+                    }
+                }
+            }
+        }
+        .scrollIndicators(.hidden)
+        .frame(width: 280, height: 460)
+        .padding(.top, 16)
+        .presentationCompactAdaptation(.popover)
     }
 
     @ViewBuilder
@@ -114,5 +194,7 @@ struct TariffsView: View {
 }
 
 #Preview {
-    TariffsView(service: TariffsServiceMock())
+    NavigationStack {
+        TariffsView(service: TariffsServiceMock())
+    }
 }

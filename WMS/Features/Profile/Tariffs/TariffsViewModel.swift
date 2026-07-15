@@ -9,8 +9,27 @@ final class TariffsViewModel {
     var isLoading = false
     var errorMessage: String?
 
+    var selectedZones: Set<String> = []
+    var selectedOperations: Set<String> = []
+
+    var allZones: [String] {
+        Set(tariffs.map(\.zone)).sorted()
+    }
+
+    var allOperations: [String] {
+        Set(tariffs.map(\.operation)).sorted()
+    }
+
     var sections: [TariffZoneSection] {
-        makeSections(from: tariffs)
+        makeSections(from: filteredTariffs)
+    }
+
+    private var filteredTariffs: [OperationTariff] {
+        tariffs.filter { tariff in
+            (selectedZones.isEmpty || selectedZones.contains(tariff.zone))
+                && (selectedOperations.isEmpty
+                    || selectedOperations.contains(tariff.operation))
+        }
     }
 
     init(service: TariffsServiceProtocol) {
@@ -30,6 +49,31 @@ final class TariffsViewModel {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func toggleZone(_ zone: String) {
+        if selectedZones.contains(zone) {
+            selectedZones.remove(zone)
+        } else {
+            selectedZones.insert(zone)
+        }
+    }
+
+    func toggleOperation(_ operation: String) {
+        if selectedOperations.contains(operation) {
+            selectedOperations.remove(operation)
+        } else {
+            selectedOperations.insert(operation)
+        }
+    }
+
+    var hasActiveFilters: Bool {
+        !selectedZones.isEmpty || !selectedOperations.isEmpty
+    }
+
+    func resetFilters() {
+        selectedZones.removeAll()
+        selectedOperations.removeAll()
     }
 
     private func makeSections(from tariffs: [OperationTariff]) -> [TariffZoneSection] {
