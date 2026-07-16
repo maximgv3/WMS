@@ -15,6 +15,18 @@ extension Date {
         )
     }
 
+    /// Day, wide month and year, e.g. "12 июля 2026 г.".
+    /// Used for dates that are rarely recent, like document updates.
+    func formattedAsDocumentDate() -> String {
+        formatted(
+            .dateTime
+                .locale(Locale(identifier: "ru_RU"))
+                .day()
+                .month(.wide)
+                .year()
+        )
+    }
+
     /// Day and wide month, with "Сегодня"/"Вчера" for recent dates.
     /// Used as a header when grouping items by day.
     func formattedAsSectionHeader(calendar: Calendar = .current) -> String {

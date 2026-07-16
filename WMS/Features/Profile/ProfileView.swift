@@ -20,7 +20,7 @@ struct ProfileView: View {
                 value: viewModel.profile?.rating.formatted(),
                 destination: .rating
             ),
-            .init(title: "Документы", icon: "doc.text"),
+            .init(title: "Документы", icon: "doc.text", destination: .documents),
             .init(title: "Тарифы", icon: "shippingbox", destination: .tariffs),
             .init(title: "Поддержка", icon: "questionmark.bubble")
         ]
@@ -220,6 +220,9 @@ struct ProfileView: View {
         case .rating:
             ProfileRatingView(service: ProfileRatingServiceMock())
                 .toolbar(.hidden, for: .tabBar)
+        case .documents:
+            DocumentsView(service: DocumentsServiceMock())
+                .toolbar(.hidden, for: .tabBar)
         case .tariffs:
             TariffsView(service: TariffsServiceMock())
                 .toolbar(.hidden, for: .tabBar)
@@ -363,6 +366,7 @@ struct ProfileView: View {
 private enum ProfileDestination {
     case finances
     case rating
+    case documents
     case tariffs
 }
 

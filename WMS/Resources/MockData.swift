@@ -71,4 +71,37 @@ struct MockData {
         .init(operation: "Раскладка", zone: "Блок 5", rateKopecks: 1260),
         .init(operation: "Упаковка",  zone: "Блок 5", rateKopecks: 1080)
     ]
+
+    static let warehouseDocuments: [WarehouseDocument] = {
+        let today = Calendar.current.startOfDay(for: .now)
+        func date(daysAgo: Int) -> Date {
+            Calendar.current.date(byAdding: .day, value: -daysAgo, to: today)!
+        }
+        return [
+            .init(
+                title: "Инструкция по охране труда",
+                fileName: "safety_instruction",
+                updatedAt: date(daysAgo: 45),
+                isAcknowledged: true
+            ),
+            .init(
+                title: "Регламент сборки заказов",
+                fileName: "picking_regulations",
+                updatedAt: date(daysAgo: 12),
+                isAcknowledged: true
+            ),
+            .init(
+                title: "Приказ о режиме работы склада",
+                fileName: "warehouse_order",
+                updatedAt: date(daysAgo: 3),
+                isAcknowledged: false
+            ),
+            .init(
+                title: "Памятка новому сотруднику",
+                fileName: "newcomer_guide",
+                updatedAt: date(daysAgo: 60),
+                isAcknowledged: false
+            )
+        ]
+    }()
 }
