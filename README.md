@@ -82,19 +82,29 @@ A demo GIF of the picking flow is shown above.
 
 ```text
 WMS/
-├── Models/
-├── Resources/
-│   ├── Assets/
-│   └── MockJSON/
-├── Screens/
-│   ├── OperationsList/
+├── Features/
+│   ├── Inventory/
+│   ├── Operations/
+│   ├── Picking/
+│   │   └── PickingTask/
 │   ├── Profile/
-│   ├── Shared/
-│   └── Features/
-│       ├── Picking/
-│       ├── Receiving/
-│       └── Inventory/
-└── Services/
+│   │   ├── Documents/
+│   │   ├── Finance/
+│   │   ├── Rating/
+│   │   └── Tariffs/
+│   └── Receiving/
+├── Models/
+│   ├── Operations/
+│   ├── Picking/
+│   └── Profile/
+├── Resources/
+│   ├── Assets.xcassets/
+│   ├── MockJSON/
+│   └── MockPDF/
+├── Services/
+├── Shared/
+│   └── Components/
+└── Utilities/
 ```
 
 Key files:
@@ -118,7 +128,7 @@ Key files:
 - `MenuRow.swift` - Shared reusable menu row component.
 - `CameraAccessBlockedView.swift` - Camera permission blocker UI.
 - `CameraPermissionService.swift` - Camera permission status and request helper.
-- `InDevelopmentView.swift` - Shared placeholder for unfinished sections.
+- `ErrorView.swift` - Shared placeholder and error screen for unfinished or unavailable sections.
 - `ProfileService.swift` - Profile service protocol and mock implementation.
 - `PickingTaskViewModelTests.swift` - Swift Testing tests for Picking logic.
 - `ProfileViewModelTests.swift` - Swift Testing tests for Profile loading behavior.
@@ -146,7 +156,7 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
 - Picking onboarding completion is stored locally with `@AppStorage`.
 - The task menu includes debug-only demo controls and an onboarding replay action for local testing.
-- Profile detail rows, support, and settings currently use shared in-development placeholders.
+- Support and settings currently use a shared in-development placeholder.
 - Camera permission handling blocks warehouse operations when camera access is missing.
 - Receiving, Putaway, Inventory, and other warehouse operations are planned as future modules.
 
@@ -156,4 +166,3 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - Add an explicit empty task state.
 - Add a camera switcher for 0.5x / 1x camera modes.
 - Move camera permission blocking to an operation-tab overlay so the Profile tab remains available without camera access.
-- Add detail screens for Profile menu items.
