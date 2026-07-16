@@ -25,6 +25,8 @@ final class ProfileFinanceViewModel {
             let summary = try await service.getFinanceSummary()
             self.summary = summary
             self.transactionSections = makeTransactionSections(from: summary.transactions)
+        } catch is CancellationError {
+            return
         } catch {
             errorMessage = error.localizedDescription
         }

@@ -13,7 +13,9 @@ final class TariffsViewModel {
     var selectedOperations: Set<String> = []
 
     var allZones: [String] {
-        Set(tariffs.map(\.zone)).sorted()
+        Set(tariffs.map(\.zone)).sorted {
+            $0.localizedStandardCompare($1) == .orderedAscending
+        }
     }
 
     var allOperations: [String] {
@@ -84,6 +86,6 @@ final class TariffsViewModel {
                     tariffs: tariffs.sorted { $0.operation < $1.operation }
                 )
             }
-            .sorted { $0.zone < $1.zone }
+            .sorted { $0.zone.localizedStandardCompare($1.zone) == .orderedAscending }
     }
 }
