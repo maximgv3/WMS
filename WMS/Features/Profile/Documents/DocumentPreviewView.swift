@@ -21,6 +21,11 @@ struct DocumentPreviewView: View {
             title: "Не удалось отметить",
             message: $viewModel.errorMessage
         )
+        .task {
+            // The view model is shared with the list, so an error left behind by
+            // another document would show up on this one.
+            viewModel.errorMessage = nil
+        }
     }
 
     @ViewBuilder

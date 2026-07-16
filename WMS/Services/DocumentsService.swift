@@ -30,13 +30,13 @@ final class DocumentsServiceMock: DocumentsServiceProtocol {
     }
 
     func acknowledge(documentID: String) async throws {
+        try await Task.sleep(for: .seconds(1))
         switch errorThrowType {
         case .acknowledgeFailed:
             throw DocumentsServiceMockError.acknowledgeFailed
         case .cancellation:
             throw CancellationError()
         default:
-            try await Task.sleep(for: .seconds(1))
             guard let index = documents.firstIndex(where: { $0.id == documentID }) else {
                 return
             }
