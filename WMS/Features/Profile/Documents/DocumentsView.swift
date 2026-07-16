@@ -92,8 +92,8 @@ struct DocumentsView: View {
                     }
                 }
             }
-            .padding(.top, 12)
-            .padding(20)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
         }
         .scrollIndicators(.hidden)
     }
