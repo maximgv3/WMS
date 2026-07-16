@@ -60,4 +60,11 @@ final class DocumentsViewModel {
         }
         documents[index].isAcknowledged = true
     }
+
+    #if DEBUG
+        /// Reaches behind the protocol on purpose, to try error states in the running app.
+        func debugSetError(_ type: DocumentsServiceMock.DocumentsServiceMockError?) {
+            (service as? DocumentsServiceMock)?.errorThrowType = type
+        }
+    #endif
 }

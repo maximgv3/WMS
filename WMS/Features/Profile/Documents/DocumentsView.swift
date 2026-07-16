@@ -52,13 +52,7 @@ struct DocumentsView: View {
 
     private var loadedState: some View {
         VStack(spacing: .zero) {
-            Text("Документы")
-                .font(.largeTitle).bold()
-                .foregroundStyle(ColorPalette.surfacePrimary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .padding(.bottom, 20)
+            title
 
             ZStack(alignment: .top) {
                 Color.white
@@ -72,6 +66,33 @@ struct DocumentsView: View {
                 documentsList
             }
         }
+    }
+
+    @ViewBuilder
+    private var title: some View {
+        #if DEBUG
+            Menu {
+                Button("Без ошибок") { viewModel.debugSetError(nil) }
+                Button("Ошибка подписи") {
+                    viewModel.debugSetError(.acknowledgeFailed)
+                }
+            } label: {
+                titleText
+            }
+            .buttonStyle(.plain)
+        #else
+            titleText
+        #endif
+    }
+
+    private var titleText: some View {
+        Text("Документы")
+            .font(.largeTitle).bold()
+            .foregroundStyle(ColorPalette.surfacePrimary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 20)
     }
 
     private var documentsList: some View {
