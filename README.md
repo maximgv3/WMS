@@ -24,31 +24,49 @@ A demo GIF of the picking flow is shown above.
 |:---:|:---:|:---:|
 | <img src="assets/picking-finish.png" width="230"> | <img src="assets/profile.png" width="230"> | <img src="assets/profile-operations.png" width="230"> |
 
+| Rating | Documents | Tariffs |
+|:---:|:---:|:---:|
+| <img src="assets/profile-rating.png" width="230"> | <img src="assets/profile-documents.png" width="230"> | <img src="assets/profile-tariffs.png" width="230"> |
+
 ## Features
+
+### App
 
 - Warehouse operations menu: Picking, Receiving, Inventory.
 - Tab-based app shell with Operations and Profile sections.
+- Navigation with `NavigationStack(path:)`.
+- `@Observable` ViewModel.
 - Camera permission blocker before warehouse operations, with first-run guidance and Settings recovery after denied access.
+
+### Picking
+
 - Picking flow: fetch task, onboarding, current item, scan, progress, finish screen.
 - One-time illustrated Picking onboarding stored with `@AppStorage`, with replay from the task menu.
 - AVFoundation scanner with camera preview embedded in SwiftUI.
 - Scan area limited to the visible camera preview.
 - Ultra wide camera selection when available, with fallback to the regular camera.
-- Navigation with `NavigationStack(path:)`.
-- `@Observable` ViewModel.
-- Mock API-style JSON resources for profile and picking task loading.
-- Mock service for fetching tasks, validating replacements, encoding finish requests, and finishing picking tasks.
-- API-style finish request encoding with collected, skipped, and replacement item IDs.
-- Animated error banner in the navigation bar.
-- System sound feedback for successful and failed scans.
 - Circular picking progress indicator in the navigation bar.
 - Missing item flow with confirmation and skipped item summary.
 - Replacement item mode for collecting an allowed analog item.
+- API-style finish request encoding with collected, skipped, and replacement item IDs.
 - Manual debug-only demo controls for testing successful and failed collection without the camera.
+
+### Profile
+
 - Profile screen with AsyncImage avatar, finance cards, reusable detail rows, support/settings placeholders, async mock loading, loading/error states, and pull-to-refresh.
+- Rating screen with an interactive Swift Charts line chart, drag selection with a value callout, and a per-operation rating grid with trend indicators.
+- Tariffs screen with rates grouped by warehouse zone and a popover filter by zone and operation.
+- Documents screen with a PDFKit preview and an acknowledge action that updates the document state through the service.
+
+### Shared and data
+
+- Animated error banner in the navigation bar.
+- System sound feedback for successful and failed scans.
 - Shared temporary placeholder screen for modules and profile sections that are still in development.
+- Mock API-style JSON resources for profile and picking task loading.
+- Mock service for fetching tasks, validating replacements, encoding finish requests, and finishing picking tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
-- Swift Testing coverage for core picking ViewModel/result behavior and Profile ViewModel loading states.
+- Swift Testing coverage for core picking ViewModel/result behavior, Profile and Rating ViewModel loading states, and document acknowledgement.
 
 ## Main Flow
 
@@ -70,13 +88,10 @@ A demo GIF of the picking flow is shown above.
 - MVVM
 - Observation (`@Observable`)
 - AVFoundation
-- NavigationStack
-- AsyncImage
-- AudioToolbox
-- Codable
-- JSONEncoder / JSONDecoder
-- Mock service layer
+- Swift Charts
+- PDFKit
 - Swift Testing
+- Mock service layer with API-style JSON
 
 ## Project Structure
 
@@ -97,6 +112,9 @@ WMS/
 │   ├── Operations/
 │   ├── Picking/
 │   └── Profile/
+│       ├── Documents/
+│       ├── Rating/
+│       └── Tariffs/
 ├── Resources/
 │   ├── Assets.xcassets/
 │   ├── MockJSON/
@@ -107,31 +125,19 @@ WMS/
 └── Utilities/
 ```
 
-Key files:
+Where to start reading:
 
-- `PickingModuleView.swift` - Picking module entry point and task fetching.
 - `PickingTaskView.swift` - Current item screen and scanner UI.
-- `PickingOnboardingView.swift` - Illustrated onboarding for the Picking flow.
-- `PickingProgressMenu.swift` - Navigation bar progress indicator and progress details menu.
 - `PickingTaskViewModel.swift` - Picking logic and code validation.
 - `ScannerPreviewView.swift` - SwiftUI wrapper around the AVFoundation scanner.
-- `PickingFinishView.swift` - Task completion screen.
-- `PickingFinishViewModel.swift` - Finish state and task completion logic.
-- `PickingResult.swift` - Summary model for collected, skipped, and replacement items.
+- `PickingTaskService.swift` - Picking service protocol and mock implementation.
 - `PickingTaskResultRequest.swift` - Encodable API-style request for finishing a picking task.
-- `PickingTaskService.swift` - Service protocol and mock implementation.
+- `ProfileRatingView.swift` - Swift Charts rating chart with drag selection.
+- `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
+- `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
+- `PDFKitView.swift` - SwiftUI wrapper around PDFKit.
 - `MockJSONLoader.swift` - Helper for decoding bundled mock JSON resources.
-- `Profile.swift` - Profile data model.
-- `ProfileView.swift` - Profile tab UI.
-- `ProfileViewModel.swift` - Profile loading state and refresh logic.
-- `SettingsView.swift` - Profile settings entry point.
-- `MenuRow.swift` - Shared reusable menu row component.
-- `CameraAccessBlockedView.swift` - Camera permission blocker UI.
-- `CameraPermissionService.swift` - Camera permission status and request helper.
-- `ErrorView.swift` - Shared placeholder and error screen for unfinished or unavailable sections.
-- `ProfileService.swift` - Profile service protocol and mock implementation.
-- `PickingTaskViewModelTests.swift` - Swift Testing tests for Picking logic.
-- `ProfileViewModelTests.swift` - Swift Testing tests for Profile loading behavior.
+- `WMSTests/` - Swift Testing suites for the Picking, Profile, Rating, and Documents ViewModels.
 
 ## How to Run
 
