@@ -138,11 +138,11 @@
 				};
 			};
 			buildConfigurationList = 45A2E6202F9A948F003258DB /* Build configuration list for PBXProject "WMS" */;
-			developmentRegion = en;
+			developmentRegion = ru;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				ru,
 			);
 			mainGroup = 45A2E61C2F9A948F003258DB;
 			minimizedProjectReferenceProxies = 1;
