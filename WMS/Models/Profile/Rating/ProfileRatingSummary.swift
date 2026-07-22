@@ -1,6 +1,6 @@
 import Foundation
 
-struct ProfileRatingSummary {
+nonisolated struct ProfileRatingSummary: Sendable {
     let history: [RatingPoint]
     let operations: [OperationRating]
 }

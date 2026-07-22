@@ -1,6 +1,6 @@
 import Foundation
 
-struct WarehouseDocument: Identifiable {
+nonisolated struct WarehouseDocument: Identifiable, Sendable {
     var id: String { fileName }
     let title: String
     let fileName: String

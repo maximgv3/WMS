@@ -1,6 +1,6 @@
 import Foundation
 
-struct RatingPoint: Identifiable {
+nonisolated struct RatingPoint: Identifiable, Sendable {
     let date: Date
     let value: Double
     

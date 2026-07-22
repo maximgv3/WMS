@@ -1,6 +1,6 @@
 import Foundation
 
-struct TariffZoneSection: Identifiable {
+nonisolated struct TariffZoneSection: Identifiable, Sendable {
     let zone: String
     let tariffs: [OperationTariff]
 

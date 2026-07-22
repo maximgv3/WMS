@@ -1,6 +1,6 @@
 import Foundation
 
-struct Profile: Decodable, Sendable {
+nonisolated struct Profile: Decodable, Sendable {
     let name: String
     let imageUrl: URL
 

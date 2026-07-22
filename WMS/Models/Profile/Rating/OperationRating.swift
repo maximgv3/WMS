@@ -1,6 +1,6 @@
 import Foundation
 
-struct OperationRating: Identifiable {
+nonisolated struct OperationRating: Identifiable, Sendable {
     let name: String
     let value: Double
     let iconName: String
