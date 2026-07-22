@@ -157,7 +157,7 @@ struct ProfileRatingView: View {
         }
         .chartXAxis {
             AxisMarks {
-                AxisValueLabel(format: .dateTime.day().month(.abbreviated))
+                AxisValueLabel(anchor: .top)
                     .foregroundStyle(ColorPalette.surfacePrimary)
             }
         }
