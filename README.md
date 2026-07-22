@@ -4,7 +4,7 @@
   <img src="assets/picking-demo.gif" width="300" alt="Picking flow demo" />
 </p>
 
-A mini warehouse management app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task from API-style mock JSON, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
+A warehouse operations app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task from API-style mock JSON, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
 
 Picking is the first implemented module. The app also includes a Profile tab with asynchronously loaded mock data and is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
 
@@ -95,6 +95,9 @@ A demo GIF of the picking flow is shown above.
 
 ## Project Structure
 
+<details>
+<summary>Folder tree</summary>
+
 ```text
 WMS/
 ├── Features/
@@ -124,6 +127,8 @@ WMS/
 │   └── Components/
 └── Utilities/
 ```
+
+</details>
 
 Where to start reading:
 
