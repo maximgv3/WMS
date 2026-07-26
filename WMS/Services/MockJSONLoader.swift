@@ -8,6 +8,7 @@ enum MockJSONLoader {
 
         let data = try Data(contentsOf: url)
         let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode(T.self, from: data)
     }
 }
