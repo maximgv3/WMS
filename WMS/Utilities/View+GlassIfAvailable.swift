@@ -2,15 +2,14 @@ import SwiftUI
 
 extension View {
     @ViewBuilder
-    func glassIfAvailable() -> some View {
+    func glassIfAvailable(
+        shape: some Shape = Capsule(),
+        background: some ShapeStyle = Material.ultraThinMaterial
+    ) -> some View {
         if #available(iOS 26, *) {
-            self.glassEffect()
+            self.glassEffect(.regular.interactive(), in: shape)
         } else {
-            self
-                .background(.ultraThinMaterial)
-
+            self.background(background, in: shape)
         }
     }
 }
-
-

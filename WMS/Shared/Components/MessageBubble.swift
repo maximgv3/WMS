@@ -20,7 +20,7 @@ struct MessageBubble: View {
                         bottomLeadingRadius: message.fromUser ? 20 : 4,
                         bottomTrailingRadius: message.fromUser ? 4 : 20,
                         topTrailingRadius: 20,
-                        style: .continuous
+                        style: .circular
                     )
                 )
             

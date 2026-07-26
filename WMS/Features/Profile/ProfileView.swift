@@ -22,7 +22,7 @@ struct ProfileView: View {
             ),
             .init(title: "Документы", icon: "doc.text", destination: .documents),
             .init(title: "Тарифы", icon: "shippingbox", destination: .tariffs),
-            .init(title: "Поддержка", icon: "questionmark.bubble")
+            .init(title: "Поддержка", icon: "questionmark.bubble", destination: .support)
         ]
     }
 
@@ -213,22 +213,23 @@ struct ProfileView: View {
 
     @ViewBuilder
     private func destination(for item: ProfileMenuItem) -> some View {
-        switch item.destination {
-        case .finances:
-            ProfileFinanceView(service: ProfileFinanceServiceMock())
-                .toolbar(.hidden, for: .tabBar)
-        case .rating:
-            ProfileRatingView(service: ProfileRatingServiceMock())
-                .toolbar(.hidden, for: .tabBar)
-        case .documents:
-            DocumentsView(service: DocumentsServiceMock())
-                .toolbar(.hidden, for: .tabBar)
-        case .tariffs:
-            TariffsView(service: TariffsServiceMock())
-                .toolbar(.hidden, for: .tabBar)
-        case nil:
-            ErrorView(type: .inDevelopment)
+        Group {
+            switch item.destination {
+            case .finances:
+                ProfileFinanceView(service: ProfileFinanceServiceMock())
+            case .rating:
+                ProfileRatingView(service: ProfileRatingServiceMock())
+            case .documents:
+                DocumentsView(service: DocumentsServiceMock())
+            case .tariffs:
+                TariffsView(service: TariffsServiceMock())
+            case .support:
+                SupportView()
+            case nil:
+                ErrorView(type: .inDevelopment)
+            }
         }
+        .toolbar(.hidden, for: .tabBar)
     }
 
     // MARK: - Profile Card
@@ -368,6 +369,7 @@ private enum ProfileDestination {
     case rating
     case documents
     case tariffs
+    case support
 }
 
 private struct ProfileMenuItem: Identifiable {
