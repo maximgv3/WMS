@@ -104,4 +104,10 @@ struct MockData {
             )
         ]
     }()
+    
+    static let supportMessages: [ChatMessage] = [
+        .init(date: .now, fromUser: false, text: "Здравствуйте! Чем можем помочь?", id: "1"),
+        .init(date: .now, fromUser: true,  text: "Не приходит подтверждение приёмки", id: "2"),
+        .init(date: .now, fromUser: false, text: "Проверяю, одну минуту…", id: "3"),
+    ]
 }

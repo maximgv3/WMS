@@ -1,27 +1,17 @@
 import SwiftUI
 
 struct SupportView: View {
-    
-    @State private var replyDraft = ""
-    
-    @State private var messages: [ChatMessage] = [
-        .init(date: .now, fromUser: false, text: "Здравствуйте! Чем можем помочь?", id: "1"),
-        .init(date: .now, fromUser: true,  text: "Не приходит подтверждение приёмки", id: "2"),
-        .init(date: .now, fromUser: false, text: "Проверяю, одну минуту…", id: "3"),
-    ]
-    
+
+    @State private var viewModel: SupportViewModel
+
+    init(service: SupportServiceProtocol) {
+        self.viewModel = SupportViewModel(service: service)
+    }
+
     var body: some View {
         ZStack {
             ColorPalette.backgroundPrimary.ignoresSafeArea()
-            ScrollView {
-                LazyVStack {
-                    ForEach(messages) { message in
-                        MessageBubble(message: message)
-                            .transition(.move(edge: .bottom).combined(with: .opacity))
-                    }
-                }
-            }
-            .defaultScrollAnchor(.bottom)
+            content
         }
         .safeAreaInset(edge: .bottom) {
             replyBar
@@ -30,23 +20,36 @@ struct SupportView: View {
         }
         .navigationTitle("Поддержка")
         .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    private func send() {
-        let text = replyDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !text.isEmpty else { return }
-        
-        withAnimation(.snappy(duration: 0.25)) {
-            messages.append(
-                .init(date: .now, fromUser: true, text: text, id: UUID().uuidString)
-            )
+        .errorBanner(title: "Ошибка", message: $viewModel.errorMessage)
+        .task {
+            await viewModel.loadMessages()
         }
-        replyDraft = ""
     }
-    
+
+    @ViewBuilder
+    private var content: some View {
+        if viewModel.isLoading && viewModel.messages.isEmpty {
+            ProgressView()
+        } else {
+            ScrollView {
+                LazyVStack {
+                    ForEach(viewModel.messages) { message in
+                        MessageBubble(message: message)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                    }
+                }
+            }
+            .defaultScrollAnchor(.bottom)
+        }
+    }
+
+    private func send() {
+        Task { await viewModel.send() }
+    }
+
     private var replyBar: some View {
         HStack(spacing: 12) {
-            TextField("Сообщение...", text: $replyDraft)
+            TextField("Сообщение...", text: $viewModel.replyDraft)
                 .textFieldStyle(.plain)
                 .onSubmit(send)
                 .padding(.horizontal, 16)
@@ -60,7 +63,7 @@ struct SupportView: View {
                     .padding(4)
             }
             .padding(.horizontal, 8)
-            .disabled(replyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .disabled(viewModel.replyDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
         }
         .glassIfAvailable()
     }
@@ -68,6 +71,6 @@ struct SupportView: View {
 
 #Preview {
     NavigationStack{
-        SupportView()
+        SupportView(service: SupportServiceMock())
     }
 }

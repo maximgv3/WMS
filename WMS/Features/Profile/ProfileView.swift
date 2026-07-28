@@ -224,7 +224,7 @@ struct ProfileView: View {
             case .tariffs:
                 TariffsView(service: TariffsServiceMock())
             case .support:
-                SupportView()
+                SupportView(service: SupportServiceMock())
             case nil:
                 ErrorView(type: .inDevelopment)
             }
