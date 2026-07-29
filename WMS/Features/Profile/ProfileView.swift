@@ -63,6 +63,9 @@ struct ProfileView: View {
             )
             .navigationTitle("Профиль")
             .navigationBarTitleDisplayMode(.inline)
+            .navigationDestination(for: ProfileDestination.self) { item in
+                destination(for: item)
+            }
             .toolbar(.hidden, for: .navigationBar)
         }
         .task {
@@ -185,9 +188,7 @@ struct ProfileView: View {
         section(header: "Подробнее") {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
-                    NavigationLink {
-                        destination(for: item)
-                    } label: {
+                    NavigationLink(value: item.destination) {
                         MenuRow(
                             title: item.title,
                             icon: item.icon,
@@ -195,7 +196,6 @@ struct ProfileView: View {
                         )
                     }
                     .buttonStyle(.plain)
-                    .disabled(item.destination == nil)
                     if item.id != detailsItems.last?.id {
                         Divider().padding(.horizontal, 16)
                     }
@@ -212,9 +212,9 @@ struct ProfileView: View {
     }
 
     @ViewBuilder
-    private func destination(for item: ProfileMenuItem) -> some View {
+    private func destination(for item: ProfileDestination) -> some View {
         Group {
-            switch item.destination {
+            switch item {
             case .finances:
                 ProfileFinanceView(service: ProfileFinanceServiceMock())
             case .rating:
@@ -225,8 +225,6 @@ struct ProfileView: View {
                 TariffsView(service: TariffsServiceMock())
             case .support:
                 SupportView(service: SupportServiceMock())
-            case nil:
-                ErrorView(type: .inDevelopment)
             }
         }
         .toolbar(.hidden, for: .tabBar)
@@ -364,7 +362,7 @@ struct ProfileView: View {
     ProfileView(profileService: ProfileServiceMock())
 }
 
-private enum ProfileDestination {
+private enum ProfileDestination: Hashable {
     case finances
     case rating
     case documents
