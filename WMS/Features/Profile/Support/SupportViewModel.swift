@@ -59,4 +59,12 @@ final class SupportViewModel {
             errorMessage = error.localizedDescription
         }
     }
+
+    func observeIncoming() async {
+        for await message in service.incomingMessages {
+            withAnimation(.snappy(duration: 0.25)) {
+                messages.append(message)
+            }
+        }
+    }
 }

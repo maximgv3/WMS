@@ -23,6 +23,7 @@ struct SupportView: View {
         .errorBanner(title: "Ошибка", message: $viewModel.errorMessage)
         .task {
             await viewModel.loadMessages()
+            await viewModel.observeIncoming()
         }
     }
 

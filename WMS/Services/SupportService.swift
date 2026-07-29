@@ -1,6 +1,7 @@
 import Foundation
 
 protocol SupportServiceProtocol: AnyObject {
+    var incomingMessages: AsyncStream<ChatMessage> { get }
     func getMessages() async throws -> [ChatMessage]
     func send(_ text: String) async throws -> ChatMessage
 }
@@ -8,13 +9,20 @@ protocol SupportServiceProtocol: AnyObject {
 final class SupportServiceMock: SupportServiceProtocol {
     var errorThrowType: SupportServiceMockError?
     private var messages: [ChatMessage]
+    let incomingMessages: AsyncStream<ChatMessage>
+    private let continuation: AsyncStream<ChatMessage>.Continuation
 
     init(
         errorThrowType: SupportServiceMockError? = nil,
-        messages: [ChatMessage] = MockData.supportMessages
+        messages: [ChatMessage] = MockData.firstSupportMessages
     ) {
         self.errorThrowType = errorThrowType
         self.messages = messages
+        let (stream, continuation) = AsyncStream.makeStream(
+            of: ChatMessage.self
+        )
+        self.incomingMessages = stream
+        self.continuation = continuation
     }
 
     func getMessages() async throws -> [ChatMessage] {
@@ -44,7 +52,19 @@ final class SupportServiceMock: SupportServiceProtocol {
                 id: UUID().uuidString
             )
             messages.append(message)
+            sendMockSupportReply()
             return message
+        }
+    }
+
+    private func sendMockSupportReply() {
+        Task {
+            do {
+                for message in MockData.replySupportMessages {
+                    try await Task.sleep(for: .seconds((1...3).randomElement() ?? 1))
+                    continuation.yield(message)
+                }
+            } catch { }
         }
     }
 

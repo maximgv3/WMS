@@ -105,9 +105,15 @@ struct MockData {
         ]
     }()
     
-    static let supportMessages: [ChatMessage] = [
-        .init(date: .now, fromUser: false, text: "Здравствуйте! Чем можем помочь?", id: "1"),
-        .init(date: .now, fromUser: true,  text: "Не приходит подтверждение приёмки", id: "2"),
-        .init(date: .now, fromUser: false, text: "Проверяю, одну минуту…", id: "3"),
+    static let firstSupportMessages: [ChatMessage] = [
+        .init(date: .now - 61 * 60, fromUser: false, text: "Здравствуйте! Чем можем помочь?", id: "1"),
+        .init(date: .now - 60 * 60, fromUser: true,  text: "Не засчитывается завершение задания приёмки", id: "2"),
+        .init(date: .now - 59 * 60, fromUser: false, text: "Проверила, всё успешно засчитано", id: "3"),
     ]
+
+    static var replySupportMessages: [ChatMessage] { [
+        .init(date: .now, fromUser: false, text: "Соединяю вас с оператором, отвечающим за данную область.", id: UUID().uuidString),
+        .init(date: .now, fromUser: false, text: "Пожалуйста, учтите, что время ответа может составлять до 24 часов из-за высокой нагрузки.", id: UUID().uuidString),
+        .init(date: .now, fromUser: false, text: "Пока что Вы можете продолжить вашу работу.", id: UUID().uuidString),
+    ] }
 }
