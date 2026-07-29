@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ReceivingModuleView: View {
+struct PutawayModuleView: View {
     var body: some View {
         ErrorView(type: .inDevelopment)
     }

@@ -1,29 +1,29 @@
 import Foundation
 
 nonisolated enum OperationType: String, CaseIterable, Identifiable {
+    case putaway
     case picking
-    case receiving
-    case inventory
+    case returns
 
     var id: String { rawValue }
     var title: String {
         switch self {
+        case .putaway:
+            "Раскладка"
         case .picking:
             "Сборка"
-        case .receiving:
-            "Приёмка"
-        case .inventory:
-            "Инвентаризация"
+        case .returns:
+            "Проверка возвратов"
         }
     }
     var iconName: String {
         switch self {
+        case .putaway:
+            "tray.and.arrow.down"
         case .picking:
             "cart"
-        case .receiving:
-            "shippingbox"
-        case .inventory:
-            "checklist"
+        case .returns:
+            "shippingbox.and.arrow.backward"
         }
     }
 }

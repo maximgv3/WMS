@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct InventoryModuleView: View {
+struct ReturnsModuleView: View {
     var body: some View {
         ErrorView(type: .inDevelopment)
     }

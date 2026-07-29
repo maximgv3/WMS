@@ -4,9 +4,9 @@ struct OperationsListView: View {
     @Environment(\.scenePhase) private var scenePhase
     
     private let operations: [OperationMenuItem] = [
+        .init(operation: .putaway, isEnabled: false),
         .init(operation: .picking, isEnabled: true),
-        .init(operation: .receiving, isEnabled: false),
-        .init(operation: .inventory, isEnabled: false)
+        .init(operation: .returns, isEnabled: false)
     ]
     @State private var selectedOperation: OperationType?
     private let cameraPermissionService = CameraPermissionService()
@@ -108,12 +108,12 @@ struct OperationsListView: View {
     @ViewBuilder
     private func destination(for operation: OperationType) -> some View {
         switch operation {
+        case .putaway:
+            PutawayModuleView()
         case .picking:
             PickingModuleView()
-        case .receiving:
-            ReceivingModuleView()
-        case .inventory:
-            InventoryModuleView()
+        case .returns:
+            ReturnsModuleView()
         }
     }
 }

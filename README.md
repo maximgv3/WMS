@@ -6,11 +6,11 @@
 
 A warehouse operations app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task from API-style mock JSON, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
 
-Picking is the first implemented warehouse module. The Profile tab is the second developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
+Picking is the first implemented warehouse module. The Profile tab is the second developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Putaway, Returns check, and other warehouse operations.
 
 ## Project Status
 
-In development. The Picking module is the most complete part of the app; Receiving, Putaway, Inventory, and other warehouse modules are planned.
+In development. The Picking module is the most complete part of the app; Putaway, Returns check, and other warehouse modules are planned.
 
 ## Screenshots
 
@@ -36,7 +36,7 @@ A demo GIF of the picking flow is shown above.
 
 ### App
 
-- Warehouse operations menu: Picking, Receiving, Inventory.
+- Warehouse operations menu: Putaway, Picking, Returns check.
 - Tab-based app shell with Operations and Profile sections.
 - Navigation with `NavigationStack(path:)`.
 - `@Observable` ViewModel.
@@ -106,7 +106,6 @@ A demo GIF of the picking flow is shown above.
 ```text
 WMS/
 ├── Features/
-│   ├── Inventory/
 │   ├── Operations/
 │   ├── Picking/
 │   │   └── PickingTask/
@@ -116,7 +115,8 @@ WMS/
 │   │   ├── Rating/
 │   │   ├── Support/
 │   │   └── Tariffs/
-│   └── Receiving/
+│   ├── Putaway/
+│   └── Returns/
 ├── Models/
 │   ├── Operations/
 │   ├── Picking/
@@ -178,7 +178,7 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - The settings entry point is hidden until the app has configurable options.
 - Camera permission handling blocks warehouse operations when camera access is missing.
-- Receiving, Putaway, Inventory, and other warehouse operations are planned as future modules.
+- Putaway, Returns check, and other warehouse operations are planned as future modules.
 
 ## Future Improvements
 
