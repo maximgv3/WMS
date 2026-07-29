@@ -6,7 +6,7 @@
 
 A warehouse operations app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task from API-style mock JSON, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
 
-Picking is the first implemented module. The app also includes a Profile tab with asynchronously loaded mock data and is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
+Picking is the first implemented warehouse module. The Profile tab is the second developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Receiving, Putaway, Inventory, and other warehouse operations.
 
 ## Project Status
 
@@ -27,6 +27,10 @@ A demo GIF of the picking flow is shown above.
 | Rating | Documents | Tariffs |
 |:---:|:---:|:---:|
 | <img src="assets/profile-rating.png" width="230"> | <img src="assets/profile-documents.png" width="230"> | <img src="assets/profile-tariffs.png" width="230"> |
+
+| Support chat |
+|:---:|
+| <img src="assets/profile-support.png" width="230"> |
 
 ## Features
 
@@ -53,16 +57,17 @@ A demo GIF of the picking flow is shown above.
 
 ### Profile
 
-- Profile screen with AsyncImage avatar, finance cards, reusable detail rows, support/settings placeholders, async mock loading, loading/error states, and pull-to-refresh.
+- Profile screen with AsyncImage avatar, finance cards, reusable detail rows, async mock loading, loading/error states, and pull-to-refresh.
 - Rating screen with an interactive Swift Charts line chart, drag selection with a value callout, and a per-operation rating grid with trend indicators.
 - Tariffs screen with rates grouped by warehouse zone and a popover filter by zone and operation.
 - Documents screen with a PDFKit preview and an acknowledge action that updates the document state through the service.
+- Support chat screen with messages that appear instantly and roll back if sending fails, and replies that arrive from the service on a delay.
 
 ### Shared and data
 
 - Animated error banner in the navigation bar.
 - System sound feedback for successful and failed scans.
-- Shared temporary placeholder screen for modules and profile sections that are still in development.
+- Shared temporary placeholder screen for warehouse modules that are still in development.
 - Mock API-style JSON resources for profile and picking task loading.
 - Mock service for fetching tasks, validating replacements, encoding finish requests, and finishing picking tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
@@ -109,6 +114,7 @@ WMS/
 │   │   ├── Documents/
 │   │   ├── Finance/
 │   │   ├── Rating/
+│   │   ├── Support/
 │   │   └── Tariffs/
 │   └── Receiving/
 ├── Models/
@@ -117,6 +123,7 @@ WMS/
 │   └── Profile/
 │       ├── Documents/
 │       ├── Rating/
+│       ├── Support/
 │       └── Tariffs/
 ├── Resources/
 │   ├── Assets.xcassets/
@@ -140,6 +147,7 @@ Where to start reading:
 - `ProfileRatingView.swift` - Swift Charts rating chart with drag selection.
 - `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
 - `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
+- `SupportService.swift` - Support chat service protocol, with server-initiated messages exposed as an `AsyncStream`.
 - `PDFKitView.swift` - SwiftUI wrapper around PDFKit.
 - `MockJSONLoader.swift` - Helper for decoding bundled mock JSON resources.
 - `WMSTests/` - Swift Testing suites for the Picking, Profile, Rating, and Documents ViewModels.
@@ -167,7 +175,8 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
 - Picking onboarding completion is stored locally with `@AppStorage`.
 - The task menu includes debug-only demo controls and an onboarding replay action for local testing.
-- Support and settings currently use a shared in-development placeholder.
+- Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
+- The settings entry point is hidden until the app has configurable options.
 - Camera permission handling blocks warehouse operations when camera access is missing.
 - Receiving, Putaway, Inventory, and other warehouse operations are planned as future modules.
 
