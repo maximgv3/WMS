@@ -62,6 +62,7 @@ final class SupportServiceMock: SupportServiceProtocol {
             do {
                 for message in MockData.replySupportMessages {
                     try await Task.sleep(for: .seconds((1...3).randomElement() ?? 1))
+                    messages.append(message)
                     continuation.yield(message)
                 }
             } catch { }
