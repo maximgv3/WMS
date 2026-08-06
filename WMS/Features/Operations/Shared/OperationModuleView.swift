@@ -1,14 +1,14 @@
 import SwiftUI
 
-struct PickingModuleView: View {
+struct OperationModuleView: View {
     @Environment(\.dismiss) private var dismiss
     let operationType: OperationType
-    @State private var viewModel: PickingModuleViewModel
+    @State private var viewModel: OperationModuleViewModel
     @State private var path: [OperationType.WorkRoute] = []
 
-    init(operationType: OperationType, taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
+    init(operationType: OperationType, pickingService: PickingTaskServiceProtocol = PickingListServiceMock(), putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock()) {
         self.operationType = operationType
-        self.viewModel = PickingModuleViewModel(taskService: taskService)
+        self.viewModel = OperationModuleViewModel(operationType: operationType, pickingService: pickingService, putawayService: putawayService)
     }
     var body: some View {
         NavigationStack(path: $path) {
@@ -37,7 +37,7 @@ struct PickingModuleView: View {
                     case .task(let task):
                         PickingTaskView(
                             pickingTask: task,
-                            pickingTaskService: viewModel.taskService,
+                            pickingTaskService: viewModel.pickingService,
                             path: $path
                         )
                     case .finish(let result):
@@ -45,7 +45,7 @@ struct PickingModuleView: View {
                             path: $path,
                             result: result,
                             userId: viewModel.userId,
-                            taskService: viewModel.taskService
+                            taskService: viewModel.pickingService
                         )
                     }
                 }
@@ -104,13 +104,13 @@ struct PickingModuleView: View {
     }
 
     private func getTaskTapped() async {
-        if let task = await viewModel.fetchTask() {
-            path.append(.picking(.task(task)))
+        if let route = await viewModel.fetchTask() {
+            path.append(route)
         }
     }
 
 }
 
 #Preview {
-    PickingModuleView(operationType: .picking)
+    OperationModuleView(operationType: .picking)
 }

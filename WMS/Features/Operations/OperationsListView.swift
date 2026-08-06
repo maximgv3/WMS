@@ -34,7 +34,7 @@ struct OperationsListView: View {
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(item: $selectedOperation) { operation in
-                PickingModuleView(operationType: operation)
+                OperationModuleView(operationType: operation)
                     .interactiveDismissDisabled()
             }
         }
