@@ -6,9 +6,17 @@ struct OperationModuleView: View {
     @State private var viewModel: OperationModuleViewModel
     @State private var path: [OperationType.WorkRoute] = []
 
-    init(operationType: OperationType, pickingService: PickingTaskServiceProtocol = PickingListServiceMock(), putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock()) {
+    init(
+        operationType: OperationType,
+        pickingService: PickingTaskServiceProtocol = PickingListServiceMock(),
+        putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock()
+    ) {
         self.operationType = operationType
-        self.viewModel = OperationModuleViewModel(operationType: operationType, pickingService: pickingService, putawayService: putawayService)
+        self.viewModel = OperationModuleViewModel(
+            operationType: operationType,
+            pickingService: pickingService,
+            putawayService: putawayService
+        )
     }
     var body: some View {
         NavigationStack(path: $path) {
@@ -17,7 +25,10 @@ struct OperationModuleView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    ModuleHeader(title: operationType.title, onBack: { dismiss() })
+                    ModuleHeader(
+                        title: operationType.title,
+                        onBack: { dismiss() }
+                    )
 
                     content
                         .clipShape(
@@ -56,9 +67,11 @@ struct OperationModuleView: View {
     private var moduleExitDragGesture: some Gesture {
         DragGesture(minimumDistance: 30)
             .onEnded { value in
-                let isMostlyVertical = abs(value.translation.height) > abs(value.translation.width)
+                let isMostlyVertical =
+                    abs(value.translation.height) > abs(value.translation.width)
                 let isSwipeDown = value.translation.height > 120
-                let isMostlyHorizontal = abs(value.translation.width) > abs(value.translation.height)
+                let isMostlyHorizontal =
+                    abs(value.translation.width) > abs(value.translation.height)
                 let isSwipeRight = value.translation.width > 90
                 let isStartedFromLeadingEdge = value.startLocation.x < 32
 
@@ -66,7 +79,9 @@ struct OperationModuleView: View {
                     dismiss()
                 }
 
-                if path.isEmpty && isMostlyHorizontal && isSwipeRight && isStartedFromLeadingEdge {
+                if path.isEmpty && isMostlyHorizontal && isSwipeRight
+                    && isStartedFromLeadingEdge
+                {
                     dismiss()
                 }
             }
@@ -75,16 +90,19 @@ struct OperationModuleView: View {
     private var content: some View {
         VStack(spacing: 60) {
             #if DEBUG
-            Button {
-                viewModel.toggleTestUserId()
-            } label: {
-                pickingListImage
-            }
-            .buttonStyle(.plain)
+                Button {
+                    viewModel.toggleTestUserId()
+                } label: {
+                    operationImage
+                }
+                .buttonStyle(.plain)
             #else
-            pickingListImage
+                pickingListImage
             #endif
-            PrimaryButton("Получить задание", isLoading: viewModel.isLoadingTask) {
+            PrimaryButton(
+                "Получить задание",
+                isLoading: viewModel.isLoadingTask
+            ) {
                 Task {
                     await getTaskTapped()
                 }
@@ -93,14 +111,29 @@ struct OperationModuleView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .errorBanner(title: "Не удалось получить сборочный лист", message: $viewModel.errorMessage)
+        .errorBanner(
+            title: "Не удалось получить сборочный лист",
+            message: $viewModel.errorMessage
+        )
     }
 
-    private var pickingListImage: some View {
-        Image(.pickingList)
-            .resizable()
-            .scaledToFit()
-            .frame(width: 140, height: 140)
+    private var operationImage: some View {
+        Group {
+            switch operationType {
+            case .putaway:
+                Image(.putaway)
+                    .resizable()
+                    .scaledToFit()
+            case .picking:
+                Image(.picking)
+                    .resizable()
+                    .scaledToFit()
+            default:
+                Image(systemName: "clock")
+            }
+        }
+        .frame(width: 250, height: 250)
+
     }
 
     private func getTaskTapped() async {
