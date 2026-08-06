@@ -26,4 +26,9 @@ nonisolated enum OperationType: String, CaseIterable, Identifiable {
             "shippingbox.and.arrow.backward"
         }
     }
+
+    enum WorkRoute: Hashable {
+        case picking(PickingRoute)
+        case putaway(PutawayRoute)
+    }
 }

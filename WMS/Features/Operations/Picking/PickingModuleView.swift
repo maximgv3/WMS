@@ -2,10 +2,12 @@ import SwiftUI
 
 struct PickingModuleView: View {
     @Environment(\.dismiss) private var dismiss
+    let operationType: OperationType
     @State private var viewModel: PickingModuleViewModel
-    @State private var path: [PickingRoute] = []
+    @State private var path: [OperationType.WorkRoute] = []
 
-    init(taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
+    init(operationType: OperationType, taskService: PickingTaskServiceProtocol = PickingListServiceMock()) {
+        self.operationType = operationType
         self.viewModel = PickingModuleViewModel(taskService: taskService)
     }
     var body: some View {
@@ -15,7 +17,7 @@ struct PickingModuleView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    ModuleHeader(title: "Сборка", onBack: { dismiss() })
+                    ModuleHeader(title: operationType.title, onBack: { dismiss() })
 
                     content
                         .clipShape(
@@ -29,17 +31,23 @@ struct PickingModuleView: View {
             }
             .navigationBarBackButtonHidden()
             .gesture(moduleExitDragGesture)
-            .navigationDestination(for: PickingRoute.self) { route in
-                switch route {
-                case .task(let task):
-                    PickingTaskView(pickingTask: task, pickingTaskService: viewModel.taskService, path: $path)
-                case .finish(let result):
-                    PickingFinishView(
-                        path: $path,
-                        result: result,
-                        userId: viewModel.userId,
-                        taskService: viewModel.taskService
-                    )
+            .navigationDestination(for: OperationType.WorkRoute.self) { route in
+                if case .picking(let pickingRoute) = route {
+                    switch pickingRoute {
+                    case .task(let task):
+                        PickingTaskView(
+                            pickingTask: task,
+                            pickingTaskService: viewModel.taskService,
+                            path: $path
+                        )
+                    case .finish(let result):
+                        PickingFinishView(
+                            path: $path,
+                            result: result,
+                            userId: viewModel.userId,
+                            taskService: viewModel.taskService
+                        )
+                    }
                 }
             }
         }
@@ -97,12 +105,12 @@ struct PickingModuleView: View {
 
     private func getTaskTapped() async {
         if let task = await viewModel.fetchTask() {
-            path.append(.task(task))
+            path.append(.picking(.task(task)))
         }
     }
 
 }
 
 #Preview {
-    PickingModuleView()
+    PickingModuleView(operationType: .picking)
 }

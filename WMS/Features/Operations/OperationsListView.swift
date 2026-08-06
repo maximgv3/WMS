@@ -2,11 +2,11 @@ import SwiftUI
 
 struct OperationsListView: View {
     @Environment(\.scenePhase) private var scenePhase
-    
+
     private let operations: [OperationMenuItem] = [
         .init(operation: .putaway, isEnabled: false),
         .init(operation: .picking, isEnabled: true),
-        .init(operation: .returns, isEnabled: false)
+        .init(operation: .returns, isEnabled: false),
     ]
     @State private var selectedOperation: OperationType?
     private let cameraPermissionService = CameraPermissionService()
@@ -34,17 +34,25 @@ struct OperationsListView: View {
             }
             .toolbar(.hidden, for: .navigationBar)
             .fullScreenCover(item: $selectedOperation) { operation in
-                destination(for: operation)
+                PickingModuleView(operationType: operation)
                     .interactiveDismissDisabled()
             }
         }
         .onAppear {
-            guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return } // disable blocker for canvas work
+            guard
+                ProcessInfo.processInfo.environment[
+                    "XCODE_RUNNING_FOR_PREVIEWS"
+                ] != "1"
+            else { return }  // disable blocker for canvas work
             cameraBlockReason = cameraPermissionService.blockReason()
         }
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active else { return }
-            guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return }
+            guard
+                ProcessInfo.processInfo.environment[
+                    "XCODE_RUNNING_FOR_PREVIEWS"
+                ] != "1"
+            else { return }
             cameraBlockReason = cameraPermissionService.blockReason()
         }
         .fullScreenCover(item: $cameraBlockReason) { reason in
@@ -81,10 +89,13 @@ struct OperationsListView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.medium)
 
-                            Image(systemName: item.isEnabled ? "chevron.right" : "lock")
-                                .foregroundStyle(
-                                    ColorPalette.brandMuted.opacity(0.75)
-                                )
+                            Image(
+                                systemName: item.isEnabled
+                                    ? "chevron.right" : "lock"
+                            )
+                            .foregroundStyle(
+                                ColorPalette.brandMuted.opacity(0.75)
+                            )
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 18)
@@ -103,18 +114,6 @@ struct OperationsListView: View {
             .padding(.top, 12)
         }
         .scrollDisabled(true)
-    }
-
-    @ViewBuilder
-    private func destination(for operation: OperationType) -> some View {
-        switch operation {
-        case .putaway:
-            PutawayModuleView()
-        case .picking:
-            PickingModuleView()
-        case .returns:
-            ReturnsModuleView()
-        }
     }
 }
 

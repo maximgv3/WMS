@@ -1,11 +1,11 @@
 import SwiftUI
 
 struct PickingFinishView: View {
-    @Binding private var path: [PickingRoute]
+    @Binding private var path: [OperationType.WorkRoute]
     @State private var viewModel: PickingFinishViewModel
 
     init(
-        path: Binding<[PickingRoute]>,
+        path: Binding<[OperationType.WorkRoute]>,
         result: PickingResult,
         userId: Int,
         taskService: PickingTaskServiceProtocol
@@ -83,5 +83,4 @@ struct PickingFinishView: View {
         }
     }
 }
-
 

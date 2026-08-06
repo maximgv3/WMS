@@ -4,7 +4,7 @@ struct PickingTaskView: View {
     // MARK: - State
     @AppStorage("isPickingOnboardingComplete") private var isPickingOnboardingComplete = false
     @State private var viewModel: PickingTaskViewModel
-    @Binding private var path: [PickingRoute]
+    @Binding private var path: [OperationType.WorkRoute]
     @State private var isSkipConfirmationPresented = false
     @State private var isOnboardingPresented = false
     @State private var isReplacementModeOn = false
@@ -25,7 +25,7 @@ struct PickingTaskView: View {
     init(
         pickingTask: PickingTask,
         pickingTaskService: PickingTaskServiceProtocol,
-        path: Binding<[PickingRoute]>
+        path: Binding<[OperationType.WorkRoute]>
     ) {
         self.viewModel = PickingTaskViewModel(
             pickingTask: pickingTask,
@@ -103,11 +103,13 @@ struct PickingTaskView: View {
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
                 path.append(
-                    .finish(
-                        PickingResult(
-                            collectedItems: viewModel.collectedItems,
-                            skippedItems: viewModel.skippedItems,
-                            replacements: viewModel.replacements
+                    .picking(
+                        .finish(
+                            PickingResult(
+                                collectedItems: viewModel.collectedItems,
+                                skippedItems: viewModel.skippedItems,
+                                replacements: viewModel.replacements
+                            )
                         )
                     )
                 )
@@ -466,7 +468,7 @@ struct PickingTaskView: View {
 
 // MARK: - Preview
 #Preview {
-    @Previewable @State var path: [PickingRoute] = []
+    @Previewable @State var path: [OperationType.WorkRoute] = []
 
     NavigationStack(path: $path) {
         PickingTaskView(
