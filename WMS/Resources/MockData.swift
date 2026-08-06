@@ -9,6 +9,14 @@ struct MockData {
         }
     }()
 
+    static let putawayTaskMock: PutawayTask = {
+        do {
+            return try MockJSONLoader.decode(PutawayTask.self, from: "putaway_task")
+        } catch {
+            return PutawayTask(items: [], cellCapacity: 0)
+        }
+    }()
+
     static let profileMock: Profile = Profile(
         name: "Гвазава Максим Александрович",
         imageUrl: URL(
