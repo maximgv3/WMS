@@ -43,7 +43,8 @@ struct OperationModuleView: View {
             .navigationBarBackButtonHidden()
             .gesture(moduleExitDragGesture)
             .navigationDestination(for: OperationType.WorkRoute.self) { route in
-                if case .picking(let pickingRoute) = route {
+                switch route {
+                case .picking(let pickingRoute):
                     switch pickingRoute {
                     case .task(let task):
                         PickingTaskView(
@@ -58,6 +59,13 @@ struct OperationModuleView: View {
                             userId: viewModel.userId,
                             taskService: viewModel.pickingService
                         )
+                    }
+                case .putaway(let putawayRoute):
+                    switch putawayRoute {
+                    case .task:
+                        PutawayTaskView()
+                    case .finish:
+                        Text("Экран итога раскладки ещё не готов")
                     }
                 }
             }
