@@ -2,7 +2,8 @@ import SwiftUI
 
 struct PickingTaskView: View {
     // MARK: - State
-    @AppStorage("isPickingOnboardingComplete") private var isPickingOnboardingComplete = false
+    @AppStorage("isPickingOnboardingComplete") private
+        var isPickingOnboardingComplete = false
     @State private var viewModel: PickingTaskViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State private var isSkipConfirmationPresented = false
@@ -10,8 +11,8 @@ struct PickingTaskView: View {
     @State private var isReplacementModeOn = false
 
     #if DEBUG
-    @State private var isDemoModeOn = false
-    @State private var isDemoConfirmationPresented = false
+        @State private var isDemoModeOn = false
+        @State private var isDemoConfirmationPresented = false
     #endif
 
     // Error banner
@@ -58,7 +59,7 @@ struct PickingTaskView: View {
                         VStack(spacing: 6) {
                             Text(currentItem.title)
                                 .font(.system(size: 22, weight: .bold))
-                            highlightedIdText(currentItem.id)
+                            Text.itemId(currentItem.id, base: .medium)
                                 .font(.system(size: 27))
                         }
                         collectButton
@@ -163,15 +164,6 @@ struct PickingTaskView: View {
         }
     }
 
-    // MARK: - Item Info
-    private func highlightedIdText(_ id: Int) -> Text {
-        let idString = String(id)
-        let prefix = String(idString.dropLast(4))
-        let suffix = String(idString.suffix(4))
-        return Text(prefix).fontWeight(.medium)
-            + Text(suffix).fontWeight(.heavy)
-    }
-
     // MARK: - Progress
     private var progressMenu: PickingProgressMenu {
         PickingProgressMenu(
@@ -194,15 +186,15 @@ struct PickingTaskView: View {
                 )
             }
             #if DEBUG
-            Button {
-                demoButtonTapped()
-            } label: {
-                Label(
-                    "Демо-режим",
-                    systemImage:
-                        "arrow.trianglehead.2.clockwise.rotate.90.camera"
-                )
-            }
+                Button {
+                    demoButtonTapped()
+                } label: {
+                    Label(
+                        "Демо-режим",
+                        systemImage:
+                            "arrow.trianglehead.2.clockwise.rotate.90.camera"
+                    )
+                }
             #endif
 
             Button {
@@ -237,17 +229,19 @@ struct PickingTaskView: View {
             exitMenuIcon
         }
         #if DEBUG
-        .confirmationDialog(
-            "Демо-режим",
-            isPresented: $isDemoConfirmationPresented,
-            titleVisibility: .visible
-        ) {
-            Button("Включить") {
-                demoModeToggle()
+            .confirmationDialog(
+                "Демо-режим",
+                isPresented: $isDemoConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button("Включить") {
+                    demoModeToggle()
+                }
+            } message: {
+                Text(
+                    "Демо-режим заменит камеру на две кнопки: ошибочный скан и успешную сборку товара. Это удобно для демонстрации функционала без использования реальной камеры. Доступен только в debug-сборке."
+                )
             }
-        } message: {
-            Text("Демо-режим заменит камеру на две кнопки: ошибочный скан и успешную сборку товара. Это удобно для демонстрации функционала без использования реальной камеры. Доступен только в debug-сборке.")
-        }
         #endif
     }
 
@@ -257,23 +251,23 @@ struct PickingTaskView: View {
     }
 
     #if DEBUG
-    private func demoButtonTapped() {
-        if isDemoModeOn {
-            demoModeToggle()
-        } else {
-            isDemoConfirmationPresented = true
+        private func demoButtonTapped() {
+            if isDemoModeOn {
+                demoModeToggle()
+            } else {
+                isDemoConfirmationPresented = true
+            }
         }
-    }
-    private func demoModeToggle() {
-        isDemoModeOn.toggle()
-        isReplacementModeOn = false
-        isScanningEnabled = false
-    }
+        private func demoModeToggle() {
+            isDemoModeOn.toggle()
+            isReplacementModeOn = false
+            isScanningEnabled = false
+        }
     #endif
 
     private func disableDemoMode() {
         #if DEBUG
-        isDemoModeOn = false
+            isDemoModeOn = false
         #endif
     }
 
@@ -356,52 +350,52 @@ struct PickingTaskView: View {
     @ViewBuilder
     private var collectButton: some View {
         #if DEBUG
-        if isDemoModeOn {
-            demoCollectButtons
-        } else {
-            scannerCollectButton
-        }
+            if isDemoModeOn {
+                demoCollectButtons
+            } else {
+                scannerCollectButton
+            }
         #else
-        scannerCollectButton
+            scannerCollectButton
         #endif
     }
 
     #if DEBUG
-    private var demoCollectButtons: some View {
-        HStack(spacing: 12) {
-            Button {
-                tryToCollect(itemId: -1)
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 28, weight: .semibold))
-                    .foregroundStyle(ColorPalette.error)
-                    .frame(width: 56, height: 56)
-                    .background(ColorPalette.error.opacity(0.12))
-                    .clipShape(Circle())
-            }
-            .buttonStyle(.plain)
-
-            if let currentItem {
+        private var demoCollectButtons: some View {
+            HStack(spacing: 12) {
                 Button {
-                    tryToCollect(itemId: currentItem.id)
+                    tryToCollect(itemId: -1)
                 } label: {
-                    Text("Собрать")
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(ColorPalette.surfacePrimary)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(ColorPalette.brandPrimary)
-                        .clipShape(
-                            RoundedRectangle(
-                                cornerRadius: 20,
-                                style: .continuous
-                            )
-                        )
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(ColorPalette.error)
+                        .frame(width: 56, height: 56)
+                        .background(ColorPalette.error.opacity(0.12))
+                        .clipShape(Circle())
                 }
                 .buttonStyle(.plain)
+
+                if let currentItem {
+                    Button {
+                        tryToCollect(itemId: currentItem.id)
+                    } label: {
+                        Text("Собрать")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(ColorPalette.brandPrimary)
+                            .clipShape(
+                                RoundedRectangle(
+                                    cornerRadius: 20,
+                                    style: .continuous
+                                )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
-    }
     #endif
 
     @ViewBuilder
