@@ -11,7 +11,7 @@ final class PutawayTaskViewModel {
     private(set) var placedItems: [Item : StorageCell.ID] = [:]
     private(set) var lastPlacedItem: Item?
     
-    private var currentCellItemsCount: Int {
+    var currentCellItemsCount: Int {
         guard let currentCell else { return 0 }
         return placedItems.values.filter { $0 == currentCell.id }.count
     }
