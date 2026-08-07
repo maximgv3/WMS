@@ -22,7 +22,7 @@ struct PutawayTaskView: View {
                 isScanningEnabled: $isScanningEnabled,
                 idleText: isCellSelected
                     ? "Сканируйте товар" : "Сканируйте ячейку",
-                activeText: isCellSelected ? "Сканируем ячейку..." : "Сканируем товар...",
+                activeText: isCellSelected ? "Сканируем товар..." : "Сканируем ячейку...",
                 onScan: { code in viewModel.processCode(code) }
             )
             itemsList
