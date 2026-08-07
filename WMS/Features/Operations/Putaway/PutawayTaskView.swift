@@ -32,6 +32,11 @@ struct PutawayTaskView: View {
             title: "Не удалось разложить товар",
             message: errorMessage
         )
+        .onChange(of: viewModel.isPutawayEnded) { _, isEnded in
+            if isEnded {
+                path.append(.putaway(.finish(viewModel.result)))
+            }
+        }
     }
 
     private var isCellSelected: Bool { viewModel.currentCell != nil }
