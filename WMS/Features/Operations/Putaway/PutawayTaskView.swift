@@ -1,8 +1,15 @@
 import SwiftUI
 
 struct PutawayTaskView: View {
+    @State var isScanningEnabled: Bool = false
+    
     var body: some View {
-        storageCellCard
+        VStack {
+            storageCellCard
+            Spacer()
+            ScannerView(isScanningEnabled: $isScanningEnabled, idleText: "Сканируйте", activeText: "Сканируем", onScan:{_ in })
+        }
+        .padding(16)
     }
     
     @State var temp = true
@@ -27,7 +34,6 @@ struct PutawayTaskView: View {
                         style: StrokeStyle(lineWidth: 2, dash: [6])
                     )
             }
-            .padding(.horizontal, 16)
             .opacity(temp ? 0 : 1)
 
             VStack(alignment: .leading, spacing: 12) {
@@ -49,12 +55,11 @@ struct PutawayTaskView: View {
             .foregroundStyle(ColorPalette.brandPrimary)
             .frame(maxWidth: .infinity, minHeight: 140)
             .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ColorPalette.accentPrimary.opacity(0.18)))
-            .padding(.horizontal, 16)
             .opacity(temp ? 1 : 0)
         }
         .frame(maxWidth: .infinity, minHeight: 140)
         .task {
-            while false {
+            while true {
                 try? await Task.sleep(for: .seconds(1))
                 temp.toggle()
             }
