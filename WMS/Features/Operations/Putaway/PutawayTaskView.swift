@@ -72,6 +72,7 @@ struct PutawayTaskView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .glassIfAvailable(shape: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 
