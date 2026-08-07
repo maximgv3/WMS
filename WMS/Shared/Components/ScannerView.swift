@@ -44,14 +44,8 @@ struct ScannerView: View {
             .foregroundStyle(ColorPalette.surfacePrimary)
             .opacity(isScanningEnabled ? 0.35 : 0.85)
         }
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    isScanningEnabled = true
-                }
-                .onEnded { _ in
-                    isScanningEnabled = false
-                }
-        )
+        .onLongPressGesture(minimumDuration: .infinity, maximumDistance: .infinity) { } onPressingChanged: { isPressing in
+            isScanningEnabled = isPressing
+        }
     }
 }
