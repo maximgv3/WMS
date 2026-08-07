@@ -1,22 +1,66 @@
 import SwiftUI
 
 struct PutawayTaskView: View {
-    @State var isScanningEnabled: Bool = false
-    
+
+    @State private var viewModel: PutawayTaskViewModel
+    @Binding private var path: [OperationType.WorkRoute]
+    @State var isScanningEnabled = false
+
+    init(
+        task: PutawayTask,
+        service: PutawayTaskServiceProtocol,
+        path: Binding<[OperationType.WorkRoute]>
+    ) {
+        self.viewModel = PutawayTaskViewModel(task: task, service: service)
+        self._path = path
+    }
+
     var body: some View {
-        VStack {
+        VStack(spacing: 16) {
             storageCellCard
-            Spacer()
-            ScannerView(isScanningEnabled: $isScanningEnabled, idleText: "Сканируйте", activeText: "Сканируем", onScan:{_ in })
+            ScannerView(
+                isScanningEnabled: $isScanningEnabled,
+                idleText: isCellSelected
+                    ? "Сканируйте товар" : "Сканируйте ячейку",
+                activeText: isCellSelected ? "Сканируем ячейку..." : "Сканируем товар...",
+                onScan: { code in viewModel.processCode(code) }
+            )
+            itemsList
         }
         .padding(16)
+        .errorBanner(
+            title: "Не удалось разложить товар",
+            message: errorMessage
+        )
     }
-    
-    @State var temp = true
-    private var progressValue: Double {
-        return 0.75
+
+    private var isCellSelected: Bool { viewModel.currentCell != nil }
+    private var listedItems: [Item] {
+        isCellSelected ? viewModel.currentCellItems : viewModel.leftItems
     }
-    
+
+    private var errorText: String? {
+        switch viewModel.lastError {
+        case .notACell:
+            return "Сначала отсканируйте ячейку"
+        case .notAnItem:
+            return "Отсканируйте товар"
+        case .itemNotInTask:
+            return "Этого товара нет в задании"
+        case .cellIsFull:
+            return "В ячейке нет места"
+        case nil:
+            return nil
+        }
+    }
+
+    private var errorMessage: Binding<String?> {
+        Binding(
+            get: { errorText },
+            set: { if $0 == nil { viewModel.clearError() } }
+        )
+    }
+
     private var storageCellCard: some View {
         ZStack {
             VStack(spacing: 12) {
@@ -34,7 +78,7 @@ struct PutawayTaskView: View {
                         style: StrokeStyle(lineWidth: 2, dash: [6])
                     )
             }
-            .opacity(temp ? 0 : 1)
+            .opacity(isCellSelected ? 0 : 1)
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
@@ -43,44 +87,114 @@ struct PutawayTaskView: View {
                     changeCellButton
                         .padding(.horizontal, -6)
                 }
-                Text("АЛ.21.04.21.05.01")
+                Text(viewModel.currentCell?.id ?? "Ячейка не выбрана")
                     .font(.system(size: 24, weight: .medium))
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
-                ProgressView(value: progressValue)
+                ProgressView(value: viewModel.currentCellProgress)
                     .tint(ColorPalette.accentPrimary)
-                Text("3 из 4")
+                Text(
+                    String(viewModel.currentCellItemsCount) + " из "
+                        + String(viewModel.task.cellCapacity)
+                )
+                .contentTransition(.numericText(value: Double(viewModel.currentCellItemsCount)))
             }
             .padding(.horizontal, 16)
+            .animation(.snappy, value: viewModel.currentCellItemsCount)
             .foregroundStyle(ColorPalette.brandPrimary)
             .frame(maxWidth: .infinity, minHeight: 140)
-            .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(ColorPalette.accentPrimary.opacity(0.18)))
-            .opacity(temp ? 1 : 0)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
+                    ColorPalette.accentPrimary.opacity(0.18)
+                )
+            )
+            .opacity(isCellSelected ? 1 : 0)
         }
         .frame(maxWidth: .infinity, minHeight: 140)
-        .task {
-            while true {
-                try? await Task.sleep(for: .seconds(1))
-                temp.toggle()
-            }
-        }
+        .animation(.easeInOut(duration: 0.2), value: isCellSelected)
     }
-    
+
     private var changeCellButton: some View {
         Button {
-            
+            viewModel.clearCurrentCell()
         } label: {
             Text("Сменить ячейку")
                 .padding(6)
-                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(ColorPalette.brandPrimary, lineWidth: 1))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                        .strokeBorder(ColorPalette.brandPrimary, lineWidth: 1)
+                )
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .glassIfAvailable(shape: RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .glassIfAvailable(
+            shape: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+    }
+
+    @ViewBuilder
+    private var itemsList: some View {
+        if listedItems.isEmpty {
+            Text(isCellSelected ? "В ячейке пока пусто" : "Всё разложено")
+                .foregroundStyle(ColorPalette.brandMuted)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                LazyVStack(alignment: .leading) {
+                    Text(
+                        isCellSelected
+                            ? "Разложенные товары" : "Осталось разложить"
+                    )
+                    .font(.headline)
+                    ForEach(listedItems) { item in
+                        itemRow(item: item)
+                    }
+                }
+            }
+            .scrollIndicators(.hidden)
+        }
+    }
+
+    private func itemRow(item: Item) -> some View {
+        HStack(spacing: 12) {
+
+            AsyncImage(url: item.imageUrl) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                Image(systemName: "photo")
+                    .font(.system(size: 22))
+                    .foregroundStyle(ColorPalette.brandPrimary)
+            }
+            .frame(width: 44, height: 44)
+            Text(title(for: item))
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text.itemId(item.id)
+                .lineLimit(1)
+                .layoutPriority(1)
+                .monospacedDigit()
+        }
+    }
+
+    private func title(for item: Item) -> String {
+        guard let detail = item.size ?? item.color ?? item.brand else {
+            return item.title
+        }
+        return item.title + ", " + detail
     }
 }
 
 #Preview {
-    PutawayTaskView()
+    @Previewable @State var path: [OperationType.WorkRoute] = []
+
+    NavigationStack(path: $path) {
+        PutawayTaskView(
+            task: MockData.putawayTaskMock,
+            service: PutawayTaskServiceMock(),
+            path: $path
+        )
+    }
 }

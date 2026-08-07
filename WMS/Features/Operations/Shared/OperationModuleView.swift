@@ -62,8 +62,8 @@ struct OperationModuleView: View {
                     }
                 case .putaway(let putawayRoute):
                     switch putawayRoute {
-                    case .task:
-                        PutawayTaskView()
+                    case .task(let task):
+                        PutawayTaskView(task: task, service: viewModel.putawayService, path: $path)
                     case .finish:
                         Text("Экран итога раскладки ещё не готов")
                     }
@@ -105,7 +105,7 @@ struct OperationModuleView: View {
                 }
                 .buttonStyle(.plain)
             #else
-                pickingListImage
+                operationImage
             #endif
             PrimaryButton(
                 "Получить задание",
@@ -152,6 +152,10 @@ struct OperationModuleView: View {
 
 }
 
-#Preview {
+#Preview("Сборка") {
     OperationModuleView(operationType: .picking)
 }
+#Preview("Раскладка") {
+    OperationModuleView(operationType: .putaway)
+}
+

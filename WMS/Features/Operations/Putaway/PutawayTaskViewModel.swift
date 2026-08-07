@@ -10,12 +10,22 @@ final class PutawayTaskViewModel {
     private(set) var currentCell: StorageCell?
     private(set) var placedItems: [Item : StorageCell.ID] = [:]
     private(set) var lastPlacedItem: Item?
+    private(set) var lastError: PutawayError?
+    
+    var currentCellItems: [Item] {
+        guard let currentCell else { return [] }
+        return task.items.filter { placedItems[$0] == currentCell.id }
+    }
     
     var currentCellItemsCount: Int {
         guard let currentCell else { return 0 }
         return placedItems.values.filter { $0 == currentCell.id }.count
     }
 
+    var currentCellProgress: Double {
+        guard currentCell != nil, task.cellCapacity > 0 else { return 0 }
+        return Double(currentCellItemsCount) / Double(task.cellCapacity)
+    }
     var isCurrentCellFull: Bool {
         currentCellItemsCount >= task.cellCapacity
     }
@@ -29,14 +39,23 @@ final class PutawayTaskViewModel {
         self.service = service
     }
     
-    func processCode(_ code: String) throws {
-        if isCellCode(code) {
-            try processCellCode(code)
-        } else {
-            try processItemIdCode(code)
+    func processCode(_ code: String) {
+        do {
+            if isCellCode(code) {
+                try processCellCode(code)
+            } else {
+                try processItemIdCode(code)
+            }
+            lastError = nil
+        } catch {
+            lastError = error as? PutawayError // Only PutawayError is thrown above
         }
     }
-    
+
+    func clearError() {
+        lastError = nil
+    }
+
     func clearCurrentCell() {
         currentCell = nil
     }
