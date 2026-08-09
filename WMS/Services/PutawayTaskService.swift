@@ -2,7 +2,7 @@ import Foundation
 
 protocol PutawayTaskServiceProtocol: AnyObject {
     func fetchTask(userId: Int) async throws -> PutawayTask
-    func finishTask(userId: Int, result: PutawayResult) async throws
+    func finishTask(result: PutawayResult, userId: Int) async throws
 }
 
 final class PutawayTaskServiceMock: PutawayTaskServiceProtocol {
@@ -24,7 +24,7 @@ final class PutawayTaskServiceMock: PutawayTaskServiceProtocol {
         return try MockJSONLoader.decode(PutawayTask.self, from: "putaway_task")
     }
 
-    func finishTask(userId: Int, result: PutawayResult) async throws {
+    func finishTask(result: PutawayResult, userId: Int) async throws {
         if userId == 666 {
             try await Task.sleep(for: .seconds(0.5))
             throw NSError(
