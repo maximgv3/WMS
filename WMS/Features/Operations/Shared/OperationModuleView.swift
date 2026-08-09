@@ -65,7 +65,7 @@ struct OperationModuleView: View {
                     case .task(let task):
                         PutawayTaskView(task: task, service: viewModel.putawayService, path: $path)
                     case .finish:
-                        Text("Экран итога раскладки ещё не готов")
+                        PutawayFinishView(path: $path)
                     }
                 }
             }
