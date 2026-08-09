@@ -1,5 +1,5 @@
 {
-  "cell_capacity": 2,
+  "cell_capacity": 3,
   "items": [
     {
       "id": 7839201741,
@@ -52,6 +52,19 @@
       "placement": null,
       "price": 4299,
       "stock": 12
+    },
+    {
+      "id": 9027461835,
+      "barcode": "4006381333931",
+      "article": "CAP-3301",
+      "brand": "Reebok",
+      "title": "Кепка",
+      "size": null,
+      "color": "Чёрный",
+      "image_url": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg",
+      "placement": null,
+      "price": 1790,
+      "stock": 31
     }
   ]
 }
