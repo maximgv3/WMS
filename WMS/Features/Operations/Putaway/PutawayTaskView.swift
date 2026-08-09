@@ -40,6 +40,12 @@ struct PutawayTaskView: View {
                 path.append(.putaway(.finish(viewModel.result)))
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                exitMenu
+            }
+        }
     }
 
     private var isCellSelected: Bool { viewModel.currentCell != nil }
@@ -67,6 +73,22 @@ struct PutawayTaskView: View {
             get: { errorText },
             set: { if $0 == nil { viewModel.clearError() } }
         )
+    }
+
+    private var exitMenu: some View {
+        Menu {
+            Button(role: .destructive) {
+                path.removeAll()
+            } label: {
+                Label(
+                    "Выйти из модуля",
+                    systemImage: "rectangle.portrait.and.arrow.right"
+                )
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .foregroundStyle(ColorPalette.brandPrimary)
+        }
     }
 
     private var storageCellCard: some View {
