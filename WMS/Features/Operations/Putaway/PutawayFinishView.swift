@@ -1,12 +1,21 @@
 import SwiftUI
 
-// Temporary screen: shows the task is over and drops back to the module.
-// Sending the result through finishTask is still to be written.
 struct PutawayFinishView: View {
     @Binding private var path: [OperationType.WorkRoute]
+    @State private var viewModel: PutawayFinishViewModel
 
-    init(path: Binding<[OperationType.WorkRoute]>) {
+    init(
+        path: Binding<[OperationType.WorkRoute]>,
+        result: PutawayResult,
+        userId: Int,
+        taskService: PutawayTaskServiceProtocol
+    ) {
         self._path = path
+        self.viewModel = .init(
+            result: result,
+            userId: userId,
+            taskService: taskService
+        )
     }
 
     var body: some View {
@@ -20,15 +29,22 @@ struct PutawayFinishView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 72, weight: .semibold))
-                    .foregroundStyle(ColorPalette.accentPrimary)
+                #if DEBUG
+                Button {
+                    viewModel.toggleTestUserId()
+                } label: {
+                    checkmarkImage
+                }
+                .buttonStyle(.plain)
+                #else
+                checkmarkImage
+                #endif
 
-                Text("Задание выполнено")
+                Text("Раскладка завершена")
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.brandPrimary)
 
-                Text("Можно брать следующее")
+                Text(viewModel.resultText)
                     .font(.system(size: 18, weight: .regular))
                     .foregroundStyle(ColorPalette.brandMuted)
             }
@@ -37,21 +53,33 @@ struct PutawayFinishView: View {
 
             Spacer()
 
-            PrimaryButton("Отлично") {
-                path.removeAll()
-            }
-            .padding(.horizontal, 64)
-            .padding(.bottom, 40)
+            finishButton
+                .padding(.horizontal, 64)
+                .padding(.bottom, 40)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
+        .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
     }
-}
 
-#Preview {
-    @Previewable @State var path: [OperationType.WorkRoute] = []
+    private var checkmarkImage: some View {
+        Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 72, weight: .semibold))
+            .foregroundStyle(ColorPalette.accentPrimary)
+    }
 
-    NavigationStack(path: $path) {
-        PutawayFinishView(path: $path)
+    private var finishButton: some View {
+        PrimaryButton("Завершить задание", isLoading: viewModel.isFinishingTask) {
+            Task {
+                await finish()
+            }
+        }
+    }
+
+    private func finish() async {
+        let isFinished = await viewModel.finishTask()
+        if isFinished {
+            path.removeAll()
+        }
     }
 }
