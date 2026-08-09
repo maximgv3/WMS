@@ -26,6 +26,16 @@ nonisolated enum OperationType: String, CaseIterable, Identifiable {
             "shippingbox.and.arrow.backward"
         }
     }
+    var fetchErrorTitle: String {
+        switch self {
+        case .putaway:
+            "Не удалось получить задание"
+        case .picking:
+            "Не удалось получить сборочный лист"
+        case .returns:
+            "Не удалось получить задание"
+        }
+    }
 
     enum WorkRoute: Hashable {
         case picking(PickingRoute)

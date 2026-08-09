@@ -125,7 +125,7 @@ struct OperationModuleView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
         .errorBanner(
-            title: "Не удалось получить сборочный лист",
+            title: operationType.fetchErrorTitle,
             message: $viewModel.errorMessage
         )
     }
