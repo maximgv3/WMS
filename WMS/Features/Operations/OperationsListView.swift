@@ -4,7 +4,7 @@ struct OperationsListView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     private let operations: [OperationMenuItem] = [
-        .init(operation: .putaway, isEnabled: false),
+        .init(operation: .putaway, isEnabled: true),
         .init(operation: .picking, isEnabled: true),
         .init(operation: .returns, isEnabled: false),
     ]
