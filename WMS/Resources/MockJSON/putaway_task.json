@@ -1,34 +1,21 @@
 {
-  "cell_capacity": 5,
+  "cell_capacity": 2,
   "items": [
     {
-      "id": 4471902358,
+      "id": 7839201741,
       "barcode": "4620187349056",
       "article": "THRM-8821",
       "brand": null,
       "title": "Термокружка",
       "size": "350мл",
       "color": "Чёрный",
-      "image_url": "https://s.a-5.ru/i/file/161/7/f2/32/f2327ecacc88862f.jpg",
+      "image_url": "https://www.admos-gifts.ru/product600x600xffffff/i/product/025208002.010.png",
       "placement": null,
       "price": 1290,
       "stock": 18
     },
     {
-      "id": 4471902361,
-      "barcode": "4620187349063",
-      "article": "THRM-8824",
-      "brand": null,
-      "title": "Термокружка",
-      "size": "500мл",
-      "color": "Стальной",
-      "image_url": "https://s.a-5.ru/i/file/161/7/f2/32/f2327ecacc88862f.jpg",
-      "placement": null,
-      "price": 1490,
-      "stock": 11
-    },
-    {
-      "id": 2938471055,
+      "id": 3147859206,
       "barcode": "4601122334455",
       "article": "GLV-1204",
       "brand": "Outventure",
@@ -41,33 +28,7 @@
       "stock": 27
     },
     {
-      "id": 2938471062,
-      "barcode": "4601122334462",
-      "article": "GLV-1206",
-      "brand": "Outventure",
-      "title": "Перчатки",
-      "size": "L",
-      "color": "Чёрный",
-      "image_url": "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/6a9/768_1024_e548/141110850299.jpg",
-      "placement": null,
-      "price": 1599,
-      "stock": 22
-    },
-    {
-      "id": 2938471079,
-      "barcode": "4601122334479",
-      "article": "GLV-1207",
-      "brand": "Outventure",
-      "title": "Перчатки",
-      "size": "S",
-      "color": "Серый",
-      "image_url": "https://cdn.sportmaster.ru/upload/mdm/media_content/resize/6a9/768_1024_e548/141110850299.jpg",
-      "placement": null,
-      "price": 1499,
-      "stock": 14
-    },
-    {
-      "id": 6103448827,
+      "id": 5862149037,
       "barcode": "5909988776655",
       "article": "BAG-1211",
       "brand": "Nike",
@@ -80,20 +41,7 @@
       "stock": 9
     },
     {
-      "id": 6103448834,
-      "barcode": "5909988776662",
-      "article": "BAG-1215",
-      "brand": "Nike",
-      "title": "Сумка",
-      "size": null,
-      "color": "Чёрный",
-      "image_url": "https://cdn.4stand.com/large/67/b1/67b1fb59f7f4fac0c9d3a4f674fac101e38c11eb.webp",
-      "placement": null,
-      "price": 3690,
-      "stock": 6
-    },
-    {
-      "id": 5517203946,
+      "id": 6481059327,
       "barcode": "4055123098761",
       "article": "JNS-4453",
       "brand": "Zara",
@@ -104,58 +52,6 @@
       "placement": null,
       "price": 4299,
       "stock": 12
-    },
-    {
-      "id": 5517203953,
-      "barcode": "4055123098778",
-      "article": "JNS-4455",
-      "brand": "Zara",
-      "title": "Джинсы",
-      "size": "34",
-      "color": "Синий",
-      "image_url": "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-13/847/668/404/231/38/100051616967b0.jpg",
-      "placement": null,
-      "price": 4299,
-      "stock": 8
-    },
-    {
-      "id": 5517203960,
-      "barcode": "4055123098785",
-      "article": "JNS-4458",
-      "brand": "Zara",
-      "title": "Джинсы",
-      "size": "30",
-      "color": "Чёрный",
-      "image_url": "https://main-cdn.sbermegamarket.ru/big1/hlr-system/-13/847/668/404/231/38/100051616967b0.jpg",
-      "placement": null,
-      "price": 4599,
-      "stock": 5
-    },
-    {
-      "id": 8264015573,
-      "barcode": "4630012345678",
-      "article": "CAP-3301",
-      "brand": "Reebok",
-      "title": "Кепка",
-      "size": null,
-      "color": "Чёрный",
-      "image_url": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg",
-      "placement": null,
-      "price": 1790,
-      "stock": 31
-    },
-    {
-      "id": 8264015580,
-      "barcode": "4630012345685",
-      "article": "CAP-3304",
-      "brand": "Reebok",
-      "title": "Кепка",
-      "size": null,
-      "color": "Белый",
-      "image_url": "https://hatsandcaps.ru/components/com_jshopping/files/img_products/full_56-045-09(0).jpg",
-      "placement": null,
-      "price": 1790,
-      "stock": 24
     }
   ]
 }
