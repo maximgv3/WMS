@@ -56,6 +56,21 @@ final class PutawayTaskViewModel {
         lastError = nil
     }
 
+    func preloadImages() async {
+        await withTaskGroup(of: Void.self) { group in
+            for item in task.items {
+                let url = item.imageUrl
+                group.addTask {
+                    do {
+                        _ = try await URLSession.shared.data(from: url)
+                    } catch {
+                        print("Failed to load image:", error)
+                    }
+                }
+            }
+        }
+    }
+
     func clearCurrentCell() {
         currentCell = nil
     }

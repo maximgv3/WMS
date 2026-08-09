@@ -23,7 +23,7 @@ struct PutawayTaskView: View {
                 idleText: isCellSelected
                     ? "Сканируйте товар" : "Сканируйте ячейку",
                 activeText: isCellSelected ? "Сканируем товар..." : "Сканируем ячейку...",
-                onScan: { code in viewModel.processCode(code) }
+                onScan: { code in processScan(code) }
             )
             itemsList
         }
@@ -32,6 +32,9 @@ struct PutawayTaskView: View {
             title: "Не удалось разложить товар",
             message: errorMessage
         )
+        .task {
+            await viewModel.preloadImages()
+        }
         .onChange(of: viewModel.isPutawayEnded) { _, isEnded in
             if isEnded {
                 path.append(.putaway(.finish(viewModel.result)))
@@ -181,6 +184,16 @@ struct PutawayTaskView: View {
                 .lineLimit(1)
                 .layoutPriority(1)
                 .monospacedDigit()
+        }
+    }
+
+    private func processScan(_ code: String) {
+        viewModel.processCode(code)
+
+        if viewModel.lastError == nil {
+            FeedbackService.playSuccess()
+        } else {
+            FeedbackService.playError()
         }
     }
 
