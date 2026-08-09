@@ -158,6 +158,7 @@ struct PutawayTaskView: View {
                         itemRow(item: item)
                     }
                 }
+                .animation(.snappy, value: listedItems)
             }
             .scrollIndicators(.hidden)
         }

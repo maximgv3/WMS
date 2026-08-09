@@ -9,12 +9,14 @@ final class PutawayTaskViewModel {
     
     private(set) var currentCell: StorageCell?
     private(set) var placedItems: [Item : StorageCell.ID] = [:]
-    private(set) var lastPlacedItem: Item?
     private(set) var lastError: PutawayError?
-    
+    private var placementOrder: [Item] = [] // Newest first
+
+    var lastPlacedItem: Item? { placementOrder.first }
+
     var currentCellItems: [Item] {
         guard let currentCell else { return [] }
-        return task.items.filter { placedItems[$0] == currentCell.id }
+        return placementOrder.filter { placedItems[$0] == currentCell.id }
     }
     
     var currentCellItemsCount: Int {
@@ -84,10 +86,17 @@ final class PutawayTaskViewModel {
         guard let currentCell else { throw PutawayError.notACell }
         guard let id = Int(itemId) else { throw PutawayError.notAnItem }
         guard let item = task.items.first(where: { $0.id == id }) else { throw PutawayError.itemNotInTask }
-        if placedItems[item] == currentCell.id { return }
-        guard !isCurrentCellFull else { throw PutawayError.cellIsFull }
-        placedItems[item] = currentCell.id
-        lastPlacedItem = item
+        // Rescanning an item from this same cell isn't an error and skips the limit
+        if placedItems[item] != currentCell.id {
+            guard !isCurrentCellFull else { throw PutawayError.cellIsFull }
+            placedItems[item] = currentCell.id
+        }
+        markAsLastPlaced(item)
+    }
+
+    private func markAsLastPlaced(_ item: Item) {
+        placementOrder.removeAll { $0 == item }
+        placementOrder.insert(item, at: 0)
     }
     
     private func isCellCode(_ code: String) -> Bool {
