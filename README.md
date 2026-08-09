@@ -4,13 +4,13 @@
   <img src="assets/picking-demo.gif" width="300" alt="Picking flow demo" />
 </p>
 
-A warehouse operations app built with SwiftUI. The current implementation focuses on a warehouse picking flow: an operator receives a task from API-style mock JSON, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
+A warehouse operations app built with SwiftUI. Two warehouse flows are implemented, both driven by API-style mock JSON. In Picking, an operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request. In Putaway, the operator scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up.
 
-Picking is the first implemented warehouse module. The Profile tab is the second developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Putaway, Returns check, and other warehouse operations.
+Picking and Putaway are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Returns check and other warehouse operations.
 
 ## Project Status
 
-In development. The Picking module is the most complete part of the app; Putaway, Returns check, and other warehouse modules are planned.
+In development. Picking is the most complete module and Putaway is fully playable end to end; Returns check and other warehouse modules are planned.
 
 ## Screenshots
 
@@ -55,6 +55,16 @@ A demo GIF of the picking flow is shown above.
 - API-style finish request encoding with collected, skipped, and replacement item IDs.
 - Manual debug-only demo controls for testing successful and failed collection without the camera.
 
+### Putaway
+
+- Putaway flow: fetch task, scan a storage cell, scan items into it, switch cells, finish screen.
+- Free putaway: the task says what to put away, not where. The operator picks a cell and scans its location code.
+- Storage cell card with a fill indicator against the cell capacity of the task.
+- Item list that switches by phase: items left in the cart before a cell is chosen, items already placed once it is.
+- The item just scanned moves to the top of the list, so the list itself confirms the scan.
+- Rejection only when the cell is out of space; re-scanning an item that already lies in the current cell is accepted.
+- API-style finish request encoding with every item-to-cell placement.
+
 ### Profile
 
 - Profile screen with AsyncImage avatar, finance cards, reusable detail rows, async mock loading, loading/error states, and pull-to-refresh.
@@ -68,8 +78,8 @@ A demo GIF of the picking flow is shown above.
 - Animated error banner in the navigation bar.
 - System sound feedback for successful and failed scans.
 - Shared temporary placeholder screen for warehouse modules that are still in development.
-- Mock API-style JSON resources for profile and picking task loading.
-- Mock service for fetching tasks, validating replacements, encoding finish requests, and finishing picking tasks.
+- Mock API-style JSON resources for profile, picking, and putaway task loading.
+- Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking and putaway tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
 - Swift Testing coverage for core picking ViewModel/result behavior, Profile and Rating ViewModel loading states, and document acknowledgement.
 
@@ -107,24 +117,26 @@ A demo GIF of the picking flow is shown above.
 WMS/
 ├── Features/
 │   ├── Operations/
-│   ├── Picking/
-│   │   └── PickingTask/
-│   ├── Profile/
-│   │   ├── Documents/
-│   │   ├── Finance/
-│   │   ├── Rating/
-│   │   ├── Support/
-│   │   └── Tariffs/
-│   ├── Putaway/
-│   └── Returns/
-├── Models/
-│   ├── Operations/
-│   ├── Picking/
+│   │   ├── Picking/
+│   │   │   └── PickingTask/
+│   │   ├── Putaway/
+│   │   ├── Returns/
+│   │   └── Shared/
 │   └── Profile/
 │       ├── Documents/
+│       ├── Finance/
 │       ├── Rating/
 │       ├── Support/
 │       └── Tariffs/
+├── Models/
+│   ├── Operations/
+│   ├── Picking/
+│   ├── Profile/
+│   │   ├── Documents/
+│   │   ├── Rating/
+│   │   ├── Support/
+│   │   └── Tariffs/
+│   └── Putaway/
 ├── Resources/
 │   ├── Assets.xcassets/
 │   ├── MockJSON/
@@ -144,6 +156,8 @@ Where to start reading:
 - `ScannerPreviewView.swift` - SwiftUI wrapper around the AVFoundation scanner.
 - `PickingTaskService.swift` - Picking service protocol and mock implementation.
 - `PickingTaskResultRequest.swift` - Encodable API-style request for finishing a picking task.
+- `PutawayTaskView.swift` - Storage cell card, scanner, and item list for putaway.
+- `PutawayTaskViewModel.swift` - Cell selection, placement, capacity, and placement order.
 - `ProfileRatingView.swift` - Swift Charts rating chart with drag selection.
 - `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
 - `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
@@ -173,12 +187,14 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The mock service includes a test user ID for checking the task fetching error state.
 - Profile and picking task data are loaded from bundled mock JSON files.
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
+- The putaway finish flow encodes item-to-cell placements the same way.
+- The picking and putaway mock tasks share item IDs, so one set of printed codes works in both modules.
 - Picking onboarding completion is stored locally with `@AppStorage`.
 - The task menu includes debug-only demo controls and an onboarding replay action for local testing.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - The settings entry point is hidden until the app has configurable options.
 - Camera permission handling blocks warehouse operations when camera access is missing.
-- Putaway, Returns check, and other warehouse operations are planned as future modules.
+- Returns check and other warehouse operations are planned as future modules.
 
 ## Future Improvements
 
