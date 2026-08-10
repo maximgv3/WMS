@@ -3,7 +3,10 @@ import Observation
 
 @Observable
 final class PickingTaskViewModel {
-    static let collectAllItemsCheatCode = 666
+
+    #if DEBUG
+        static let collectAllItemsCheatCode = 666
+    #endif
 
     private var pickingTask: PickingTask
     private var pickingTaskService: PickingTaskServiceProtocol
@@ -14,22 +17,29 @@ final class PickingTaskViewModel {
 
     private(set) var collectedItems: [Item] = []
     private(set) var skippedItems: [Item] = []
-    private(set) var replacements: [Item: Int] = [:] // Old Item : New item id
-    var isPickingEnded: Bool { collectedItemsCount + skippedItemsCount == allItemsCount }
+    private(set) var replacements: [Item: Int] = [:]  // Old Item : New item id
+    var isPickingEnded: Bool {
+        collectedItemsCount + skippedItemsCount == allItemsCount
+    }
 
     var leftItems: [Item] {
-        sortedByPlacement(pickingTask.allItems.filter { item in
-            !collectedItems.contains(item)
-                && !skippedItems.contains(item)
-                && !replacements.keys.contains(item)
-        })
+        sortedByPlacement(
+            pickingTask.allItems.filter { item in
+                !collectedItems.contains(item)
+                    && !skippedItems.contains(item)
+                    && !replacements.keys.contains(item)
+            }
+        )
     }
 
     var currentItem: Item? {
         leftItems.first
     }
 
-    init(pickingTask: PickingTask, pickingTaskService: PickingTaskServiceProtocol) {
+    init(
+        pickingTask: PickingTask,
+        pickingTaskService: PickingTaskServiceProtocol
+    ) {
         self.pickingTask = pickingTask
         self.pickingTaskService = pickingTaskService
     }
@@ -42,11 +52,12 @@ final class PickingTaskViewModel {
     }
 
     func tryToCollect(itemId: Int) throws {
-        if itemId == Self.collectAllItemsCheatCode {
-            collectedItems += leftItems
-            return
-        }
-
+        #if DEBUG
+            if itemId == Self.collectAllItemsCheatCode {
+                collectedItems += leftItems
+                return
+            }
+        #endif
         guard !isCollectedOrReplacementIdAlreadyUsed(itemId) else {
             throw PickingTaskError.alreadyCollected
         }
@@ -73,7 +84,10 @@ final class PickingTaskViewModel {
         guard !isCollectedOrReplacementIdAlreadyUsed(replacementId) else {
             throw PickingTaskError.alreadyCollected
         }
-        if await pickingTaskService.checkIfIdAvailableForReplacement(id: currentItem.id, replacementId: replacementId) {
+        if await pickingTaskService.checkIfIdAvailableForReplacement(
+            id: currentItem.id,
+            replacementId: replacementId
+        ) {
             registerReplacement(replacementId: replacementId)
         } else {
             throw PickingTaskError.cantUseForReplacement
@@ -108,10 +122,13 @@ final class PickingTaskViewModel {
         items.sorted { lhs, rhs in
             let lhsPlacement = lhs.placement ?? ""
             let rhsPlacement = rhs.placement ?? ""
-            let placementComparison = lhsPlacement.localizedStandardCompare(rhsPlacement)
+            let placementComparison = lhsPlacement.localizedStandardCompare(
+                rhsPlacement
+            )
 
             if placementComparison == .orderedSame {
-                return lhs.article.localizedStandardCompare(rhs.article) == .orderedAscending
+                return lhs.article.localizedStandardCompare(rhs.article)
+                    == .orderedAscending
             }
 
             return placementComparison == .orderedAscending
