@@ -57,7 +57,7 @@ final class PutawayTaskViewModel {
             }
             lastError = nil
         } catch {
-            lastError = error as? PutawayError // Only PutawayError is thrown above
+            lastError = error
         }
     }
 
@@ -84,12 +84,12 @@ final class PutawayTaskViewModel {
         currentCell = nil
     }
     
-    private func processCellCode(_ cellId: String) throws {
+    private func processCellCode(_ cellId: String) throws(PutawayError) {
         guard currentCell == nil else { throw PutawayError.notAnItem }
         currentCell = StorageCell(id: cellId)
     }
     
-    private func processItemIdCode(_ itemId: String) throws {
+    private func processItemIdCode(_ itemId: String) throws(PutawayError) {
         guard let currentCell else { throw PutawayError.notACell }
         guard let id = Int(itemId) else { throw PutawayError.notAnItem }
         guard let item = task.items.first(where: { $0.id == id }) else { throw PutawayError.itemNotInTask }
