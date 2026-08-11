@@ -68,10 +68,10 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
             collectedItemIds: result.collectedItems.map(\.id),
             skippedItemIds: result.skippedItems.map(\.id),
             replacements: result.replacements.map {
-                originalItem,
+                originalItemId,
                 replacementId in
                 Replacement(
-                    originalItemId: originalItem.id,
+                    originalItemId: originalItemId,
                     replacementId: replacementId
                 )
             }

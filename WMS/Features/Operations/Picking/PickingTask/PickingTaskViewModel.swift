@@ -17,7 +17,7 @@ final class PickingTaskViewModel {
 
     private(set) var collectedItems: [Item] = []
     private(set) var skippedItems: [Item] = []
-    private(set) var replacements: [Item: Int] = [:]  // Old Item : New item id
+    private(set) var replacements: [Item.ID: Int] = [:]  // Old item id : New item id
     var isPickingEnded: Bool {
         collectedItemsCount + skippedItemsCount == allItemsCount
     }
@@ -25,9 +25,9 @@ final class PickingTaskViewModel {
     var leftItems: [Item] {
         sortedByPlacement(
             pickingTask.allItems.filter { item in
-                !collectedItems.contains(item)
-                    && !skippedItems.contains(item)
-                    && !replacements.keys.contains(item)
+                !collectedItems.contains { $0.id == item.id }
+                    && !skippedItems.contains { $0.id == item.id }
+                    && replacements[item.id] == nil
             }
         )
     }
@@ -110,7 +110,7 @@ final class PickingTaskViewModel {
     }
     private func registerReplacement(replacementId: Int) {
         guard let currentItem else { return }
-        replacements[currentItem] = replacementId
+        replacements[currentItem.id] = replacementId
     }
 
     private func isCollectedOrReplacementIdAlreadyUsed(_ itemId: Int) -> Bool {

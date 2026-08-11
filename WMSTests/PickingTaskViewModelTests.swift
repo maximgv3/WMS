@@ -99,7 +99,7 @@ struct PickingTaskViewModelTests {
 
         try await viewModel.tryToReplace(replacementId: 111)
 
-        #expect(viewModel.replacements == [item1: 111])
+        #expect(viewModel.replacements == [item1.id: 111])
         #expect(viewModel.collectedItemsCount == 1)
         #expect(viewModel.currentItem == item2)
         #expect(viewModel.isPickingEnded == false)
@@ -133,7 +133,7 @@ struct PickingTaskViewModelTests {
             try await viewModel.tryToReplace(replacementId: 111)
         }
 
-        #expect(viewModel.replacements == [item1: 111])
+        #expect(viewModel.replacements == [item1.id: 111])
         #expect(viewModel.currentItem == item2)
     }
     
@@ -145,7 +145,7 @@ struct PickingTaskViewModelTests {
         let result = PickingResult(
             collectedItems: collectedItems,
             skippedItems: skippedItems,
-            replacements: [replacedItem: 111]
+            replacements: [replacedItem.id: 111]
         )
 
         #expect(result.collectedCount == 3)
