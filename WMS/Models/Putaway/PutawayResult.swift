@@ -1,5 +1,5 @@
 import Foundation
 
 nonisolated struct PutawayResult: Hashable, Sendable {
-    let placedItems: [Item: StorageCell.ID]
+    let placedItems: [Item.ID: StorageCell.ID]
 }

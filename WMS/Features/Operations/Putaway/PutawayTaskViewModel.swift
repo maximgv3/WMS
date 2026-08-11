@@ -8,7 +8,7 @@ final class PutawayTaskViewModel {
     let service: PutawayTaskServiceProtocol
     
     private(set) var currentCell: StorageCell?
-    private(set) var placedItems: [Item : StorageCell.ID] = [:]
+    private(set) var placedItems: [Item.ID : StorageCell.ID] = [:]
     private(set) var lastError: PutawayError?
     private var placementOrder: [Item] = [] // Newest first
 
@@ -16,7 +16,7 @@ final class PutawayTaskViewModel {
 
     var currentCellItems: [Item] {
         guard let currentCell else { return [] }
-        return placementOrder.filter { placedItems[$0] == currentCell.id }
+        return placementOrder.filter { placedItems[$0.id] == currentCell.id }
     }
     
     var currentCellItemsCount: Int {
@@ -39,7 +39,7 @@ final class PutawayTaskViewModel {
     
     var allItemsCount: Int { task.items.count }
     
-    var leftItems: [Item] { task.items.filter { placedItems[$0] == nil } }
+    var leftItems: [Item] { task.items.filter { placedItems[$0.id] == nil } }
     var isPutawayEnded: Bool { leftItems.isEmpty }
     var result: PutawayResult { PutawayResult(placedItems: placedItems) }
     
@@ -94,9 +94,9 @@ final class PutawayTaskViewModel {
         guard let id = Int(itemId) else { throw PutawayError.notAnItem }
         guard let item = task.items.first(where: { $0.id == id }) else { throw PutawayError.itemNotInTask }
         // Rescanning an item from this same cell isn't an error and skips the limit
-        if placedItems[item] != currentCell.id {
+        if placedItems[item.id] != currentCell.id {
             guard !isCurrentCellFull else { throw PutawayError.cellIsFull }
-            placedItems[item] = currentCell.id
+            placedItems[item.id] = currentCell.id
         }
         markAsLastPlaced(item)
     }

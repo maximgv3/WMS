@@ -54,8 +54,8 @@ final class PutawayTaskServiceMock: PutawayTaskServiceProtocol {
         PutawayTaskResultRequest(
             userId: userId,
             placements: result.placedItems
-                .map { item, cell in
-                    Placement(itemId: item.id, cell: cell)
+                .map { itemId, cell in
+                    Placement(itemId: itemId, cell: cell)
                 }
                 .sorted { $0.itemId < $1.itemId }
         )
