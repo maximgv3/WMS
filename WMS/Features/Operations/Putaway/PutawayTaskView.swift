@@ -27,14 +27,15 @@ struct PutawayTaskView: View {
             )
             itemsList
         }
-        .padding(16)
+        .padding([.horizontal, .top], 16)
         .safeAreaInset(edge: .bottom) {
             ZStack {
                 if viewModel.isAllItemsPlaced {
                     PrimaryButton(
                         "Закончить задание",
                         background: ColorPalette.success,
-                        foreground: ColorPalette.surfacePrimary
+                        foreground: ColorPalette.surfacePrimary,
+                        isGlassy: true
                     ) {
                         path.append(.putaway(.finish(viewModel.result)))
                     }

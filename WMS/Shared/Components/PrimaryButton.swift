@@ -11,6 +11,7 @@ struct PrimaryButton: View {
     private let foreground: Color
     private let isLoading: Bool
     private let isDisabled: Bool
+    private let isGlassy: Bool
     private let variant: Variant
     private let action: () -> Void
     init(
@@ -19,6 +20,7 @@ struct PrimaryButton: View {
         foreground: Color = ColorPalette.brandPrimary,
         isLoading: Bool = false,
         isDisabled: Bool = false,
+        isGlassy: Bool = false,
         variant: Variant = .fullWidth,
         action: @escaping () -> Void
     ) {
@@ -27,6 +29,7 @@ struct PrimaryButton: View {
         self.foreground = foreground
         self.isLoading = isLoading
         self.isDisabled = isDisabled
+        self.isGlassy = isGlassy
         self.variant = variant
         self.action = action
     }
@@ -35,25 +38,53 @@ struct PrimaryButton: View {
         Button {
             action()
         } label: {
-            ZStack {
-                ProgressView()
-                    .tint(foreground)
-                    .opacity(isLoading ? 1 : 0)
-
-                Text(title)
-                    .font(style.font)
-                    .foregroundStyle(foreground)
-                    .opacity(isLoading ? 0 : 1)
-            }
-            .frame(maxWidth: style.maxWidth)
-            .padding(.horizontal, style.horizontalPadding)
-            .padding(.vertical, style.verticalPadding)
-            .background(background)
-            .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius, style: .continuous))
+            styledLabel
         }
         .buttonStyle(.plain)
         .disabled(isDisabled || isLoading)
         .animation(.easeInOut(duration: 0.2), value: isLoading)
+    }
+
+    private var label: some View {
+        ZStack {
+            ProgressView()
+                .tint(foreground)
+                .opacity(isLoading ? 1 : 0)
+
+            Text(title)
+                .font(style.font)
+                .foregroundStyle(foreground)
+                .opacity(isLoading ? 0 : 1)
+        }
+        .frame(maxWidth: style.maxWidth)
+        .padding(.horizontal, style.horizontalPadding)
+        .padding(.vertical, style.verticalPadding)
+    }
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: style.cornerRadius, style: .continuous)
+    }
+
+    @ViewBuilder
+    private var styledLabel: some View {
+        if isGlassy {
+            if #available(iOS 26, *) {
+                label.glassEffect(
+                    .regular.tint(background).interactive(),
+                    in: shape
+                )
+            } else {
+                filledLabel
+            }
+        } else {
+            filledLabel
+        }
+    }
+
+    private var filledLabel: some View {
+        label
+            .background(background)
+            .clipShape(shape)
     }
 
     private var style: Style {
@@ -93,6 +124,14 @@ private struct Style {
 
         PrimaryButton("Завершить задание", isLoading: true) {}
             .padding(.horizontal, 64)
+
+        PrimaryButton(
+            "Закончить задание",
+            background: ColorPalette.success,
+            foreground: ColorPalette.surfacePrimary,
+            isGlassy: true
+        ) {}
+        .padding(.horizontal, 64)
 
         PrimaryButton("Попробовать снова", variant: .capsule) {}
 
