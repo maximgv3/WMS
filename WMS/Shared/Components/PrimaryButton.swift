@@ -7,19 +7,24 @@ struct PrimaryButton: View {
     }
 
     private let title: String
+    private let background: Color
+    private let foreground: Color
     private let isLoading: Bool
     private let isDisabled: Bool
     private let variant: Variant
     private let action: () -> Void
-
     init(
         _ title: String,
+        background: Color = ColorPalette.accentPrimary,
+        foreground: Color = ColorPalette.brandPrimary,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         variant: Variant = .fullWidth,
         action: @escaping () -> Void
     ) {
         self.title = title
+        self.background = background
+        self.foreground = foreground
         self.isLoading = isLoading
         self.isDisabled = isDisabled
         self.variant = variant
@@ -32,18 +37,18 @@ struct PrimaryButton: View {
         } label: {
             ZStack {
                 ProgressView()
-                    .tint(ColorPalette.brandPrimary)
+                    .tint(foreground)
                     .opacity(isLoading ? 1 : 0)
 
                 Text(title)
                     .font(style.font)
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(foreground)
                     .opacity(isLoading ? 0 : 1)
             }
             .frame(maxWidth: style.maxWidth)
             .padding(.horizontal, style.horizontalPadding)
             .padding(.vertical, style.verticalPadding)
-            .background(ColorPalette.accentPrimary)
+            .background(background)
             .clipShape(RoundedRectangle(cornerRadius: style.cornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)

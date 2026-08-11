@@ -40,7 +40,7 @@ final class PutawayTaskViewModel {
     var allItemsCount: Int { task.items.count }
     
     var leftItems: [Item] { task.items.filter { placedItems[$0.id] == nil } }
-    var isPutawayEnded: Bool { leftItems.isEmpty }
+    var isAllItemsPlaced: Bool { leftItems.isEmpty }
     var result: PutawayResult { PutawayResult(placedItems: placedItems) }
     
     init(task: PutawayTask, service: PutawayTaskServiceProtocol) {
@@ -83,7 +83,7 @@ final class PutawayTaskViewModel {
     func clearCurrentCell() {
         currentCell = nil
     }
-    
+
     private func processCellCode(_ cellId: String) throws(PutawayError) {
         guard currentCell == nil else { throw PutawayError.notAnItem }
         currentCell = StorageCell(id: cellId)

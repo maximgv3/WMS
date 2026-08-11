@@ -28,17 +28,31 @@ struct PutawayTaskView: View {
             itemsList
         }
         .padding(16)
+        .safeAreaInset(edge: .bottom) {
+            ZStack {
+                if viewModel.isAllItemsPlaced {
+                    PrimaryButton(
+                        "Закончить задание",
+                        background: ColorPalette.success,
+                        foreground: ColorPalette.surfacePrimary
+                    ) {
+                        path.append(.putaway(.finish(viewModel.result)))
+                    }
+                    .padding(.horizontal, 16)
+                    .transition(.scale(scale: 0.96).combined(with: .opacity))
+                }
+            }
+            .animation(
+                .spring(response: 0.22, dampingFraction: 0.55),
+                value: viewModel.isAllItemsPlaced
+            )
+        }
         .errorBanner(
             title: "Не удалось разложить товар",
             message: errorMessage
         )
         .task {
             await viewModel.preloadImages()
-        }
-        .onChange(of: viewModel.isPutawayEnded) { _, isEnded in
-            if isEnded {
-                path.append(.putaway(.finish(viewModel.result)))
-            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
