@@ -42,6 +42,14 @@ struct PutawayTaskView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                TaskProgressMenu(doneCount: viewModel.placedItemsCount, totalCount: viewModel.allItemsCount) {
+                    if viewModel.placedItemsCount > 0 {
+                        Text("Разложено \(viewModel.placedItemsCount)")
+                    }
+                    Text("Необработано \(viewModel.leftItems.count) шт.")
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 exitMenu
             }

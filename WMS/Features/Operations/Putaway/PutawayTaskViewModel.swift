@@ -28,9 +28,16 @@ final class PutawayTaskViewModel {
         guard currentCell != nil, task.cellCapacity > 0 else { return 0 }
         return Double(currentCellItemsCount) / Double(task.cellCapacity)
     }
+    
     var isCurrentCellFull: Bool {
         currentCellItemsCount >= task.cellCapacity
     }
+    
+    var placedItemsCount: Int {
+        placedItems.count
+    }
+    
+    var allItemsCount: Int { task.items.count }
     
     var leftItems: [Item] { task.items.filter { placedItems[$0] == nil } }
     var isPutawayEnded: Bool { leftItems.isEmpty }
