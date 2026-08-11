@@ -1,37 +1,32 @@
 import SwiftUI
 
-struct PickingProgressMenu: View {
+struct TaskProgressMenu<MenuContent: View>: View {
+    
+    private let doneCount: Int
     private let totalCount: Int
-    private let collectedCount: Int
-    private let skippedCount: Int
+    private let menuContent: MenuContent
+    
     private var progressPercentage: Double {
         guard totalCount > 0 else { return 0 }
-        return Double(collectedCount + skippedCount) / Double(totalCount)
+        return Double(doneCount) / Double(totalCount)
     }
     
-    init(totalCount: Int, collectedCount: Int, skippedCount: Int) {
+    init(doneCount: Int, totalCount: Int, @ViewBuilder menuContent: () -> MenuContent ) {
+        self.doneCount = doneCount
         self.totalCount = totalCount
-        self.collectedCount = collectedCount
-        self.skippedCount = skippedCount
+        self.menuContent = menuContent()
     }
     
     var body: some View {
-        Menu {
-            Text("Собрано \(collectedCount) из \(totalCount)")
-            if skippedCount > 0 {
-                Text("Пропущено \(skippedCount)")
-            }
-        } label: {
-            progressIndicator
-        }
+        Menu { menuContent } label: { progressIndicator }
         .buttonStyle(.plain)
     }
-
+    
     private var progressIndicator: some View {
         HStack(spacing: 10) {
             circularProgress
             Text(
-                "\(collectedCount + skippedCount)/\(totalCount)"
+                "\(doneCount)/\(totalCount)"
             )
             .font(.system(size: 14, weight: .semibold))
             .foregroundStyle(ColorPalette.brandPrimary)
@@ -48,12 +43,12 @@ struct PickingProgressMenu: View {
             value: progressPercentage
         )
     }
-
+    
     private var circularProgress: some View {
         ZStack {
             Circle()
                 .stroke(ColorPalette.brandMuted.opacity(0.22), lineWidth: 3)
-
+            
             Circle()
                 .trim(from: 0, to: progressPercentage)
                 .stroke(
@@ -71,5 +66,5 @@ struct PickingProgressMenu: View {
 }
 
 #Preview {
-    PickingProgressMenu(totalCount: 10, collectedCount: 4, skippedCount: 0)
+TaskProgressMenu(doneCount: 6, totalCount: 10, menuContent: { Text("Собрано 6 из 10") })
 }

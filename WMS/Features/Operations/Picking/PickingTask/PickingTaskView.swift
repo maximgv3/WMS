@@ -165,12 +165,19 @@ struct PickingTaskView: View {
     }
 
     // MARK: - Progress
-    private var progressMenu: PickingProgressMenu {
-        PickingProgressMenu(
-            totalCount: viewModel.allItemsCount,
-            collectedCount: viewModel.collectedItemsCount,
-            skippedCount: viewModel.skippedItemsCount
-        )
+    private var progressMenu: some View {
+        TaskProgressMenu(
+            doneCount: viewModel.collectedItemsCount
+                + viewModel.skippedItemsCount,
+            totalCount: viewModel.allItemsCount
+        ) {
+            Text(
+                "Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)"
+            )
+            if viewModel.skippedItemsCount > 0 {
+                Text("Пропущено \(viewModel.skippedItemsCount)")
+            }
+        }
     }
 
     private var topMenu: some View {
