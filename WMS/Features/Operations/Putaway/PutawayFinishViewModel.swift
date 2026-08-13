@@ -11,7 +11,14 @@ final class PutawayFinishViewModel {
     var errorMessage: String?
 
     var resultText: String {
-        "Разложено товаров: \(result.placedItems.count)"
+        var resultDraft = ""
+        if !result.placedItems.isEmpty {
+            resultDraft += "Разложено товаров: \(result.placedItems.count)\n"
+        }
+        if !result.skippedItemIds.isEmpty {
+            resultDraft += "Пропущено товаров: \(result.skippedItemIds.count)"
+        }
+        return resultDraft
     }
 
     init(

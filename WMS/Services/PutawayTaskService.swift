@@ -53,6 +53,7 @@ final class PutawayTaskServiceMock: PutawayTaskServiceProtocol {
     {
         PutawayTaskResultRequest(
             userId: userId,
+            skippedItemIds: result.skippedItemIds,
             placements: result.placedItems
                 .map { itemId, cell in
                     Placement(itemId: itemId, cell: cell)

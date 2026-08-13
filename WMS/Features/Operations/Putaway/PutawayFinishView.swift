@@ -40,7 +40,7 @@ struct PutawayFinishView: View {
                 checkmarkImage
                 #endif
 
-                Text("Раскладка завершена")
+                Text("Задание раскладки закрыто")
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.brandPrimary)
 
@@ -69,7 +69,7 @@ struct PutawayFinishView: View {
     }
 
     private var finishButton: some View {
-        PrimaryButton("Завершить задание", isLoading: viewModel.isFinishingTask) {
+        PrimaryButton("Выгрузить результаты", isLoading: viewModel.isFinishingTask) {
             Task {
                 await finish()
             }

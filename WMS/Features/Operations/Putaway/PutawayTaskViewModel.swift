@@ -41,7 +41,7 @@ final class PutawayTaskViewModel {
     
     var leftItems: [Item] { task.items.filter { placedItems[$0.id] == nil } }
     var isAllItemsPlaced: Bool { leftItems.isEmpty }
-    var result: PutawayResult { PutawayResult(placedItems: placedItems) }
+    var result: PutawayResult { PutawayResult(placedItems: placedItems, skippedItemIds: leftItems.map(\.id)) }
     
     init(task: PutawayTask, service: PutawayTaskServiceProtocol) {
         self.task = task

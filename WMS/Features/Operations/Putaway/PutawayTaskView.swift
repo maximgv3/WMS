@@ -5,6 +5,7 @@ struct PutawayTaskView: View {
     @State private var viewModel: PutawayTaskViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State var isScanningEnabled = false
+    @State var isEarlyFinishPresented = false
 
     init(
         task: PutawayTask,
@@ -22,7 +23,8 @@ struct PutawayTaskView: View {
                 isScanningEnabled: $isScanningEnabled,
                 idleText: isCellSelected
                     ? "Сканируйте товар" : "Сканируйте ячейку",
-                activeText: isCellSelected ? "Сканируем товар..." : "Сканируем ячейку...",
+                activeText: isCellSelected
+                    ? "Сканируем товар..." : "Сканируем ячейку...",
                 onScan: { code in processScan(code) }
             )
             itemsList
@@ -58,7 +60,10 @@ struct PutawayTaskView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                TaskProgressMenu(doneCount: viewModel.placedItemsCount, totalCount: viewModel.allItemsCount) {
+                TaskProgressMenu(
+                    doneCount: viewModel.placedItemsCount,
+                    totalCount: viewModel.allItemsCount
+                ) {
                     if viewModel.placedItemsCount > 0 {
                         Text("Разложено \(viewModel.placedItemsCount)")
                     }
@@ -100,6 +105,18 @@ struct PutawayTaskView: View {
 
     private var exitMenu: some View {
         Menu {
+            if !viewModel.isAllItemsPlaced {
+                Button {
+                    viewModel.clearCurrentCell()
+                    isEarlyFinishPresented = true
+                } label: {
+                    Label(
+                        "Завершить досрочно",
+                        systemImage: "flag.checkered"
+                    )
+                }
+            }
+
             Button(role: .destructive) {
                 path.removeAll()
             } label: {
@@ -112,6 +129,20 @@ struct PutawayTaskView: View {
             Image(systemName: "ellipsis.circle")
                 .foregroundStyle(ColorPalette.brandPrimary)
         }
+        .confirmationDialog(
+            "Досрочное завершение",
+            isPresented: $isEarlyFinishPresented,
+            titleVisibility: .visible
+        ) {
+            Button("Завершить", role: .destructive) {
+                path.append(.putaway(.finish(viewModel.result)))
+            }
+        } message: {
+            Text(
+                "Остались неразложенные товары. В случае досрочного завершения, новые задания раскладки нельзя будет брать до следующей смены. Вы уверены?"
+            )
+        }
+
     }
 
     private var storageCellCard: some View {
@@ -150,7 +181,9 @@ struct PutawayTaskView: View {
                     String(viewModel.currentCellItemsCount) + " из "
                         + String(viewModel.task.cellCapacity)
                 )
-                .contentTransition(.numericText(value: Double(viewModel.currentCellItemsCount)))
+                .contentTransition(
+                    .numericText(value: Double(viewModel.currentCellItemsCount))
+                )
             }
             .padding(.horizontal, 16)
             .animation(.snappy, value: viewModel.currentCellItemsCount)
