@@ -102,7 +102,7 @@ final class PutawayTaskViewModel {
     }
 
     private func markAsLastPlaced(_ item: Item) {
-        placementOrder.removeAll { $0 == item }
+        placementOrder.removeAll { $0.id == item.id }
         placementOrder.insert(item, at: 0)
     }
     
