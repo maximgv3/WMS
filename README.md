@@ -1,7 +1,5 @@
 # WMS
 
-## Demo
-
 | Putaway | Picking |
 |:---:|:---:|
 | <img src="assets/putaway-demo.gif" width="260" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" alt="Picking flow demo"> |
