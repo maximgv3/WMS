@@ -2,7 +2,7 @@
 
 | Putaway | Picking |
 |:---:|:---:|
-| <img src="assets/putaway-demo.gif" width="260" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" alt="Picking flow demo"> |
+| <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> |
 | **Putaway:** the operator places items into freely selected storage cells. | **Picking:** the operator collects items according to the task list. |
 
 A warehouse operations app built with SwiftUI. Two warehouse flows are implemented, both driven by API-style mock JSON. In Putaway, an operator receives a task, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
