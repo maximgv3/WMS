@@ -13,7 +13,7 @@ struct MockData {
         do {
             return try MockJSONLoader.decode(PutawayTask.self, from: "putaway_task")
         } catch {
-            return PutawayTask(items: [], cellCapacity: 0)
+            return PutawayTask(items: [], cellCapacity: 0, container: PutawayContainer(id: "", location: ""))
         }
     }()
 

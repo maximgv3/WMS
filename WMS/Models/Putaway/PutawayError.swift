@@ -5,4 +5,5 @@ enum PutawayError: Error {
     case cellIsFull
     case notACell
     case notAnItem
+    case wrongContainer
 }

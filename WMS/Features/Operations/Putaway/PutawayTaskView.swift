@@ -91,7 +91,7 @@ struct PutawayTaskView: View {
             return "Этого товара нет в задании"
         case .cellIsFull:
             return "В ячейке нет места"
-        case nil:
+        case .wrongContainer, nil:
             return nil
         }
     }

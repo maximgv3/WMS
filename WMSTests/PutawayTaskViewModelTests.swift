@@ -255,7 +255,11 @@ struct PutawayTaskViewModelTests {
         cellCapacity: Int = 2
     ) -> PutawayTaskViewModel {
         PutawayTaskViewModel(
-            task: PutawayTask(items: items, cellCapacity: cellCapacity),
+            task: PutawayTask(
+                items: items,
+                cellCapacity: cellCapacity,
+                container: PutawayContainer(id: "", location: "")
+            ),
             service: PutawayTaskServiceMock()
         )
     }

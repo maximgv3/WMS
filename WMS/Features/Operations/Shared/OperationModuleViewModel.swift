@@ -27,7 +27,7 @@ final class OperationModuleViewModel {
             switch operationType {
             case .putaway:
                 let task = try await putawayService.fetchTask(userId: userId)
-                return .putaway(.task(task))
+                return .putaway(.container(task))
             case .picking:
                 let task = try await pickingService.fetchTask(userId: userId)
                 return .picking(.task(task))

@@ -62,6 +62,8 @@ struct OperationModuleView: View {
                     }
                 case .putaway(let putawayRoute):
                     switch putawayRoute {
+                    case .container(let task):
+                        PutawayContainerView(task: task, path: $path)
                     case .task(let task):
                         PutawayTaskView(task: task, service: viewModel.putawayService, path: $path)
                     case .finish(let result):

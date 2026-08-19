@@ -1,5 +1,9 @@
 {
   "cell_capacity": 3,
+  "container": {
+    "id": "WMSCT481203",
+    "location": "Блок 3, ряд 12"
+  },
   "items": [
     {
       "id": 7839201741,
