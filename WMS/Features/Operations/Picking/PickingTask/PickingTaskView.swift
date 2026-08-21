@@ -81,7 +81,12 @@ struct PickingTaskView: View {
             isOnboardingPresented = !isPickingOnboardingComplete
         }
         .fullScreenCover(isPresented: $isOnboardingPresented) {
-            PickingOnboardingView()
+            OnboardingView(
+                pages: OnboardingPages.Picking.pages,
+                completionImage: .pickingOnboardingEnd
+            ) {
+                isPickingOnboardingComplete = true
+            }
         }
         .alert("Уверены?", isPresented: $isSkipConfirmationPresented) {
             Button("Отмена", role: .cancel) {}
