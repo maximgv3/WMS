@@ -11,6 +11,7 @@ DerivedData/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata/
+*.xcscheme
 
 # Swift Package Manager
 .swiftpm/
