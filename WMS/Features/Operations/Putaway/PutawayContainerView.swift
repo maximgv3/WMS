@@ -26,7 +26,7 @@ struct PutawayContainerView: View {
                 activeText: "Сканируем контейнер...",
                 onScan: { code in processScan(code) }
             )
-            Text("Найдите контейнер на месте и отсканируйте его код")
+            Text("Найдите контейнер на месте\nи отсканируйте его код")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(ColorPalette.brandMuted)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -55,17 +55,25 @@ struct PutawayContainerView: View {
     }
 
     private var containerCard: some View {
+
         VStack(alignment: .leading, spacing: 12) {
-            Text("Контейнер")
-            Text(viewModel.container.id)
-                .font(.system(size: 24, weight: .medium))
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-            HStack(spacing: 6) {
-                Image(systemName: "mappin.and.ellipse")
-                Text(viewModel.container.location)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.6)
+            HStack(spacing: 24) {
+                Image(systemName: "tray.full")
+                    .font(.system(size: 40))
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Контейнер")
+                    Text(viewModel.container.id)
+                        .font(.system(size: 24, weight: .medium))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
+                    HStack(spacing: 6) {
+                        Image(systemName: "mappin.and.ellipse")
+                        Text(viewModel.container.location)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.6)
+                    }
+                }
+                Spacer()
             }
         }
         .padding(.horizontal, 16)
