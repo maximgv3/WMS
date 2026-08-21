@@ -4,9 +4,8 @@ struct ScannerView: View {
     @Binding var isScanningEnabled: Bool
     let idleText: String
     let activeText: String
+    var previewHeight: CGFloat = 130
     let onScan: (String) -> Void
-
-    private let previewHeight: CGFloat = 130
 
     var body: some View {
         ScannerPreviewView(
@@ -15,7 +14,8 @@ struct ScannerView: View {
             onScan: onScan
         )
         .frame(maxWidth: .infinity)
-        .frame(height: previewHeight)
+        .frame(maxHeight: previewHeight)
+        .layoutPriority(1)
         .clipShape(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
         )

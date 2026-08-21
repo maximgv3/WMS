@@ -24,12 +24,13 @@ struct PutawayContainerView: View {
                 isScanningEnabled: $isScanningEnabled,
                 idleText: "Сканируйте контейнер",
                 activeText: "Сканируем контейнер...",
+                previewHeight: 400,
                 onScan: { code in processScan(code) }
             )
             Text("Найдите контейнер на месте\nи отсканируйте его код")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(ColorPalette.brandMuted)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, minHeight: 56, maxHeight: .infinity)
         }
         .padding([.horizontal, .top], 16)
         .errorBanner(
