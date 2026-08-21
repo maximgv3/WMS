@@ -143,7 +143,7 @@ struct OperationModuleView: View {
                 Image(.picking)
                     .resizable()
                     .scaledToFit()
-            default:
+            case .returns:
                 Image(systemName: "clock")
             }
         }
