@@ -10,8 +10,7 @@ struct ErrorBannerModifier: ViewModifier {
             .overlay(alignment: .top) {
                 if let message {
                     ErrorBannerView(title: title, message: message)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 16)
+                        .padding(16)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
             }
