@@ -94,3 +94,10 @@ struct OnboardingPage {
         completionImage: .pickingOnboardingEnd
     ) {}
 }
+
+#Preview("Раскладка") {
+    OnboardingView(
+        pages: OnboardingPages.Putaway.pages,
+        completionImage: .putawayOnboardingEnd
+    ) {}
+}

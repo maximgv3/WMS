@@ -34,4 +34,37 @@ enum OnboardingPages {
             ),
         ]
     }
+
+    enum Putaway {
+        static let pages: [OnboardingPage] = [
+            .init(
+                image: .scanContainer,
+                text: "Найдите нужный контейнер и отсканируйте его"
+            ),
+            .init(
+                image: .placeItemsInCart,
+                text: "Переложите товары из контейнера в тележку"
+            ),
+            .init(
+                image: .scanPlace,
+                text: "Выберите любую свободную ячейку и отсканируйте её"
+            ),
+            .init(
+                image: .scanItemInCell,
+                text: "Отсканируйте товар и положите его в ячейку"
+            ),
+            .init(
+                image: .changeCell,
+                text: "Когда место в ячейке закончилось, смените её"
+            ),
+            .init(
+                image: .finishTask,
+                text: "Разложите таким образом все товары и завершите задание"
+            ),
+            .init(
+                image: .returnEmptyContainer,
+                text: "Откатите пустой контейнер в зону хранения"
+            ),
+        ]
+    }
 }

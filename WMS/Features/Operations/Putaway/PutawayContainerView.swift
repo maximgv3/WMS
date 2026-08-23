@@ -2,9 +2,12 @@ import SwiftUI
 
 struct PutawayContainerView: View {
 
+    @AppStorage("isPutawayOnboardingComplete") private
+        var isPutawayOnboardingComplete = false
     @State private var viewModel: PutawayContainerViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State private var isScanningEnabled = false
+    @State private var isOnboardingPresented = false
 
     private let task: PutawayTask
 
@@ -37,6 +40,17 @@ struct PutawayContainerView: View {
             title: "Не удалось начать раскладку",
             message: errorMessage
         )
+        .onAppear {
+            isOnboardingPresented = !isPutawayOnboardingComplete
+        }
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
+            OnboardingView(
+                pages: OnboardingPages.Putaway.pages,
+                completionImage: .putawayOnboardingEnd
+            ) {
+                isPutawayOnboardingComplete = true
+            }
+        }
     }
 
     private var errorText: String? {
