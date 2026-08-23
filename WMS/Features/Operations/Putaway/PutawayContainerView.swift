@@ -9,6 +9,13 @@ struct PutawayContainerView: View {
     @State private var isScanningEnabled = false
     @State private var isOnboardingPresented = false
 
+    #if DEBUG
+        @AppStorage("isPutawayDemoModeOn") private var isDemoModeOn = false
+        @State private var isDemoConfirmationPresented = false
+
+        private let demoWrongContainerCode = "WMSCT000000"
+    #endif
+
     private let task: PutawayTask
 
     init(
@@ -23,13 +30,7 @@ struct PutawayContainerView: View {
     var body: some View {
         VStack(spacing: 16) {
             containerCard
-            ScannerView(
-                isScanningEnabled: $isScanningEnabled,
-                idleText: "Сканируйте контейнер",
-                activeText: "Сканируем контейнер...",
-                previewHeight: 400,
-                onScan: { code in processScan(code) }
-            )
+            scanner
             Text("Найдите контейнер на месте\nи отсканируйте его код")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(ColorPalette.brandMuted)
@@ -77,6 +78,18 @@ struct PutawayContainerView: View {
 
     private var exitMenu: some View {
         Menu {
+            #if DEBUG
+                Button {
+                    demoButtonTapped()
+                } label: {
+                    Label(
+                        "Демо-режим",
+                        systemImage:
+                            "arrow.trianglehead.2.clockwise.rotate.90.camera"
+                    )
+                }
+            #endif
+
             Button {
                 isPutawayOnboardingComplete = false
                 isOnboardingPresented = true
@@ -100,7 +113,104 @@ struct PutawayContainerView: View {
             Image(systemName: "ellipsis.circle")
                 .foregroundStyle(ColorPalette.brandPrimary)
         }
+        #if DEBUG
+            .confirmationDialog(
+                "Демо-режим",
+                isPresented: $isDemoConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button("Включить") {
+                    demoModeToggle()
+                }
+            } message: {
+                Text(
+                    "Демо-режим заменит камеру на кнопки: ошибочный скан и скан нужного контейнера. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                )
+            }
+        #endif
     }
+
+    @ViewBuilder
+    private var scanner: some View {
+        #if DEBUG
+            if isDemoModeOn {
+                demoControls
+            } else {
+                scannerView
+            }
+        #else
+            scannerView
+        #endif
+    }
+
+    private var scannerView: some View {
+        ScannerView(
+            isScanningEnabled: $isScanningEnabled,
+            idleText: "Сканируйте контейнер",
+            activeText: "Сканируем контейнер...",
+            previewHeight: 400,
+            onScan: { code in processScan(code) }
+        )
+    }
+
+    #if DEBUG
+        private var demoControls: some View {
+            HStack(spacing: 12) {
+                Button {
+                    processScan(demoWrongContainerCode)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(ColorPalette.error)
+                        .frame(width: 56, height: 56)
+                        .background(ColorPalette.error.opacity(0.12))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+
+                Button {
+                    processScan(viewModel.container.id)
+                } label: {
+                    Text("Контейнер")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(ColorPalette.surfacePrimary)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(ColorPalette.brandPrimary)
+                        .clipShape(
+                            RoundedRectangle(
+                                cornerRadius: 20,
+                                style: .continuous
+                            )
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity)
+            .frame(height: 130)
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(
+                        ColorPalette.brandMuted.opacity(0.35),
+                        style: StrokeStyle(lineWidth: 1, dash: [6])
+                    )
+            }
+        }
+
+        private func demoButtonTapped() {
+            if isDemoModeOn {
+                demoModeToggle()
+            } else {
+                isDemoConfirmationPresented = true
+            }
+        }
+
+        private func demoModeToggle() {
+            isDemoModeOn.toggle()
+            isScanningEnabled = false
+        }
+    #endif
 
     private var containerCard: some View {
 

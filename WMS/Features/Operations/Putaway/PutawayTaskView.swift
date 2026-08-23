@@ -10,6 +10,13 @@ struct PutawayTaskView: View {
     @State var isEarlyFinishPresented = false
     @State private var isOnboardingPresented = false
 
+    #if DEBUG
+        @AppStorage("isPutawayDemoModeOn") private var isDemoModeOn = false
+        @State private var isDemoConfirmationPresented = false
+
+        private let demoWrongCode = "0000000000"
+    #endif
+
     init(
         task: PutawayTask,
         service: PutawayTaskServiceProtocol,
@@ -22,14 +29,7 @@ struct PutawayTaskView: View {
     var body: some View {
         VStack(spacing: 16) {
             storageCellCard
-            ScannerView(
-                isScanningEnabled: $isScanningEnabled,
-                idleText: isCellSelected
-                    ? "Сканируйте товар" : "Сканируйте ячейку",
-                activeText: isCellSelected
-                    ? "Сканируем товар..." : "Сканируем ячейку...",
-                onScan: { code in processScan(code) }
-            )
+            scanner
             itemsList
         }
         .padding([.horizontal, .top], 16)
@@ -128,6 +128,18 @@ struct PutawayTaskView: View {
                 }
             }
 
+            #if DEBUG
+                Button {
+                    demoButtonTapped()
+                } label: {
+                    Label(
+                        "Демо-режим",
+                        systemImage:
+                            "arrow.trianglehead.2.clockwise.rotate.90.camera"
+                    )
+                }
+            #endif
+
             Button {
                 isPutawayOnboardingComplete = false
                 isOnboardingPresented = true
@@ -164,8 +176,126 @@ struct PutawayTaskView: View {
                 "Остались неразложенные товары. В случае досрочного завершения, новые задания раскладки нельзя будет брать до следующей смены. Вы уверены?"
             )
         }
+        #if DEBUG
+            .confirmationDialog(
+                "Демо-режим",
+                isPresented: $isDemoConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button("Включить") {
+                    demoModeToggle()
+                }
+            } message: {
+                Text(
+                    "Демо-режим заменит камеру на кнопки: ошибочный скан, выбор ячейки и укладка товара. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                )
+            }
+        #endif
 
     }
+
+    @ViewBuilder
+    private var scanner: some View {
+        #if DEBUG
+            if isDemoModeOn {
+                demoControls
+            } else {
+                scannerView
+            }
+        #else
+            scannerView
+        #endif
+    }
+
+    private var scannerView: some View {
+        ScannerView(
+            isScanningEnabled: $isScanningEnabled,
+            idleText: isCellSelected
+                ? "Сканируйте товар" : "Сканируйте ячейку",
+            activeText: isCellSelected
+                ? "Сканируем товар..." : "Сканируем ячейку...",
+            onScan: { code in processScan(code) }
+        )
+    }
+
+    #if DEBUG
+        private var demoControls: some View {
+            HStack(spacing: 12) {
+                Button {
+                    processScan(demoWrongCode)
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundStyle(ColorPalette.error)
+                        .frame(width: 56, height: 56)
+                        .background(ColorPalette.error.opacity(0.12))
+                        .clipShape(Circle())
+                }
+                .buttonStyle(.plain)
+
+                if isCellSelected {
+                    if let item = viewModel.leftItems.first {
+                        demoPrimaryButton("Разложить") {
+                            processScan(String(item.id))
+                        }
+                    }
+                } else {
+                    demoPrimaryButton("Ячейка") {
+                        processScan(randomDemoCellCode())
+                    }
+                }
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity)
+            .frame(height: 130)
+            .overlay {
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .strokeBorder(
+                        ColorPalette.brandMuted.opacity(0.35),
+                        style: StrokeStyle(lineWidth: 1, dash: [6])
+                    )
+            }
+        }
+
+        private func demoPrimaryButton(
+            _ title: String,
+            action: @escaping () -> Void
+        ) -> some View {
+            Button(action: action) {
+                Text(title)
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56)
+                    .background(ColorPalette.brandPrimary)
+                    .clipShape(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    )
+            }
+            .buttonStyle(.plain)
+        }
+
+        /// Cell code is six two-digit groups, because `isCellCode` looks for
+        /// exactly five separators
+        private func randomDemoCellCode() -> String {
+            (0..<6)
+                .map { _ in String(format: "%02d", Int.random(in: 1...99)) }
+                .joined(separator: ".")
+        }
+
+        private func demoButtonTapped() {
+            if isDemoModeOn {
+                demoModeToggle()
+            } else {
+                isDemoConfirmationPresented = true
+            }
+        }
+
+        private func demoModeToggle() {
+            isDemoModeOn.toggle()
+            isScanningEnabled = false
+        }
+    #endif
 
     private var storageCellCard: some View {
         ZStack {
