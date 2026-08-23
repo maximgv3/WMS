@@ -51,6 +51,12 @@ struct PutawayContainerView: View {
                 isPutawayOnboardingComplete = true
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                exitMenu
+            }
+        }
     }
 
     private var errorText: String? {
@@ -67,6 +73,33 @@ struct PutawayContainerView: View {
             get: { errorText },
             set: { if $0 == nil { viewModel.clearError() } }
         )
+    }
+
+    private var exitMenu: some View {
+        Menu {
+            Button {
+                isPutawayOnboardingComplete = false
+                isOnboardingPresented = true
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Пройти обучение",
+                    systemImage: "book.closed"
+                )
+            }
+
+            Button(role: .destructive) {
+                path.removeAll()
+            } label: {
+                Label(
+                    "Выйти из модуля",
+                    systemImage: "rectangle.portrait.and.arrow.right"
+                )
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .foregroundStyle(ColorPalette.brandPrimary)
+        }
     }
 
     private var containerCard: some View {
