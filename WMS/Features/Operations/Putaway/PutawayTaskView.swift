@@ -2,10 +2,13 @@ import SwiftUI
 
 struct PutawayTaskView: View {
 
+    @AppStorage("isPutawayOnboardingComplete") private
+        var isPutawayOnboardingComplete = false
     @State private var viewModel: PutawayTaskViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State var isScanningEnabled = false
     @State var isEarlyFinishPresented = false
+    @State private var isOnboardingPresented = false
 
     init(
         task: PutawayTask,
@@ -56,6 +59,14 @@ struct PutawayTaskView: View {
         )
         .task {
             await viewModel.preloadImages()
+        }
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
+            OnboardingView(
+                pages: OnboardingPages.Putaway.pages,
+                completionImage: .putawayOnboardingEnd
+            ) {
+                isPutawayOnboardingComplete = true
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -115,6 +126,17 @@ struct PutawayTaskView: View {
                         systemImage: "flag.checkered"
                     )
                 }
+            }
+
+            Button {
+                isPutawayOnboardingComplete = false
+                isOnboardingPresented = true
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Пройти обучение",
+                    systemImage: "book.closed"
+                )
             }
 
             Button(role: .destructive) {
