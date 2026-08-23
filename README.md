@@ -55,6 +55,7 @@ In development. Putaway and Picking are both complete end to end and covered by 
 - Finish button that appears once the last item is placed, instead of jumping to the finish screen on its own.
 - Early finish from the task menu, behind a confirmation dialog, for when the rest of the items cannot be placed.
 - API-style finish request encoding with every item-to-cell placement, plus the IDs of the items left unplaced after an early finish.
+- Manual debug-only demo controls for walking the container scan, cell selection, and item placement without the camera.
 
 ### Picking
 
@@ -210,7 +211,8 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The picking and putaway mock tasks share item IDs, so one set of printed codes works in both modules.
 - The putaway task opens with a container scan, and the container card on screen shows the code the mock task expects.
 - Picking and putaway onboarding completion is stored locally with `@AppStorage`, one flag per module.
-- Each module replays its onboarding from the menu in the navigation bar, and the picking task menu also includes debug-only demo controls for local testing.
+- Each module replays its onboarding from the menu in the navigation bar.
+- Both modules include debug-only demo controls that replace the camera with buttons, so the flows can be walked in the simulator, where no camera exists.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - The settings entry point is hidden until the app has configurable options.
 - Camera permission handling blocks warehouse operations when camera access is missing.
