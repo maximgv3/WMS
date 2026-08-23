@@ -5,7 +5,7 @@
 | <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> |
 | **Putaway:** the operator places items into freely selected storage cells. | **Picking:** the operator collects items according to the task list. |
 
-A warehouse operations app built with SwiftUI. Two warehouse flows are implemented, both driven by API-style mock JSON. In Putaway, an operator receives a task, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
+A warehouse operations app built with SwiftUI. Two warehouse flows are implemented, both driven by API-style mock JSON. In Putaway, an operator receives a task, reviews a short onboarding flow, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request.
 
 Putaway and Picking are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional modules such as Returns check and other warehouse operations.
 
@@ -43,7 +43,8 @@ In development. Putaway and Picking are both complete end to end and covered by 
 
 ### Putaway
 
-- Putaway flow: fetch task, scan the container, scan a storage cell, scan items into it, switch cells, finish screen.
+- Putaway flow: fetch task, onboarding, scan the container, scan a storage cell, scan items into it, switch cells, finish screen.
+- One-time illustrated Putaway onboarding stored with `@AppStorage`, with replay from the container and task menus.
 - Container check before the task opens: a card names the container and where it stands in the warehouse, and only the code of that container starts the putaway.
 - Free putaway: the task says what to put away, not where. The operator picks a cell and scans its location code.
 - Storage cell card with a fill indicator against the cell capacity of the task.
@@ -79,6 +80,7 @@ In development. Putaway and Picking are both complete end to end and covered by 
 ### Shared and data
 
 - Animated error banner in the navigation bar.
+- One onboarding component shared by both modules, with the pages of each module kept as data.
 - System sound feedback for successful and failed scans.
 - Mock API-style JSON resources for profile, picking, and putaway task loading.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking and putaway tasks.
@@ -91,13 +93,14 @@ In development. Putaway and Picking are both complete end to end and covered by 
 
 1. Open the Putaway module.
 2. Fetch a putaway task.
-3. Find the container named in the task and scan its code; any other code is rejected.
-4. Scan the location code of a storage cell to open it.
-5. Hold the camera area to scan an item into the open cell.
-6. The scanned item moves to the top of the placed list and the cell fill indicator grows.
-7. When the cell is out of space, switch cells and scan the location code of the next one.
-8. After the last item is placed, the finish button appears; items that cannot be placed are left behind by finishing early from the task menu.
-9. Finish the task through the mock service, which encodes every item-to-cell placement into JSON.
+3. Complete the Putaway onboarding on first launch, or replay it from the container or task menu.
+4. Find the container named in the task and scan its code; any other code is rejected.
+5. Scan the location code of a storage cell to open it.
+6. Hold the camera area to scan an item into the open cell.
+7. The scanned item moves to the top of the placed list and the cell fill indicator grows.
+8. When the cell is out of space, switch cells and scan the location code of the next one.
+9. After the last item is placed, the finish button appears; items that cannot be placed are left behind by finishing early from the task menu.
+10. Finish the task through the mock service, which encodes every item-to-cell placement into JSON.
 
 ### Picking
 
@@ -206,8 +209,8 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The putaway finish flow encodes item-to-cell placements the same way.
 - The picking and putaway mock tasks share item IDs, so one set of printed codes works in both modules.
 - The putaway task opens with a container scan, and the container card on screen shows the code the mock task expects.
-- Picking onboarding completion is stored locally with `@AppStorage`.
-- The task menu includes debug-only demo controls and an onboarding replay action for local testing.
+- Picking and putaway onboarding completion is stored locally with `@AppStorage`, one flag per module.
+- Each module replays its onboarding from the menu in the navigation bar, and the picking task menu also includes debug-only demo controls for local testing.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - The settings entry point is hidden until the app has configurable options.
 - Camera permission handling blocks warehouse operations when camera access is missing.
