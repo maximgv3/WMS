@@ -43,6 +43,7 @@ struct PutawayContainerView: View {
         )
         .onAppear {
             isOnboardingPresented = !isPutawayOnboardingComplete
+            disableDemoMode()
         }
         .fullScreenCover(isPresented: $isOnboardingPresented) {
             OnboardingView(
@@ -211,6 +212,12 @@ struct PutawayContainerView: View {
             isScanningEnabled = false
         }
     #endif
+
+    private func disableDemoMode() {
+        #if DEBUG
+            isDemoModeOn = false
+        #endif
+    }
 
     private var containerCard: some View {
 
