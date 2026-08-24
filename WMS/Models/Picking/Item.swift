@@ -9,7 +9,7 @@ nonisolated struct Item: Identifiable, Hashable, Equatable, Sendable, Codable {
     let title: String
     let size: String?
     let color: String?
-    let imageUrl: URL
+    let imageUrl: URL?
     let placement: String?
     let price: Double
     let stock: Int

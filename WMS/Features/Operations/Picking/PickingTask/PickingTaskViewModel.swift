@@ -97,7 +97,7 @@ final class PickingTaskViewModel {
     func preloadImages() async {
         await withTaskGroup(of: Void.self) { group in
             for item in pickingTask.allItems {
-                let url = item.imageUrl
+                guard let url = item.imageUrl else { continue }
                 group.addTask {
                     do {
                         _ = try await URLSession.shared.data(from: url)

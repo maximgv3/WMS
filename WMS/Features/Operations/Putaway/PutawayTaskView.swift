@@ -55,7 +55,8 @@ struct PutawayTaskView: View {
         }
         .errorBanner(
             title: "Не удалось разложить товар",
-            message: errorMessage
+            message: errorMessage,
+            autoDismissAfter: errorAutoDismiss
         )
         .task {
             await viewModel.preloadImages()
@@ -99,12 +100,16 @@ struct PutawayTaskView: View {
         case .notAnItem:
             return "Отсканируйте товар"
         case .itemNotInTask:
-            return "Этого товара нет в задании"
+            return "Товара нет в задании. Отсканируйте ещё раз, чтобы всё равно разложить"
         case .cellIsFull:
             return "В ячейке нет места"
         case .wrongContainer, nil:
             return nil
         }
+    }
+
+    private var errorAutoDismiss: Duration {
+        viewModel.lastError == .itemNotInTask ? .seconds(6) : .seconds(3)
     }
 
     private var errorMessage: Binding<String?> {
@@ -275,8 +280,6 @@ struct PutawayTaskView: View {
             .buttonStyle(.plain)
         }
 
-        /// Cell code is six two-digit groups, because `isCellCode` looks for
-        /// exactly five separators
         private func randomDemoCellCode() -> String {
             (0..<6)
                 .map { _ in String(format: "%02d", Int.random(in: 1...99)) }
@@ -397,14 +400,18 @@ struct PutawayTaskView: View {
     private func itemRow(item: Item) -> some View {
         HStack(spacing: 12) {
 
-            AsyncImage(url: item.imageUrl) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                Image(systemName: "photo")
-                    .font(.system(size: 22))
-                    .foregroundStyle(ColorPalette.brandPrimary)
+            Group {
+                if let imageUrl = item.imageUrl {
+                    AsyncImage(url: imageUrl) { image in
+                        image
+                            .resizable()
+                            .scaledToFit()
+                    } placeholder: {
+                        itemImagePlaceholder
+                    }
+                } else {
+                    itemImagePlaceholder
+                }
             }
             .frame(width: 44, height: 44)
             Text(title(for: item))
@@ -416,6 +423,12 @@ struct PutawayTaskView: View {
                 .layoutPriority(1)
                 .monospacedDigit()
         }
+    }
+
+    private var itemImagePlaceholder: some View {
+        Image(systemName: "photo")
+            .font(.system(size: 22))
+            .foregroundStyle(ColorPalette.brandPrimary)
     }
 
     private func processScan(_ code: String) {

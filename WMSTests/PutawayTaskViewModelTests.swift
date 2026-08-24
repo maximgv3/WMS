@@ -234,6 +234,87 @@ struct PutawayTaskViewModelTests {
         #expect(viewModel.isAllItemsPlaced == false)
     }
 
+    // MARK: - Items outside the task
+
+    @Test
+    func foreignItemIsRejectedOnFirstScan() {
+        let viewModel = makeViewModel(items: [makeItem()])
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+
+        #expect(viewModel.lastError == .itemNotInTask)
+        #expect(viewModel.placedItems.isEmpty)
+    }
+
+    @Test
+    func foreignItemIsPlacedOnSecondScan() {
+        let viewModel = makeViewModel(items: [makeItem()])
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+        viewModel.processCode("999")
+
+        #expect(viewModel.lastError == nil)
+        #expect(viewModel.placedItems[999] == cellA)
+        #expect(viewModel.lastPlacedItem?.title == "Неизвестный товар")
+    }
+
+    @Test
+    func foreignItemNeedsTwoScansInARow() {
+        let item = makeItem()
+        let viewModel = makeViewModel(items: [item])
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+        viewModel.processCode("\(item.id)")
+        viewModel.processCode("999")
+
+        #expect(viewModel.lastError == .itemNotInTask)
+        #expect(viewModel.placedItems[999] == nil)
+    }
+
+    @Test
+    func clearingErrorCancelsForeignConfirmation() {
+        let viewModel = makeViewModel(items: [makeItem()])
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+        viewModel.clearError()
+        viewModel.processCode("999")
+
+        #expect(viewModel.lastError == .itemNotInTask)
+        #expect(viewModel.placedItems.isEmpty)
+    }
+
+    @Test
+    func foreignItemTakesUpCellCapacity() {
+        let item = makeItem()
+        let viewModel = makeViewModel(items: [item], cellCapacity: 1)
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+        viewModel.processCode("999")
+        viewModel.processCode("\(item.id)")
+
+        #expect(viewModel.lastError == .cellIsFull)
+        #expect(viewModel.currentCellItemsCount == 1)
+    }
+
+    @Test
+    func foreignItemIsNotCountedAsTaskProgress() {
+        let item = makeItem()
+        let viewModel = makeViewModel(items: [item])
+
+        viewModel.processCode(cellA)
+        viewModel.processCode("999")
+        viewModel.processCode("999")
+
+        #expect(viewModel.placedItemsCount == 0)
+        #expect(viewModel.isAllItemsPlaced == false)
+        #expect(viewModel.currentCellItems.count == 1)
+    }
+
     private func makeItem(id: Int = 123) -> Item {
         Item(
             id: id,

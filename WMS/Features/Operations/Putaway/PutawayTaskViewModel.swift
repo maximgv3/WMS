@@ -10,6 +10,7 @@ final class PutawayTaskViewModel {
     private(set) var currentCell: StorageCell?
     private(set) var placedItems: [Item.ID : StorageCell.ID] = [:]
     private(set) var lastError: PutawayError?
+    private var pendingForeignCode: String?
     private var placementOrder: [Item] = [] // Newest first
 
     var lastPlacedItem: Item? { placementOrder.first }
@@ -34,7 +35,7 @@ final class PutawayTaskViewModel {
     }
     
     var placedItemsCount: Int {
-        placedItems.count
+        task.items.filter { placedItems[$0.id] != nil }.count
     }
     
     var allItemsCount: Int { task.items.count }
@@ -49,11 +50,14 @@ final class PutawayTaskViewModel {
     }
     
     func processCode(_ code: String) {
+        let confirmedCode = pendingForeignCode
+        pendingForeignCode = nil
+
         do {
             if isCellCode(code) {
                 try processCellCode(code)
             } else {
-                try processItemIdCode(code)
+                try processItemIdCode(code, confirmedCode: confirmedCode)
             }
             lastError = nil
         } catch {
@@ -63,12 +67,13 @@ final class PutawayTaskViewModel {
 
     func clearError() {
         lastError = nil
+        pendingForeignCode = nil
     }
 
     func preloadImages() async {
         await withTaskGroup(of: Void.self) { group in
             for item in task.items {
-                let url = item.imageUrl
+                guard let url = item.imageUrl else { continue }
                 group.addTask {
                     do {
                         _ = try await URLSession.shared.data(from: url)
@@ -82,6 +87,7 @@ final class PutawayTaskViewModel {
 
     func clearCurrentCell() {
         currentCell = nil
+        pendingForeignCode = nil
     }
 
     private func processCellCode(_ cellId: String) throws(PutawayError) {
@@ -89,16 +95,48 @@ final class PutawayTaskViewModel {
         currentCell = StorageCell(id: cellId)
     }
     
-    private func processItemIdCode(_ itemId: String) throws(PutawayError) {
+    private func processItemIdCode(
+        _ itemId: String,
+        confirmedCode: String?
+    ) throws(PutawayError) {
         guard let currentCell else { throw PutawayError.notACell }
         guard let id = Int(itemId) else { throw PutawayError.notAnItem }
-        guard let item = task.items.first(where: { $0.id == id }) else { throw PutawayError.itemNotInTask }
+
+        guard let item = task.items.first(where: { $0.id == id }) else {
+            guard confirmedCode == itemId else {
+                pendingForeignCode = itemId
+                throw PutawayError.itemNotInTask
+            }
+            try place(unknownItem(id: id), in: currentCell)
+            return
+        }
+
+        try place(item, in: currentCell)
+    }
+
+    private func place(_ item: Item, in cell: StorageCell) throws(PutawayError) {
         // Rescanning an item from this same cell isn't an error and skips the limit
-        if placedItems[item.id] != currentCell.id {
+        if placedItems[item.id] != cell.id {
             guard !isCurrentCellFull else { throw PutawayError.cellIsFull }
-            placedItems[item.id] = currentCell.id
+            placedItems[item.id] = cell.id
         }
         markAsLastPlaced(item)
+    }
+
+    private func unknownItem(id: Int) -> Item {
+        Item(
+            id: id,
+            barcode: "",
+            article: "",
+            brand: nil,
+            title: "Неизвестный товар",
+            size: nil,
+            color: nil,
+            imageUrl: nil,
+            placement: nil,
+            price: 0,
+            stock: 0
+        )
     }
 
     private func markAsLastPlaced(_ item: Item) {

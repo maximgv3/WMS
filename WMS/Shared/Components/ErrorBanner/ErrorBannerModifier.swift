@@ -34,7 +34,6 @@ struct ErrorBannerModifier: ViewModifier {
         DragGesture()
             .onChanged { value in
                 let height = value.translation.height
-                // Downwards the banner resists, it has nowhere to go
                 dragOffset = height < 0 ? height : height / 4
             }
             .onEnded { value in
@@ -50,7 +49,17 @@ struct ErrorBannerModifier: ViewModifier {
 }
 
 extension View {
-    func errorBanner(title: String, message: Binding<String?>) -> some View {
-        modifier(ErrorBannerModifier(title: title, message: message))
+    func errorBanner(
+        title: String,
+        message: Binding<String?>,
+        autoDismissAfter: Duration = .seconds(3)
+    ) -> some View {
+        modifier(
+            ErrorBannerModifier(
+                title: title,
+                message: message,
+                autoDismissAfter: autoDismissAfter
+            )
+        )
     }
 }
