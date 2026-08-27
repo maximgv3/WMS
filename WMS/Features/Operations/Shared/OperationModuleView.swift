@@ -162,11 +162,9 @@ struct OperationModuleView: View {
                     .resizable()
                     .scaledToFit()
             case .returns:
-                Image(systemName: operationType.iconName)
+                Image(.returns)
                     .resizable()
                     .scaledToFit()
-                    .padding(40)
-                    .foregroundStyle(ColorPalette.brandPrimary)
             }
         }
         .frame(width: 250, height: 250)
