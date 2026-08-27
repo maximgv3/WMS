@@ -40,5 +40,6 @@ nonisolated enum OperationType: String, CaseIterable, Identifiable {
     enum WorkRoute: Hashable {
         case picking(PickingRoute)
         case putaway(PutawayRoute)
+        case returns(ReturnsRoute)
     }
 }

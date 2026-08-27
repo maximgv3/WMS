@@ -6,7 +6,7 @@ struct OperationsListView: View {
     private let operations: [OperationMenuItem] = [
         .init(operation: .putaway, isEnabled: true),
         .init(operation: .picking, isEnabled: true),
-        .init(operation: .returns, isEnabled: false),
+        .init(operation: .returns, isEnabled: true),
     ]
     @State private var selectedOperation: OperationType?
     private let cameraPermissionService = CameraPermissionService()

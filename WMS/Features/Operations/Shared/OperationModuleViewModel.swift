@@ -10,11 +10,13 @@ final class OperationModuleViewModel {
     let operationType: OperationType
     let pickingService: PickingTaskServiceProtocol
     let putawayService: PutawayTaskServiceProtocol
+    let returnsService: ReturnsTaskServiceProtocol
 
-    init(operationType: OperationType, pickingService: PickingTaskServiceProtocol, putawayService: PutawayTaskServiceProtocol) {
+    init(operationType: OperationType, pickingService: PickingTaskServiceProtocol, putawayService: PutawayTaskServiceProtocol, returnsService: ReturnsTaskServiceProtocol) {
         self.operationType = operationType
         self.pickingService = pickingService
         self.putawayService = putawayService
+        self.returnsService = returnsService
     }
 
     func fetchTask() async -> OperationType.WorkRoute? {
@@ -32,7 +34,8 @@ final class OperationModuleViewModel {
                 let task = try await pickingService.fetchTask(userId: userId)
                 return .picking(.task(task))
             case .returns:
-                return nil
+                let task = try await returnsService.fetchTask(userId: userId)
+                return .returns(.task(task))
             }
         } catch {
             FeedbackService.playErrorHaptic()

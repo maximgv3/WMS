@@ -1,0 +1,85 @@
+import SwiftUI
+
+struct ReturnsFinishView: View {
+    @Binding private var path: [OperationType.WorkRoute]
+    @State private var viewModel: ReturnsFinishViewModel
+
+    init(
+        path: Binding<[OperationType.WorkRoute]>,
+        result: ReturnsResult,
+        userId: Int,
+        taskService: ReturnsTaskServiceProtocol
+    ) {
+        self._path = path
+        self.viewModel = .init(
+            result: result,
+            userId: userId,
+            taskService: taskService
+        )
+    }
+
+    var body: some View {
+        content
+            .ignoresSafeArea(edges: .bottom)
+            .navigationBarBackButtonHidden(true)
+    }
+
+    private var content: some View {
+        VStack(spacing: 32) {
+            Spacer()
+
+            VStack(spacing: 12) {
+                #if DEBUG
+                Button {
+                    viewModel.toggleTestUserId()
+                } label: {
+                    checkmarkImage
+                }
+                .buttonStyle(.plain)
+                #else
+                checkmarkImage
+                #endif
+
+                Text("Задание проверки закрыто")
+                    .font(.system(size: 30, weight: .bold))
+                    .foregroundStyle(ColorPalette.brandPrimary)
+
+                Text(viewModel.resultText)
+                    .font(.system(size: 18, weight: .regular))
+                    .foregroundStyle(ColorPalette.brandMuted)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 24)
+
+            Spacer()
+
+            finishButton
+                .padding(.horizontal, 64)
+                .padding(.bottom, 40)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(ColorPalette.backgroundPrimary)
+        .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
+    }
+
+    private var checkmarkImage: some View {
+        Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 72, weight: .semibold))
+            .foregroundStyle(ColorPalette.accentPrimary)
+    }
+
+    private var finishButton: some View {
+        PrimaryButton("Выгрузить результаты", isLoading: viewModel.isFinishingTask) {
+            Task {
+                await finish()
+            }
+        }
+    }
+
+    private func finish() async {
+        let isFinished = await viewModel.finishTask()
+        if isFinished {
+            path.removeAll()
+        }
+    }
+}

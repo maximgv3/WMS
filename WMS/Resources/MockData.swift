@@ -17,6 +17,14 @@ struct MockData {
         }
     }()
 
+    static let returnsTaskMock: ReturnsTask = {
+        do {
+            return try MockJSONLoader.decode(ReturnsTask.self, from: "returns_task")
+        } catch {
+            return ReturnsTask(items: [])
+        }
+    }()
+
     static let ratingHistory: [RatingPoint] = {
         let values: [Double] = [
             4.9, 17.2, 18.0, 18.4, 19.1, 19.6, 20.0, 20.3, 19.9, 20.5,

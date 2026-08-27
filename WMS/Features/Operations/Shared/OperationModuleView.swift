@@ -9,13 +9,15 @@ struct OperationModuleView: View {
     init(
         operationType: OperationType,
         pickingService: PickingTaskServiceProtocol = PickingListServiceMock(),
-        putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock()
+        putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock(),
+        returnsService: ReturnsTaskServiceProtocol = ReturnsTaskServiceMock()
     ) {
         self.operationType = operationType
         self.viewModel = OperationModuleViewModel(
             operationType: operationType,
             pickingService: pickingService,
-            putawayService: putawayService
+            putawayService: putawayService,
+            returnsService: returnsService
         )
     }
     var body: some View {
@@ -72,6 +74,22 @@ struct OperationModuleView: View {
                             result: result,
                             userId: viewModel.userId,
                             taskService: viewModel.putawayService
+                        )
+                    }
+                case .returns(let returnsRoute):
+                    switch returnsRoute {
+                    case .task(let task):
+                        ReturnsTaskView(
+                            task: task,
+                            service: viewModel.returnsService,
+                            path: $path
+                        )
+                    case .finish(let result):
+                        ReturnsFinishView(
+                            path: $path,
+                            result: result,
+                            userId: viewModel.userId,
+                            taskService: viewModel.returnsService
                         )
                     }
                 }
@@ -144,7 +162,11 @@ struct OperationModuleView: View {
                     .resizable()
                     .scaledToFit()
             case .returns:
-                Image(systemName: "clock")
+                Image(systemName: operationType.iconName)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(40)
+                    .foregroundStyle(ColorPalette.brandPrimary)
             }
         }
         .frame(width: 250, height: 250)
@@ -164,5 +186,8 @@ struct OperationModuleView: View {
 }
 #Preview("Раскладка") {
     OperationModuleView(operationType: .putaway)
+}
+#Preview("Проверка возвратов") {
+    OperationModuleView(operationType: .returns)
 }
 
