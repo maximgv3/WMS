@@ -36,4 +36,13 @@ nonisolated enum ReturnDecision: String, CaseIterable, Identifiable, Sendable, H
             "questionmark.circle.fill"
         }
     }
+    
+    var requiresPhoto: Bool {
+        switch self {
+        case .good:
+            false
+        case .defect, .wrongItem:
+            true
+        }
+    }
 }

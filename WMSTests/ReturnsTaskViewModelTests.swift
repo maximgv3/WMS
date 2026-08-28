@@ -52,7 +52,7 @@ struct ReturnsTaskViewModelTests {
         let viewModel = makeViewModel(ids: [123])
 
         viewModel.processCode("123")
-        viewModel.decide(.defect)
+        viewModel.decide(.defect, photo: Data())
 
         #expect(viewModel.decisions[123] == .defect)
         #expect(viewModel.currentItem == nil)
@@ -66,6 +66,27 @@ struct ReturnsTaskViewModelTests {
         viewModel.decide(.good)
 
         #expect(viewModel.decisions.isEmpty)
+    }
+
+    @Test
+    func decisionRequiringPhotoIsIgnoredWithoutPhoto() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.processCode("123")
+        viewModel.decide(.defect)
+
+        #expect(viewModel.decisions.isEmpty)
+        #expect(viewModel.currentItem?.id == 123)
+    }
+
+    @Test
+    func photoIsStoredWithTheDecision() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.processCode("123")
+        viewModel.decide(.defect, photo: Data([1]))
+
+        #expect(viewModel.photos[123] == Data([1]))
     }
 
     @Test
@@ -88,10 +109,35 @@ struct ReturnsTaskViewModelTests {
         viewModel.processCode("123")
         viewModel.decide(.good)
         viewModel.processCode("123")
-        viewModel.decide(.defect)
+        viewModel.decide(.defect, photo: Data())
 
         #expect(viewModel.decisions[123] == .defect)
         #expect(viewModel.checkedItemsCount == 1)
+    }
+
+    @Test
+    func newPhotoReplacesTheOldOne() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.processCode("123")
+        viewModel.decide(.defect, photo: Data([1]))
+        viewModel.processCode("123")
+        viewModel.decide(.defect, photo: Data([2]))
+
+        #expect(viewModel.photos[123] == Data([2]))
+    }
+
+    @Test
+    func decisionWithoutPhotoRemovesTheOldPhoto() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.processCode("123")
+        viewModel.decide(.defect, photo: Data([1]))
+        viewModel.processCode("123")
+        viewModel.decide(.good)
+
+        #expect(viewModel.photos[123] == nil)
+        #expect(viewModel.decisions[123] == .good)
     }
 
     @Test
@@ -101,7 +147,7 @@ struct ReturnsTaskViewModelTests {
         viewModel.processCode("123")
         viewModel.decide(.good)
         viewModel.processCode("456")
-        viewModel.decide(.defect)
+        viewModel.decide(.defect, photo: Data())
 
         #expect(viewModel.checkedItems.map(\.id) == [456, 123])
     }
@@ -113,9 +159,9 @@ struct ReturnsTaskViewModelTests {
         viewModel.processCode("123")
         viewModel.decide(.good)
         viewModel.processCode("456")
-        viewModel.decide(.defect)
+        viewModel.decide(.defect, photo: Data())
         viewModel.processCode("123")
-        viewModel.decide(.wrongItem)
+        viewModel.decide(.wrongItem, photo: Data())
 
         #expect(viewModel.checkedItems.map(\.id) == [123, 456])
         #expect(viewModel.decisions[123] == .wrongItem)
@@ -139,7 +185,7 @@ struct ReturnsTaskViewModelTests {
         viewModel.processCode("123")
         viewModel.decide(.good)
         viewModel.processCode("456")
-        viewModel.decide(.wrongItem)
+        viewModel.decide(.wrongItem, photo: Data())
 
         #expect(viewModel.isAllItemsChecked)
         #expect(viewModel.result.decisions == [123: .good, 456: .wrongItem])

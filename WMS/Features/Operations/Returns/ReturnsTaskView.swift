@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ReturnsTaskView: View {
 
@@ -6,6 +7,7 @@ struct ReturnsTaskView: View {
     @Binding private var path: [OperationType.WorkRoute]
     @State private var isScanningEnabled = false
     @State private var isEarlyFinishPresented = false
+    @State private var pendingDecision: ReturnDecision?
 
     #if DEBUG
         @AppStorage("isReturnsDemoModeOn") private var isDemoModeOn = false
@@ -54,6 +56,16 @@ struct ReturnsTaskView: View {
             title: "Не удалось проверить товар",
             message: errorMessage
         )
+        .fullScreenCover(item: $pendingDecision) { decision in
+            CameraPickerView { image in
+                pendingDecision = nil
+                guard let data = image?.jpegData(compressionQuality: 0.6) else {
+                    return
+                }
+                applyDecision(decision, photo: data)
+            }
+            .ignoresSafeArea()
+        }
         .task {
             await viewModel.preloadImages()
         }
@@ -250,6 +262,10 @@ struct ReturnsTaskView: View {
             } else {
                 isDemoConfirmationPresented = true
             }
+        }
+
+        private var demoPhoto: Data {
+            UIImage(systemName: "photo")?.pngData() ?? Data()
         }
 
         private func demoModeToggle() {
@@ -477,8 +493,23 @@ struct ReturnsTaskView: View {
     }
 
     private func decisionTapped(_ decision: ReturnDecision) {
+        #if DEBUG
+            if isDemoModeOn && decision.requiresPhoto {
+                applyDecision(decision, photo: demoPhoto)
+                return
+            }
+        #endif
+
+        if decision.requiresPhoto {
+            pendingDecision = decision
+        } else {
+            applyDecision(decision, photo: nil)
+        }
+    }
+
+    private func applyDecision(_ decision: ReturnDecision, photo: Data?) {
         withAnimation(.snappy) {
-            viewModel.decide(decision)
+            viewModel.decide(decision, photo: photo)
         }
         FeedbackService.playSuccess()
     }

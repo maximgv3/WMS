@@ -9,6 +9,7 @@ final class ReturnsTaskViewModel {
 
     private(set) var currentItem: ReturnItem?
     private(set) var decisions: [Item.ID: ReturnDecision] = [:]
+    private(set) var photos: [Item.ID: Data] = [:]
     private(set) var lastError: ReturnsError?
     private var decisionOrder: [ReturnItem] = [] // Newest first
 
@@ -36,9 +37,12 @@ final class ReturnsTaskViewModel {
         }
     }
 
-    func decide(_ decision: ReturnDecision) {
+    func decide(_ decision: ReturnDecision, photo: Data? = nil) {
         guard let currentItem else { return }
+        if decision.requiresPhoto && photo == nil { return }
+        
         decisions[currentItem.id] = decision
+        photos[currentItem.id] = photo
         markAsLastChecked(currentItem)
         self.currentItem = nil
     }
@@ -65,7 +69,7 @@ final class ReturnsTaskViewModel {
     func clearError() {
         lastError = nil
     }
-
+    
     private func markAsLastChecked(_ returnItem: ReturnItem) {
         decisionOrder.removeAll { $0.id == returnItem.id }
         decisionOrder.insert(returnItem, at: 0)
