@@ -20,7 +20,11 @@ final class ReturnsTaskViewModel {
     var isAllItemsChecked: Bool { leftItems.isEmpty }
 
     var result: ReturnsResult {
-        ReturnsResult(decisions: decisions, skippedItemIds: leftItems.map(\.id))
+        ReturnsResult(
+            decisions: decisions,
+            photos: photos,
+            skippedItemIds: leftItems.map(\.id)
+        )
     }
 
     init(task: ReturnsTask, service: ReturnsTaskServiceProtocol) {

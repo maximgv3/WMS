@@ -15,9 +15,11 @@ struct ReturnsTaskResultRequest: Encodable {
 struct ReturnCheck: Encodable {
     let itemId: Int
     let decision: String
+    let photo: Data?
 
     enum CodingKeys: String, CodingKey {
         case itemId = "item_id"
         case decision
+        case photo
     }
 }

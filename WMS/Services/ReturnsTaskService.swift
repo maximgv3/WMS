@@ -56,7 +56,11 @@ final class ReturnsTaskServiceMock: ReturnsTaskServiceProtocol {
             skippedItemIds: result.skippedItemIds,
             checks: result.decisions
                 .map { itemId, decision in
-                    ReturnCheck(itemId: itemId, decision: decision.rawValue)
+                    ReturnCheck(
+                        itemId: itemId,
+                        decision: decision.rawValue,
+                        photo: result.photos[itemId]
+                    )
                 }
                 .sorted { $0.itemId < $1.itemId }
         )

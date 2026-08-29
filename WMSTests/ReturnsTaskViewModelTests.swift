@@ -205,6 +205,18 @@ struct ReturnsTaskViewModelTests {
     }
 
     @Test
+    func resultKeepsPhotosOfCheckedItems() {
+        let viewModel = makeViewModel(ids: [123, 456])
+
+        viewModel.processCode("123")
+        viewModel.decide(.defect, photo: Data([1]))
+        viewModel.processCode("456")
+        viewModel.decide(.good)
+
+        #expect(viewModel.result.photos == [123: Data([1])])
+    }
+
+    @Test
     func clearCurrentItemAllowsScanningAnotherItem() {
         let viewModel = makeViewModel(ids: [123, 456])
 
