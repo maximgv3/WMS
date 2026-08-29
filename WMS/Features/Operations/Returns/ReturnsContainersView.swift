@@ -332,6 +332,10 @@ struct ReturnsContainersView: View {
     }
 
     private func processScan(_ code: String) {
+        guard !viewModel.isContainerScanned || viewModel.nextSlot != nil else {
+            return
+        }
+
         withAnimation(.snappy) {
             viewModel.processCode(code)
         }
