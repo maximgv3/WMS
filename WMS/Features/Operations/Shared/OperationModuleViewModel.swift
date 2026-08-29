@@ -35,7 +35,7 @@ final class OperationModuleViewModel {
                 return .picking(.task(task))
             case .returns:
                 let task = try await returnsService.fetchTask(userId: userId)
-                return .returns(.task(task))
+                return .returns(.containers(task))
             }
         } catch {
             FeedbackService.playErrorHaptic()

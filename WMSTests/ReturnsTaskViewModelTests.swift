@@ -6,6 +6,10 @@ import Testing
 @MainActor
 struct ReturnsTaskViewModelTests {
 
+    private let sourceContainerId = "WMSCT620814"
+    private let goodContainerId = "WMSCT770145"
+    private let inspectionContainerId = "WMSCT770238"
+
     @Test
     func itemCodeBecomesCurrentItem() {
         let viewModel = makeViewModel(ids: [123])
@@ -217,6 +221,87 @@ struct ReturnsTaskViewModelTests {
     }
 
     @Test
+    func decisionPutsTheItemInTheContainerOfItsSlot() {
+        let viewModel = makeViewModel(ids: [123, 456, 789])
+
+        viewModel.processCode("123")
+        viewModel.decide(.good)
+        viewModel.processCode("456")
+        viewModel.decide(.defect, photo: Data())
+        viewModel.processCode("789")
+        viewModel.decide(.wrongItem, photo: Data())
+
+        #expect(
+            viewModel.result.containers == [
+                123: goodContainerId,
+                456: inspectionContainerId,
+                789: inspectionContainerId,
+            ]
+        )
+        #expect(viewModel.result.sourceContainerId == sourceContainerId)
+    }
+
+    @Test
+    func rebindingAContainerLeavesCheckedItemsWithTheOldOne() {
+        let viewModel = makeViewModel(ids: [123, 456])
+
+        viewModel.processCode("123")
+        viewModel.decide(.good)
+        viewModel.startRebinding(.good)
+        viewModel.processCode("WMSCT770999")
+        viewModel.processCode("456")
+        viewModel.decide(.good)
+
+        #expect(viewModel.lastError == nil)
+        #expect(viewModel.containers.good == "WMSCT770999")
+        #expect(
+            viewModel.result.containers == [
+                123: goodContainerId,
+                456: "WMSCT770999",
+            ]
+        )
+    }
+
+    @Test
+    func rebindingKeepsItemCodesOutOfTheContainerSlot() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.startRebinding(.good)
+        viewModel.processCode("123")
+
+        #expect(viewModel.lastError == .notAContainer)
+        #expect(viewModel.containers.good == goodContainerId)
+        #expect(viewModel.currentItem == nil)
+        #expect(viewModel.rebindingSlot == .good)
+    }
+
+    @Test
+    func rebindingFailsOnAContainerThatIsAlreadyUsed() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.startRebinding(.good)
+        viewModel.processCode(inspectionContainerId)
+        #expect(viewModel.lastError == .containerAlreadyUsed)
+
+        viewModel.processCode(sourceContainerId)
+        #expect(viewModel.lastError == .containerAlreadyUsed)
+        #expect(viewModel.containers.good == goodContainerId)
+    }
+
+    @Test
+    func tappingTheSameSlotTwiceStopsRebinding() {
+        let viewModel = makeViewModel(ids: [123])
+
+        viewModel.startRebinding(.good)
+        viewModel.startRebinding(.good)
+        viewModel.processCode("123")
+
+        #expect(viewModel.rebindingSlot == nil)
+        #expect(viewModel.currentItem?.id == 123)
+        #expect(viewModel.lastError == nil)
+    }
+
+    @Test
     func clearCurrentItemAllowsScanningAnotherItem() {
         let viewModel = makeViewModel(ids: [123, 456])
 
@@ -259,7 +344,14 @@ struct ReturnsTaskViewModelTests {
 
     private func makeViewModel(ids: [Int]) -> ReturnsTaskViewModel {
         ReturnsTaskViewModel(
-            task: ReturnsTask(items: ids.map(makeReturnItem)),
+            task: ReturnsTask(
+                container: ReturnsContainer(id: sourceContainerId, location: ""),
+                items: ids.map(makeReturnItem)
+            ),
+            containers: ReturnsContainers(
+                good: goodContainerId,
+                inspection: inspectionContainerId
+            ),
             service: ReturnsTaskServiceMock()
         )
     }

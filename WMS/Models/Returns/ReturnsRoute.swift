@@ -1,4 +1,5 @@
 nonisolated enum ReturnsRoute: Hashable {
-    case task(ReturnsTask)
+    case containers(ReturnsTask)
+    case task(ReturnsTask, ReturnsContainers)
     case finish(ReturnsResult)
 }

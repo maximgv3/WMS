@@ -21,7 +21,10 @@ struct MockData {
         do {
             return try MockJSONLoader.decode(ReturnsTask.self, from: "returns_task")
         } catch {
-            return ReturnsTask(items: [])
+            return ReturnsTask(
+                container: ReturnsContainer(id: "", location: ""),
+                items: []
+            )
         }
     }()
 

@@ -53,12 +53,14 @@ final class ReturnsTaskServiceMock: ReturnsTaskServiceProtocol {
     {
         ReturnsTaskResultRequest(
             userId: userId,
+            containerId: result.sourceContainerId,
             skippedItemIds: result.skippedItemIds,
             checks: result.decisions
                 .map { itemId, decision in
                     ReturnCheck(
                         itemId: itemId,
                         decision: decision.rawValue,
+                        containerId: result.containers[itemId],
                         photo: result.photos[itemId]
                     )
                 }

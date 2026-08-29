@@ -78,9 +78,12 @@ struct OperationModuleView: View {
                     }
                 case .returns(let returnsRoute):
                     switch returnsRoute {
-                    case .task(let task):
+                    case .containers(let task):
+                        ReturnsContainersView(task: task, path: $path)
+                    case .task(let task, let containers):
                         ReturnsTaskView(
                             task: task,
+                            containers: containers,
                             service: viewModel.returnsService,
                             path: $path
                         )

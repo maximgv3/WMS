@@ -14,14 +14,20 @@ struct ReturnsTaskView: View {
         @State private var isDemoConfirmationPresented = false
 
         private let demoWrongCode = "0000000000"
+        private let demoContainerCode = "WMSCT770999"
     #endif
 
     init(
         task: ReturnsTask,
+        containers: ReturnsContainers,
         service: ReturnsTaskServiceProtocol,
         path: Binding<[OperationType.WorkRoute]>
     ) {
-        self.viewModel = ReturnsTaskViewModel(task: task, service: service)
+        self.viewModel = ReturnsTaskViewModel(
+            task: task,
+            containers: containers,
+            service: service
+        )
         self._path = path
     }
 
@@ -29,6 +35,7 @@ struct ReturnsTaskView: View {
         VStack(spacing: 16) {
             returnCard
             scanner
+            containersRow
             content
         }
         .padding([.horizontal, .top], 16)
@@ -53,7 +60,7 @@ struct ReturnsTaskView: View {
             )
         }
         .errorBanner(
-            title: "Не удалось проверить товар",
+            title: errorTitle,
             message: errorMessage
         )
         .fullScreenCover(item: $pendingDecision) { decision in
@@ -103,9 +110,70 @@ struct ReturnsTaskView: View {
             return "Товара нет в задании"
         case .decisionRequired:
             return "Сначала выберите решение по товару"
-        case nil:
+        case .notAContainer:
+            return "Отсканируйте тару"
+        case .containerAlreadyUsed:
+            return "Эта тара уже занята"
+        case .wrongContainer, nil:
             return nil
         }
+    }
+
+    private var errorTitle: String {
+        switch viewModel.lastError {
+        case .notAContainer, .containerAlreadyUsed:
+            "Не удалось сменить тару"
+        default:
+            "Не удалось проверить товар"
+        }
+    }
+
+    private var containersRow: some View {
+        HStack(spacing: 8) {
+            ForEach(ReturnContainerSlot.allCases) { slot in
+                containerChip(slot)
+            }
+        }
+    }
+
+    private func containerChip(_ slot: ReturnContainerSlot) -> some View {
+        Button {
+            withAnimation(.snappy) {
+                viewModel.startRebinding(slot)
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: slot.iconName)
+                    .foregroundStyle(color(for: slot))
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(slot.title)
+                        .font(.system(size: 13))
+                        .foregroundStyle(ColorPalette.brandMuted)
+                    Text(viewModel.containers[slot])
+                        .font(.system(size: 14, weight: .medium))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                        .monospacedDigit()
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 12)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous).fill(
+                    color(for: slot).opacity(isRebinding(slot) ? 0.28 : 0.12)
+                )
+            )
+            .overlay {
+                if isRebinding(slot) {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(color(for: slot), lineWidth: 2)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(DecisionButtonStyle())
+        .foregroundStyle(ColorPalette.brandPrimary)
     }
 
     private var errorMessage: Binding<String?> {
@@ -201,10 +269,18 @@ struct ReturnsTaskView: View {
     private var scannerView: some View {
         ScannerView(
             isScanningEnabled: $isScanningEnabled,
-            idleText: "Сканируйте товар",
-            activeText: "Сканируем товар...",
+            idleText: isRebindingAnySlot
+                ? "Сканируйте тару" : "Сканируйте товар",
+            activeText: isRebindingAnySlot
+                ? "Сканируем тару..." : "Сканируем товар...",
             onScan: { code in processScan(code) }
         )
+    }
+
+    private var isRebindingAnySlot: Bool { viewModel.rebindingSlot != nil }
+
+    private func isRebinding(_ slot: ReturnContainerSlot) -> Bool {
+        viewModel.rebindingSlot == slot
     }
 
     #if DEBUG
@@ -222,7 +298,25 @@ struct ReturnsTaskView: View {
                 }
                 .buttonStyle(.plain)
 
-                if let returnItem = viewModel.leftItems.first
+                if isRebindingAnySlot {
+                    Button {
+                        processScan(demoContainerCode)
+                    } label: {
+                        Text("Тара")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(ColorPalette.brandPrimary)
+                            .clipShape(
+                                RoundedRectangle(
+                                    cornerRadius: 20,
+                                    style: .continuous
+                                )
+                            )
+                    }
+                    .buttonStyle(.plain)
+                } else if let returnItem = viewModel.leftItems.first
                     ?? viewModel.task.items.first
                 {
                     Button {
@@ -481,6 +575,15 @@ struct ReturnsTaskView: View {
             .foregroundStyle(ColorPalette.brandPrimary)
     }
 
+    private func color(for slot: ReturnContainerSlot) -> Color {
+        switch slot {
+        case .good:
+            ColorPalette.success
+        case .inspection:
+            ColorPalette.error
+        }
+    }
+
     private func color(for decision: ReturnDecision) -> Color {
         switch decision {
         case .good:
@@ -548,6 +651,10 @@ private struct DecisionButtonStyle: ButtonStyle {
     NavigationStack(path: $path) {
         ReturnsTaskView(
             task: MockData.returnsTaskMock,
+            containers: ReturnsContainers(
+                good: "WMSCT770145",
+                inspection: "WMSCT770238"
+            ),
             service: ReturnsTaskServiceMock(),
             path: $path
         )
