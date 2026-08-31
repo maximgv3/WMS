@@ -64,7 +64,7 @@ struct ReturnsTaskView: View {
             message: errorMessage
         )
         .fullScreenCover(item: $pendingDecision) { decision in
-            CameraPickerView { shot in
+            CameraPickerView(hint: decision.photoHint) { shot in
                 pendingDecision = nil
                 guard let shot else { return }
                 applyDecision(

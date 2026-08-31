@@ -7,12 +7,14 @@ struct CameraShot {
 }
 
 struct CameraPickerView: UIViewControllerRepresentable {
+    let hint: String
     var onFinish: (CameraShot?) -> Void
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
         picker.sourceType = .camera
         picker.delegate = context.coordinator
+        picker.cameraOverlayView = hintOverlay(over: picker.view)
         return picker
     }
 
@@ -25,6 +27,39 @@ struct CameraPickerView: UIViewControllerRepresentable {
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
+    }
+
+    private func hintOverlay(over pickerView: UIView) -> UIView {
+        let overlay = UIView(frame: pickerView.bounds)
+        overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        overlay.isUserInteractionEnabled = false
+
+        let label = UILabel()
+        label.text = hint
+        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.textColor = .white
+        label.textAlignment = .center
+        label.numberOfLines = 0
+        label.shadowColor = UIColor.black.withAlphaComponent(0.5)
+        label.shadowOffset = CGSize(width: 0, height: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.topAnchor.constraint(
+                equalTo: overlay.safeAreaLayoutGuide.topAnchor,
+                constant: 60
+            ),
+            label.leadingAnchor.constraint(
+                equalTo: overlay.leadingAnchor,
+                constant: 24
+            ),
+            label.trailingAnchor.constraint(
+                equalTo: overlay.trailingAnchor,
+                constant: -24
+            ),
+        ])
+        return overlay
     }
 
     final class Coordinator: NSObject, UIImagePickerControllerDelegate,

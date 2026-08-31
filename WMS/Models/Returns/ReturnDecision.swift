@@ -56,4 +56,15 @@ nonisolated enum ReturnDecision: String, CaseIterable, Identifiable, Sendable, H
             true
         }
     }
+
+    var photoHint: String {
+        switch self {
+        case .good:
+            "Сфотографируйте товар"
+        case .defect:
+            "Сфотографируйте повреждение"
+        case .wrongItem:
+            "Сфотографируйте товар, который вернули"
+        }
+    }
 }
