@@ -34,6 +34,9 @@ struct CameraPickerView: UIViewControllerRepresentable {
 
         // 96 = квадрат 32pt в строке списка на экране ×3
         private let thumbnailSize = CGSize(width: 96, height: 96)
+        private let maxPhotoSide: CGFloat = 2048
+        private let photoQuality: CGFloat = 0.8
+
         func imagePickerController(
             _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController
@@ -48,12 +51,22 @@ struct CameraPickerView: UIViewControllerRepresentable {
 
         private func shot(from image: UIImage?) -> CameraShot? {
             guard let image,
-                let data = image.jpegData(compressionQuality: 0.6)
+                let data = downscaled(image).jpegData(
+                    compressionQuality: photoQuality
+                )
             else {
                 return nil
             }
             let thumbnail = image.preparingThumbnail(of: thumbnailSize) ?? image
             return CameraShot(data: data, thumbnail: Image(uiImage: thumbnail))
+        }
+
+        private func downscaled(_ image: UIImage) -> UIImage {
+            let side = max(image.size.width, image.size.height)
+            guard side > maxPhotoSide else { return image }
+            return image.preparingThumbnail(
+                of: CGSize(width: maxPhotoSide, height: maxPhotoSide)
+            ) ?? image
         }
     }
 }
