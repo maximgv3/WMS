@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 struct ReturnsTaskView: View {
 
@@ -64,12 +63,10 @@ struct ReturnsTaskView: View {
             message: errorMessage
         )
         .fullScreenCover(item: $pendingDecision) { decision in
-            CameraPickerView { image in
+            CameraPickerView { shot in
                 pendingDecision = nil
-                guard let data = image?.jpegData(compressionQuality: 0.6) else {
-                    return
-                }
-                applyDecision(decision, photo: data)
+                guard let shot else { return }
+                applyDecision(decision, photo: shot.data)
             }
             .ignoresSafeArea()
         }
@@ -358,10 +355,6 @@ struct ReturnsTaskView: View {
             }
         }
 
-        private var demoPhoto: Data {
-            UIImage(systemName: "photo")?.pngData() ?? Data()
-        }
-
         private func demoModeToggle() {
             isDemoModeOn.toggle()
             isScanningEnabled = false
@@ -598,7 +591,7 @@ struct ReturnsTaskView: View {
     private func decisionTapped(_ decision: ReturnDecision) {
         #if DEBUG
             if isDemoModeOn && decision.requiresPhoto {
-                applyDecision(decision, photo: demoPhoto)
+                applyDecision(decision, photo: Data())
                 return
             }
         #endif

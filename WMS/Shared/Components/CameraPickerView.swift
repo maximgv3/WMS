@@ -1,8 +1,13 @@
 import SwiftUI
 import UIKit
 
+struct CameraShot {
+    let data: Data
+    let thumbnail: Image
+}
+
 struct CameraPickerView: UIViewControllerRepresentable {
-    var onFinish: (UIImage?) -> Void
+    var onFinish: (CameraShot?) -> Void
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let picker = UIImagePickerController()
@@ -25,18 +30,30 @@ struct CameraPickerView: UIViewControllerRepresentable {
     final class Coordinator: NSObject, UIImagePickerControllerDelegate,
         UINavigationControllerDelegate
     {
-        var onFinish: (UIImage?) -> Void = { _ in }
+        var onFinish: (CameraShot?) -> Void = { _ in }
 
+        // 96 = квадрат 32pt в строке списка на экране ×3
+        private let thumbnailSize = CGSize(width: 96, height: 96)
         func imagePickerController(
             _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController
                 .InfoKey: Any]
         ) {
-            onFinish(info[.originalImage] as? UIImage)
+            onFinish(shot(from: info[.originalImage] as? UIImage))
         }
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             onFinish(nil)
+        }
+
+        private func shot(from image: UIImage?) -> CameraShot? {
+            guard let image,
+                let data = image.jpegData(compressionQuality: 0.6)
+            else {
+                return nil
+            }
+            let thumbnail = image.preparingThumbnail(of: thumbnailSize) ?? image
+            return CameraShot(data: data, thumbnail: Image(uiImage: thumbnail))
         }
     }
 }
