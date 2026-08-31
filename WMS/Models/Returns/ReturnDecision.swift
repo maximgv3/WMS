@@ -36,6 +36,17 @@ nonisolated enum ReturnDecision: String, CaseIterable, Identifiable, Sendable, H
             "questionmark.circle.fill"
         }
     }
+
+    var badgeIconName: String {
+        switch self {
+        case .good:
+            "checkmark"
+        case .defect:
+            "exclamationmark"
+        case .wrongItem:
+            "questionmark"
+        }
+    }
     
     var requiresPhoto: Bool {
         switch self {

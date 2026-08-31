@@ -7,6 +7,7 @@ struct ReturnsTaskView: View {
     @State private var isScanningEnabled = false
     @State private var isEarlyFinishPresented = false
     @State private var pendingDecision: ReturnDecision?
+    @State private var photoThumbnails: [Item.ID: Image] = [:]
 
     #if DEBUG
         @AppStorage("isReturnsDemoModeOn") private var isDemoModeOn = false
@@ -66,7 +67,11 @@ struct ReturnsTaskView: View {
             CameraPickerView { shot in
                 pendingDecision = nil
                 guard let shot else { return }
-                applyDecision(decision, photo: shot.data)
+                applyDecision(
+                    decision,
+                    photo: shot.data,
+                    thumbnail: shot.thumbnail
+                )
             }
             .ignoresSafeArea()
         }
@@ -512,9 +517,11 @@ struct ReturnsTaskView: View {
                     itemRow(returnItem)
                 }
             }
+            .padding(.horizontal, 16)
             .animation(.snappy, value: listedItems)
         }
         .scrollIndicators(.hidden)
+        .padding(.horizontal, -16)
     }
 
     private func itemRow(_ returnItem: ReturnItem) -> some View {
@@ -538,11 +545,35 @@ struct ReturnsTaskView: View {
                 .monospacedDigit()
 
             if let decision = viewModel.decisions[returnItem.id] {
-                Image(systemName: decision.iconName)
-                    .font(.system(size: 18))
-                    .foregroundStyle(color(for: decision))
-                    .frame(width: 20)
+                decisionMark(decision, photo: photoThumbnails[returnItem.id])
             }
+        }
+    }
+
+    @ViewBuilder
+    private func decisionMark(
+        _ decision: ReturnDecision,
+        photo: Image?
+    ) -> some View {
+        if let photo {
+            photo
+                .resizable()
+                .scaledToFill()
+                .frame(width: 32, height: 32)
+                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .overlay(alignment: .bottomTrailing) {
+                    Image(systemName: decision.badgeIconName)
+                        .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(ColorPalette.surfacePrimary)
+                        .frame(width: 16, height: 16)
+                        .background(color(for: decision), in: Circle())
+                        .offset(x: 4, y: 4)
+                }
+        } else {
+            Image(systemName: decision.iconName)
+                .font(.system(size: 18))
+                .foregroundStyle(color(for: decision))
+                .frame(width: 32, height: 32)
         }
     }
 
@@ -591,7 +622,11 @@ struct ReturnsTaskView: View {
     private func decisionTapped(_ decision: ReturnDecision) {
         #if DEBUG
             if isDemoModeOn && decision.requiresPhoto {
-                applyDecision(decision, photo: Data())
+                applyDecision(
+                    decision,
+                    photo: Data(),
+                    thumbnail: Image(systemName: "photo")
+                )
                 return
             }
         #endif
@@ -603,7 +638,14 @@ struct ReturnsTaskView: View {
         }
     }
 
-    private func applyDecision(_ decision: ReturnDecision, photo: Data?) {
+    private func applyDecision(
+        _ decision: ReturnDecision,
+        photo: Data?,
+        thumbnail: Image? = nil
+    ) {
+        if let id = viewModel.currentItem?.id {
+            photoThumbnails[id] = thumbnail
+        }
         withAnimation(.snappy) {
             viewModel.decide(decision, photo: photo)
         }
