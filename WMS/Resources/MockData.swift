@@ -32,7 +32,7 @@ struct MockData {
         let values: [Double] = [
             4.9, 17.2, 18.0, 18.4, 19.1, 19.6, 20.0, 20.3, 19.9, 20.5,
             21.0, 21.3, 21.1, 18.6, 15.0, 16.8, 23.2, 25.4, 22.1, 22.6,
-            22.3, 22.7, 22.5, 22.9, 22.6, 23.0, 22.8, 22.4, 22.7, 22.56
+            22.3, 22.7, 22.5, 22.9, 22.6, 23.0, 22.8, 22.4, 22.7, 23.0
         ]
         let today = Calendar.current.startOfDay(for: .now)
         return values.enumerated().map { index, value in
@@ -48,36 +48,42 @@ struct MockData {
         .init(name: "Инвент",         value: 0.00,  iconName: "checklist",             didGoUp: nil),
         .init(name: "Упаковка",       value: 8.10,  iconName: "archivebox",            didGoUp: true),
         .init(name: "Раскладка",      value: 5.32,  iconName: "square.grid.3x3",       didGoUp: true),
+        .init(name: "Возвраты",       value: 7.46,  iconName: "shippingbox.and.arrow.backward", didGoUp: true),
         .init(name: "Обмеры",          value: 3.14,  iconName: "ruler",                 didGoUp: false),
         .init(name: "Сортировка",     value: 1.20,  iconName: "arrow.up.arrow.down",   didGoUp: nil),
         .init(name: "Брак",           value: 0.00,  iconName: "exclamationmark.triangle", didGoUp: nil)
     ]
 
     static let operationTariffs: [OperationTariff] = [
-        .init(operation: "Сборка",    zone: "Блок 1", rateKopecks: 1250),
-        .init(operation: "Приёмка",   zone: "Блок 1", rateKopecks: 980),
-        .init(operation: "Раскладка", zone: "Блок 1", rateKopecks: 740),
-        .init(operation: "Упаковка",  zone: "Блок 1", rateKopecks: 620),
+        .init(operation: "Сборка",             zone: "Блок 1", rateKopecks: 1250),
+        .init(operation: "Проверка возвратов", zone: "Блок 1", rateKopecks: 1100),
+        .init(operation: "Приёмка",            zone: "Блок 1", rateKopecks: 980),
+        .init(operation: "Раскладка",          zone: "Блок 1", rateKopecks: 740),
+        .init(operation: "Упаковка",           zone: "Блок 1", rateKopecks: 620),
 
-        .init(operation: "Сборка",    zone: "Блок 2", rateKopecks: 1400),
-        .init(operation: "Приёмка",   zone: "Блок 2", rateKopecks: 1120),
-        .init(operation: "Раскладка", zone: "Блок 2", rateKopecks: 860),
-        .init(operation: "Упаковка",  zone: "Блок 2", rateKopecks: 700),
+        .init(operation: "Сборка",             zone: "Блок 2", rateKopecks: 1400),
+        .init(operation: "Проверка возвратов", zone: "Блок 2", rateKopecks: 1230),
+        .init(operation: "Приёмка",            zone: "Блок 2", rateKopecks: 1120),
+        .init(operation: "Раскладка",          zone: "Блок 2", rateKopecks: 860),
+        .init(operation: "Упаковка",           zone: "Блок 2", rateKopecks: 700),
 
-        .init(operation: "Сборка",    zone: "Блок 3", rateKopecks: 1650),
-        .init(operation: "Приёмка",   zone: "Блок 3", rateKopecks: 1300),
-        .init(operation: "Раскладка", zone: "Блок 3", rateKopecks: 1010),
-        .init(operation: "Упаковка",  zone: "Блок 3", rateKopecks: 840),
+        .init(operation: "Сборка",             zone: "Блок 3", rateKopecks: 1650),
+        .init(operation: "Проверка возвратов", zone: "Блок 3", rateKopecks: 1450),
+        .init(operation: "Приёмка",            zone: "Блок 3", rateKopecks: 1300),
+        .init(operation: "Раскладка",          zone: "Блок 3", rateKopecks: 1010),
+        .init(operation: "Упаковка",           zone: "Блок 3", rateKopecks: 840),
 
-        .init(operation: "Сборка",    zone: "Блок 4", rateKopecks: 1800),
-        .init(operation: "Приёмка",   zone: "Блок 4", rateKopecks: 1450),
-        .init(operation: "Раскладка", zone: "Блок 4", rateKopecks: 1150),
-        .init(operation: "Упаковка",  zone: "Блок 4", rateKopecks: 960),
+        .init(operation: "Сборка",             zone: "Блок 4", rateKopecks: 1800),
+        .init(operation: "Проверка возвратов", zone: "Блок 4", rateKopecks: 1580),
+        .init(operation: "Приёмка",            zone: "Блок 4", rateKopecks: 1450),
+        .init(operation: "Раскладка",          zone: "Блок 4", rateKopecks: 1150),
+        .init(operation: "Упаковка",           zone: "Блок 4", rateKopecks: 960),
 
-        .init(operation: "Сборка",    zone: "Блок 5", rateKopecks: 1950),
-        .init(operation: "Приёмка",   zone: "Блок 5", rateKopecks: 1580),
-        .init(operation: "Раскладка", zone: "Блок 5", rateKopecks: 1260),
-        .init(operation: "Упаковка",  zone: "Блок 5", rateKopecks: 1080)
+        .init(operation: "Сборка",             zone: "Блок 5", rateKopecks: 1950),
+        .init(operation: "Проверка возвратов", zone: "Блок 5", rateKopecks: 1710),
+        .init(operation: "Приёмка",            zone: "Блок 5", rateKopecks: 1580),
+        .init(operation: "Раскладка",          zone: "Блок 5", rateKopecks: 1260),
+        .init(operation: "Упаковка",           zone: "Блок 5", rateKopecks: 1080)
     ]
 
     static let warehouseDocuments: [WarehouseDocument] = {
