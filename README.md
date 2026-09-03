@@ -5,7 +5,7 @@
 | <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> |
 | **Putaway:** the operator places items into freely selected storage cells. | **Picking:** the operator collects items according to the task list. |
 
-A warehouse operations app built with SwiftUI. Three warehouse flows are implemented, all driven by API-style mock JSON. In Putaway, an operator receives a task, reviews a short onboarding flow, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request. In Returns check, the operator receives a task of returned items, scans one to take it in hand, reads why the customer sent it back, inspects it, taps one of three decisions, and finishes by encoding a decision for every checked item.
+A warehouse operations app built with SwiftUI. Three warehouse flows are implemented, all driven by API-style mock JSON. In Putaway, an operator receives a task, reviews a short onboarding flow, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request. In Returns check, the operator receives a task of returned items, reviews a short onboarding flow, scans the container they arrived in, binds a container for good items and one for items going to inspection, scans an item to take it in hand, reads why the customer sent it back, inspects it, taps one of three decisions, photographs the item when the decision is defect or a wrong item, and finishes by encoding a decision, a target container, and a photo for every checked item.
 
 Putaway, Picking, and Returns check are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional warehouse operations.
 
@@ -72,17 +72,23 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 ### Returns check
 
-- Returns flow: fetch task, scan a returned item, review the return reason, choose a decision, finish screen.
+- Returns flow: fetch task, onboarding, scan the returns container, bind the result containers, scan a returned item, review the return reason, choose a decision, photograph the item, finish screen.
+- One-time illustrated Returns onboarding stored with `@AppStorage`, with replay from the container and task menus.
+- Container check before the task opens: a card names the container the returns arrived in and where it stands, and only the code of that container starts the check.
+- Two result containers bound by scanning on the same screen, one for good items and one for items going to inspection; a code that is not a container, the source container itself, and a code already bound are all rejected.
+- Result containers carried into the task as chips; tapping one switches the scanner to rebinding that container without leaving the task.
 - Item card with the reason the item came back, replaced by a dashed placeholder while nothing is in hand.
 - Three decisions per item: back to sale, defect zone, or a wrong item returned. The decision is a tap, not a scan.
+- Photo required for the defect and wrong item decisions: the camera opens with a hint written for that decision, and a cancelled shot leaves the item unchecked.
+- The shot is downscaled to 2048 px and compressed to JPEG for the request, with a separate thumbnail kept for the list row.
 - Scanning the next item is rejected until the item in hand gets a decision.
-- The whole task in one list: items left to check on top, checked items below with the newest first and the decision icon on the row.
+- The whole task in one list: items left to check on top, checked items below with the newest first and the photo of the check on the row, badged with the decision.
 - Re-scanning a checked item takes it back in hand, and a new decision overwrites the old one without moving the progress count.
 - Task progress in the navigation bar, with a menu breaking it down into checked and remaining items.
 - Finish button that appears once every item is checked and nothing is left in hand.
 - Early finish from the task menu, behind a confirmation dialog, for when the rest of the items cannot be checked.
-- API-style finish request encoding with a decision per item, plus the IDs of the items left unchecked after an early finish.
-- Manual debug-only demo controls for walking the scans without the camera.
+- API-style finish request encoding with a decision, a target container, and a photo per item, plus the IDs of the items left unchecked after an early finish.
+- Manual debug-only demo controls for walking the container and item scans without the camera.
 
 ### Profile
 
@@ -95,7 +101,8 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 ### Shared and data
 
 - Animated error banner in the navigation bar.
-- One onboarding component shared by both modules, with the pages of each module kept as data.
+- One onboarding component shared by all three modules, with the pages of each module kept as data.
+- Camera wrapper around the system camera that hands back a compressed photo and a list thumbnail in one shot.
 - System sound feedback for successful and failed scans.
 - Mock API-style JSON resources for profile, picking, putaway, and returns task loading.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking, putaway, and returns tasks.
@@ -134,13 +141,18 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 1. Open the Returns check module.
 2. Fetch a returns task.
-3. Hold the camera area to scan a returned item.
-4. Check the item, its label ID, and the reason it came back.
-5. Inspect the item and tap one of the three decisions; until then the next scan is rejected.
-6. The checked item moves into the checked part of the list and carries the icon of its decision.
-7. Re-scan a checked item to take it back in hand and overwrite the decision.
-8. After the last item is checked, the finish button appears; unchecked items are left behind by finishing early from the task menu.
-9. Finish the task through the mock service, which encodes a decision for every checked item into JSON.
+3. Complete the Returns onboarding on first launch, or replay it from the container or task menu.
+4. Find the container the returns arrived in and scan its code; any other code is rejected.
+5. Scan a container for good items and a container for items going to inspection.
+6. Hold the camera area to scan a returned item.
+7. Check the item, its label ID, and the reason it came back.
+8. Inspect the item and tap one of the three decisions; until then the next scan is rejected.
+9. For the defect and wrong item decisions, photograph the item; the decision is not recorded without a shot.
+10. Put the item into the container its decision points to; either container can be swapped mid-task by tapping its chip and scanning a new code.
+11. The checked item moves into the checked part of the list and carries the photo of the check, badged with the decision.
+12. Re-scan a checked item to take it back in hand and overwrite the decision.
+13. After the last item is checked, the finish button appears; unchecked items are left behind by finishing early from the task menu.
+14. Finish the task through the mock service, which encodes a decision, a container, and a photo for every checked item into JSON.
 
 ## Tech Stack
 
@@ -205,8 +217,10 @@ Where to start reading:
 - `PickingTaskResultRequest.swift` - Encodable API-style request for finishing a picking task.
 - `PutawayTaskView.swift` - Storage cell card, scanner, and item list for putaway.
 - `PutawayTaskViewModel.swift` - Cell selection, placement, capacity, and placement order.
+- `ReturnsContainersView.swift` - Container screen that binds the returns container and the two result containers.
 - `ReturnsTaskView.swift` - Return card, decision buttons, and the task list of the returns module.
-- `ReturnsTaskViewModel.swift` - Decision recording, re-checks, and check order.
+- `ReturnsTaskViewModel.swift` - Decision recording, photos, container binding, re-checks, and check order.
+- `CameraPickerView.swift` - SwiftUI wrapper around the system camera, returning a compressed photo and a thumbnail.
 - `ProfileRatingView.swift` - Swift Charts rating chart with drag selection.
 - `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
 - `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
@@ -236,11 +250,12 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The mock service includes a test user ID for checking the task fetching error state.
 - Profile and warehouse task data are loaded from bundled mock JSON files.
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
-- The putaway finish flow encodes item-to-cell placements the same way, and the returns finish flow encodes a decision for every checked item.
+- The putaway finish flow encodes item-to-cell placements the same way, and the returns finish flow encodes a decision, a container, and a photo for every checked item.
 - The picking, putaway, and returns mock tasks share item IDs, so one set of printed codes works in all three modules. The returns task adds the reason each item came back.
-- The putaway task opens with a container scan, and the container card on screen shows the code the mock task expects.
-- Picking and putaway onboarding completion is stored locally with `@AppStorage`, one flag per module.
-- Both modules replay their onboarding from the menu in the navigation bar.
+- The putaway and returns tasks open with a container scan, and the container card on screen shows the code the mock task expects. The returns module then takes the good and inspection containers from any two other codes carrying the container prefix.
+- Returns demo mode fills the photo step with a placeholder shot, because the simulator has no camera.
+- Picking, putaway, and returns onboarding completion is stored locally with `@AppStorage`, one flag per module.
+- All three modules replay their onboarding from the menu in the navigation bar.
 - All three warehouse modules include debug-only demo controls that replace the camera with buttons, so the flows can be walked in the simulator, where no camera exists.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - The settings entry point is hidden until the app has configurable options.
