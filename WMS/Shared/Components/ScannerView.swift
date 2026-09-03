@@ -14,7 +14,7 @@ struct ScannerView: View {
             onScan: onScan
         )
         .frame(maxWidth: .infinity)
-        .frame(maxHeight: previewHeight)
+        .frame(idealHeight: previewHeight, maxHeight: previewHeight)
         .layoutPriority(1)
         .clipShape(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
