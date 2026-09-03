@@ -42,7 +42,7 @@ struct ReturnsFinishView: View {
 
                 Text("Задание проверки закрыто")
                     .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(ColorPalette.textPrimary)
 
                 Text(viewModel.resultText)
                     .font(.system(size: 18, weight: .regular))

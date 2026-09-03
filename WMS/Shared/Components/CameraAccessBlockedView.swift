@@ -41,7 +41,7 @@ struct CameraAccessBlockedView: View {
                     .tint(ColorPalette.accentPrimary)
                 }
             }
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .padding(24)
         }
         .task {

@@ -16,6 +16,7 @@ struct ContentView: View {
                 }
         }
         .tint(ColorPalette.accentPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
         .preferredColorScheme(.light)
     }
 }

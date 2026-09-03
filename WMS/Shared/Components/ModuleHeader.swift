@@ -12,7 +12,7 @@ struct ModuleHeader: View {
                 } label: {
                     Image(systemName: "chevron.backward")
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(ColorPalette.textInverted)
                         .frame(width: 24, height: 24)
                         .offset(y: 1.5)
                 }
@@ -22,7 +22,7 @@ struct ModuleHeader: View {
             Text(title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
-                .foregroundStyle(.white)
+                .foregroundStyle(ColorPalette.textInverted)
 
             Spacer()
         }

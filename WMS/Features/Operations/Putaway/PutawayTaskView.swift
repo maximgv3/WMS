@@ -39,7 +39,7 @@ struct PutawayTaskView: View {
                     PrimaryButton(
                         "Закончить задание",
                         background: ColorPalette.success,
-                        foreground: ColorPalette.surfacePrimary,
+                        foreground: ColorPalette.textInverted,
                         isGlassy: true
                     ) {
                         path.append(.putaway(.finish(viewModel.result)))
@@ -53,6 +53,7 @@ struct PutawayTaskView: View {
                 value: viewModel.isAllItemsPlaced
             )
         }
+        .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
             title: "Не удалось разложить товар",
             message: errorMessage,
@@ -166,7 +167,7 @@ struct PutawayTaskView: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
         }
         .confirmationDialog(
             "Досрочное завершение",
@@ -269,7 +270,7 @@ struct PutawayTaskView: View {
             Button(action: action) {
                 Text(title)
                     .font(.system(size: 20, weight: .bold))
-                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .foregroundStyle(ColorPalette.textInverted)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
                     .background(ColorPalette.brandPrimary)
@@ -308,12 +309,12 @@ struct PutawayTaskView: View {
                 Text("Ячейка не выбрана")
                     .font(.system(size: 20, weight: .medium))
             }
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .frame(maxWidth: .infinity, minHeight: 140)
             .overlay {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .strokeBorder(
-                        ColorPalette.brandPrimary,
+                        ColorPalette.textPrimary,
                         style: StrokeStyle(lineWidth: 2, dash: [6])
                     )
             }
@@ -342,7 +343,7 @@ struct PutawayTaskView: View {
             }
             .padding(.horizontal, 16)
             .animation(.snappy, value: viewModel.currentCellItemsCount)
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .frame(maxWidth: .infinity, minHeight: 140)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
@@ -363,7 +364,7 @@ struct PutawayTaskView: View {
                 .padding(6)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(ColorPalette.brandPrimary, lineWidth: 1)
+                        .strokeBorder(ColorPalette.textPrimary, lineWidth: 1)
                 )
                 .contentShape(Rectangle())
         }
@@ -428,7 +429,7 @@ struct PutawayTaskView: View {
     private var itemImagePlaceholder: some View {
         Image(systemName: "photo")
             .font(.system(size: 22))
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
     }
 
     private func processScan(_ code: String) {

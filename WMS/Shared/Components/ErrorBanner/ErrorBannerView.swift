@@ -19,7 +19,7 @@ struct ErrorBannerView: View {
     private var content: some View {
         VStack(spacing: .zero) {
             Text(title)
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .font(.system(size: 18, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .lineLimit(1)
@@ -27,7 +27,7 @@ struct ErrorBannerView: View {
             if let message {
                 Text(message)
                     .padding(.top, 4)
-                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .foregroundStyle(ColorPalette.textInverted)
                     .font(.system(size: 16, weight: .regular))
                     .frame(maxWidth: .infinity, alignment: .leading)
             }

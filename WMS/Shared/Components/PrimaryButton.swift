@@ -17,7 +17,7 @@ struct PrimaryButton: View {
     init(
         _ title: String,
         background: Color = ColorPalette.accentPrimary,
-        foreground: Color = ColorPalette.brandPrimary,
+        foreground: Color = ColorPalette.textPrimary,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         isGlassy: Bool = false,
@@ -128,7 +128,7 @@ private struct Style {
         PrimaryButton(
             "Закончить задание",
             background: ColorPalette.success,
-            foreground: ColorPalette.surfacePrimary,
+            foreground: ColorPalette.textInverted,
             isGlassy: true
         ) {}
         .padding(.horizontal, 64)

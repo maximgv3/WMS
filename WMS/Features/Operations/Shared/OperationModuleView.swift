@@ -42,6 +42,7 @@ struct OperationModuleView: View {
                         .ignoresSafeArea(edges: .bottom)
                 }
             }
+            .foregroundStyle(ColorPalette.textPrimary)
             .navigationBarBackButtonHidden()
             .gesture(moduleExitDragGesture)
             .navigationDestination(for: OperationType.WorkRoute.self) { route in

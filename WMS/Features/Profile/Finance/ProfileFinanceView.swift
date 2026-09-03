@@ -85,7 +85,7 @@ struct ProfileFinanceView: View {
                             VStack(spacing: 40) {
                                 Text(error)
                                     .font(.system(size: 24, weight: .semibold))
-                                    .foregroundStyle(ColorPalette.brandPrimary)
+                                    .foregroundStyle(ColorPalette.textPrimary)
                                     .multilineTextAlignment(.center)
                                 PrimaryButton(
                                     "Попробовать снова",
@@ -123,7 +123,7 @@ struct ProfileFinanceView: View {
                                     alignment: .center
                                 )
                                 .font(.system(size: 24, weight: .semibold))
-                                .foregroundStyle(ColorPalette.brandPrimary)
+                                .foregroundStyle(ColorPalette.textPrimary)
                         } else {
                             LazyVStack(alignment: .leading, spacing: 24) {
                                 ForEach(viewModel.transactionSections) {
@@ -164,7 +164,7 @@ struct ProfileFinanceView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text(date.formattedAsSectionHeader())
                 .font(.system(size: 19, weight: .semibold))
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
             VStack(alignment: .leading, spacing: 20) {
                 ForEach(transactions) { transaction in
                     transactionRow(transaction)
@@ -185,7 +185,7 @@ struct ProfileFinanceView: View {
         let amountColor =
             isPending
             ? (isAmountPositive ? ColorPalette.success : ColorPalette.error)
-            : ColorPalette.brandPrimary
+            : ColorPalette.textPrimary
         let titleColor =
             isPending ? ColorPalette.brandMuted : ColorPalette.brandSecondary
 
@@ -218,7 +218,7 @@ struct ProfileFinanceView: View {
                 Text(title)
                     .font(.system(size: 16))
             }
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
         }
         .frame(maxWidth: .infinity)
         .frame(height: 80)

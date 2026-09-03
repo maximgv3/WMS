@@ -74,6 +74,7 @@ struct PickingTaskView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .task {
             await viewModel.preloadImages()
         }
@@ -259,7 +260,7 @@ struct PickingTaskView: View {
 
     private var exitMenuIcon: some View {
         Image(systemName: "ellipsis.circle")
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
     }
 
     #if DEBUG
@@ -344,7 +345,7 @@ struct PickingTaskView: View {
     private func errorBanner(_ message: String) -> some View {
         let label = Text(message)
             .font(.system(size: 16, weight: .semibold))
-            .foregroundStyle(ColorPalette.surfacePrimary)
+            .foregroundStyle(ColorPalette.textInverted)
             .lineLimit(1)
             .padding(.horizontal, 18)
             .padding(.vertical, 10)
@@ -393,7 +394,7 @@ struct PickingTaskView: View {
                     } label: {
                         Text("Собрать")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(ColorPalette.brandPrimary)

@@ -60,7 +60,7 @@ struct SupportView: View {
             } label: {
                 Image(systemName: "arrow.up.circle.fill")
                     .font(.system(size: 24))
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(ColorPalette.textPrimary)
                     .padding(4)
             }
             .padding(.horizontal, 8)

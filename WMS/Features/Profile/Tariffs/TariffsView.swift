@@ -50,7 +50,7 @@ struct TariffsView: View {
                             if viewModel.selectedZones.contains(zone) {
                                 Image(systemName: "checkmark")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(ColorPalette.brandPrimary)
+                                    .foregroundStyle(ColorPalette.textPrimary)
                             }
                         }
                         .contentShape(.rect)
@@ -72,7 +72,7 @@ struct TariffsView: View {
                             if viewModel.selectedOperations.contains(operation) {
                                 Image(systemName: "checkmark")
                                     .font(.subheadline.weight(.semibold))
-                                    .foregroundStyle(ColorPalette.brandPrimary)
+                                    .foregroundStyle(ColorPalette.textPrimary)
                             }
                         }
                         .contentShape(.rect)
@@ -100,7 +100,7 @@ struct TariffsView: View {
     private var content: some View {
         if viewModel.isLoading && viewModel.tariffs.isEmpty {
             ProgressView()
-                .tint(ColorPalette.surfacePrimary)
+                .tint(ColorPalette.textInverted)
         } else if let error = viewModel.errorMessage, viewModel.tariffs.isEmpty {
             errorState(error)
         } else if viewModel.tariffs.isEmpty {
@@ -120,7 +120,7 @@ struct TariffsView: View {
         VStack(spacing: 40) {
             Text(message)
                 .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
             PrimaryButton("Попробовать снова", variant: .capsule) {
                 Task { await viewModel.loadTariffs() }
@@ -133,14 +133,14 @@ struct TariffsView: View {
         VStack(spacing: .zero) {
             Text("Тарифы")
                 .font(.largeTitle).bold()
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
                 .padding(.bottom, 20)
 
             ZStack(alignment: .top) {
-                Color.white
+                ColorPalette.surfacePrimary
                     .clipShape(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 32,

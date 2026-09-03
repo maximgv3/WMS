@@ -11,7 +11,7 @@ struct MenuRow: View {
             IconChip(systemName: icon, size: 36)
 
             Text(title)
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
 
             Spacer()
 

@@ -29,7 +29,7 @@ struct ProfileRatingView: View {
     private var content: some View {
         if viewModel.isLoading && viewModel.summary == nil {
             ProgressView()
-                .tint(ColorPalette.surfacePrimary)
+                .tint(ColorPalette.textInverted)
         } else if let error = viewModel.errorMessage, viewModel.history.isEmpty {
             errorState(error)
         } else if viewModel.history.isEmpty {
@@ -43,7 +43,7 @@ struct ProfileRatingView: View {
         VStack(spacing: 40) {
             Text(message)
                 .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
             PrimaryButton("Попробовать снова", variant: .capsule) {
                 Task { await viewModel.loadRating() }
@@ -58,7 +58,7 @@ struct ProfileRatingView: View {
                 .frame(height: 200)
                 .padding()
             ZStack(alignment: .top) {
-                Color.white
+                ColorPalette.surfacePrimary
                     .clipShape(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 32,
@@ -120,13 +120,13 @@ struct ProfileRatingView: View {
 
             if let selectedPoint {
                 RuleMark(x: .value("Дата", selectedPoint.date))
-                    .foregroundStyle(ColorPalette.surfacePrimary.opacity(0.4))
+                    .foregroundStyle(ColorPalette.textInverted.opacity(0.4))
 
                 PointMark(
                     x: .value("Дата", selectedPoint.date),
                     y: .value("Рейтинг", selectedPoint.value)
                 )
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .symbolSize(150)
                 .annotation(
                     position: .automatic,
@@ -144,7 +144,7 @@ struct ProfileRatingView: View {
                         )
                         .font(.caption)
                     }
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(ColorPalette.textPrimary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)
                     .background(
@@ -158,13 +158,13 @@ struct ProfileRatingView: View {
         .chartXAxis {
             AxisMarks {
                 AxisValueLabel(anchor: .top)
-                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .foregroundStyle(ColorPalette.textInverted)
             }
         }
         .chartYAxis {
             AxisMarks {
                 AxisValueLabel()
-                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .foregroundStyle(ColorPalette.textInverted)
 
             }
         }

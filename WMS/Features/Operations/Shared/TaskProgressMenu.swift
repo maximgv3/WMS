@@ -29,7 +29,7 @@ struct TaskProgressMenu<MenuContent: View>: View {
                 "\(doneCount)/\(totalCount)"
             )
             .font(.system(size: 14, weight: .semibold))
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .monospacedDigit()
         }
         .padding(.leading, 9)

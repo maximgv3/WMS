@@ -75,7 +75,7 @@ struct OnboardingView: View {
     private func onboardingText(_ text: String) -> some View {
         Text(text)
             .font(.system(size: 20, weight: .semibold))
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)

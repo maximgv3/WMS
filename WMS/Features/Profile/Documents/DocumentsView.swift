@@ -21,7 +21,7 @@ struct DocumentsView: View {
     private var content: some View {
         if viewModel.isLoading && viewModel.documents.isEmpty {
             ProgressView()
-                .tint(ColorPalette.surfacePrimary)
+                .tint(ColorPalette.textInverted)
         } else if let error = viewModel.errorMessage, viewModel.documents.isEmpty {
             errorState(error)
         } else if viewModel.documents.isEmpty {
@@ -41,7 +41,7 @@ struct DocumentsView: View {
         VStack(spacing: 40) {
             Text(message)
                 .font(.system(size: 22, weight: .semibold))
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
             PrimaryButton("Попробовать снова", variant: .capsule) {
                 Task { await viewModel.loadDocuments() }
@@ -55,7 +55,7 @@ struct DocumentsView: View {
             title
 
             ZStack(alignment: .top) {
-                Color.white
+                ColorPalette.surfacePrimary
                     .clipShape(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 32,
@@ -88,7 +88,7 @@ struct DocumentsView: View {
     private var titleText: some View {
         Text("Документы")
             .font(.largeTitle).bold()
-            .foregroundStyle(ColorPalette.surfacePrimary)
+            .foregroundStyle(ColorPalette.textInverted)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
             .padding(.top, 16)
@@ -126,7 +126,7 @@ struct DocumentsView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(document.title)
                     .font(.body)
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(ColorPalette.textPrimary)
                     .multilineTextAlignment(.leading)
                 Text("Обновлён " + document.updatedAt.formattedAsDocumentDate())
                     .font(.system(size: 13))

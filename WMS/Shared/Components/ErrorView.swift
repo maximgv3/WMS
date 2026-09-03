@@ -37,7 +37,7 @@ struct ErrorView: View {
                     .font(.system(size: 22, weight: .semibold))
                     .multilineTextAlignment(.center)
             }
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
         }
         .task {
             if case .other(_, _, let autoDismiss) = type,

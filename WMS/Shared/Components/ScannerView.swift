@@ -41,7 +41,7 @@ struct ScannerView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
             }
             .padding(.horizontal, 10)
-            .foregroundStyle(ColorPalette.surfacePrimary)
+            .foregroundStyle(ColorPalette.textInverted)
             .opacity(isScanningEnabled ? 0.35 : 0.85)
         }
         .onLongPressGesture(minimumDuration: .infinity, maximumDistance: .infinity) { } onPressingChanged: { isPressing in

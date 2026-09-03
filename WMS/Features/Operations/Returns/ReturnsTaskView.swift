@@ -48,7 +48,7 @@ struct ReturnsTaskView: View {
                     PrimaryButton(
                         "Закончить задание",
                         background: ColorPalette.success,
-                        foreground: ColorPalette.surfacePrimary,
+                        foreground: ColorPalette.textInverted,
                         isGlassy: true
                     ) {
                         path.append(.returns(.finish(viewModel.result)))
@@ -62,6 +62,7 @@ struct ReturnsTaskView: View {
                 value: isFinishAvailable
             )
         }
+        .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
             title: errorTitle,
             message: errorMessage
@@ -186,7 +187,7 @@ struct ReturnsTaskView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DecisionButtonStyle())
-        .foregroundStyle(ColorPalette.brandPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
     }
 
     private var errorMessage: Binding<String?> {
@@ -245,7 +246,7 @@ struct ReturnsTaskView: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
         }
         .confirmationDialog(
             "Досрочное завершение",
@@ -328,7 +329,7 @@ struct ReturnsTaskView: View {
                     } label: {
                         Text("Тара")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(ColorPalette.brandPrimary)
@@ -348,7 +349,7 @@ struct ReturnsTaskView: View {
                     } label: {
                         Text("Товар")
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(ColorPalette.surfacePrimary)
+                            .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
                             .background(ColorPalette.brandPrimary)
@@ -413,12 +414,12 @@ struct ReturnsTaskView: View {
             Text("Товар не отсканирован")
                 .font(.system(size: 20, weight: .medium))
         }
-        .foregroundStyle(ColorPalette.brandPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
         .frame(maxWidth: .infinity, minHeight: 140)
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .strokeBorder(
-                    ColorPalette.brandPrimary,
+                    ColorPalette.textPrimary,
                     style: StrokeStyle(lineWidth: 2, dash: [6])
                 )
         }
@@ -449,7 +450,7 @@ struct ReturnsTaskView: View {
             }
         }
         .padding(16)
-        .foregroundStyle(ColorPalette.brandPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
         .frame(maxWidth: .infinity, minHeight: 140)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
@@ -514,7 +515,7 @@ struct ReturnsTaskView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DecisionButtonStyle())
-        .foregroundStyle(ColorPalette.brandPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
     }
 
     private var listedItems: [ReturnItem] {
@@ -586,7 +587,7 @@ struct ReturnsTaskView: View {
                 .overlay(alignment: .bottomTrailing) {
                     Image(systemName: decision.badgeIconName)
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(ColorPalette.surfacePrimary)
+                        .foregroundStyle(ColorPalette.textInverted)
                         .frame(width: 16, height: 16)
                         .background(color(for: decision), in: Circle())
                         .offset(x: 4, y: 4)
@@ -618,7 +619,7 @@ struct ReturnsTaskView: View {
     private var itemImagePlaceholder: some View {
         Image(systemName: "photo")
             .font(.system(size: 22))
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
     }
 
     private func color(for slot: ReturnContainerSlot) -> Color {

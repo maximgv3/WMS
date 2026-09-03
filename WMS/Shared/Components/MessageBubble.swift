@@ -4,7 +4,7 @@ struct MessageBubble: View {
     let message: ChatMessage
 
     private var textColor: Color {
-        message.fromUser ? ColorPalette.surfacePrimary : ColorPalette.brandPrimary
+        message.fromUser ? ColorPalette.textInverted : ColorPalette.textPrimary
     }
 
     private var time: Text {

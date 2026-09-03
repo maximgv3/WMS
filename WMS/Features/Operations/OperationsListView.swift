@@ -84,7 +84,7 @@ struct OperationsListView: View {
                             IconChip(systemName: operation.iconName, size: 44)
 
                             Text(operation.title)
-                                .foregroundStyle(ColorPalette.brandPrimary)
+                                .foregroundStyle(ColorPalette.textPrimary)
                                 .font(.system(size: 17, weight: .regular))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.medium)

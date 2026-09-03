@@ -42,7 +42,7 @@ struct PickingFinishView: View {
 
                 Text("Сборка завершена")
                     .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(ColorPalette.brandPrimary)
+                    .foregroundStyle(ColorPalette.textPrimary)
 
                 Text(viewModel.resultText)
                     .font(.system(size: 18, weight: .regular))

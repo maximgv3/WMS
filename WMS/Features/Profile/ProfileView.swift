@@ -160,7 +160,7 @@ struct ProfileView: View {
         HStack(alignment: .center) {
             Text("Профиль")
                 .font(.system(size: 32, weight: .bold))
-                .foregroundStyle(ColorPalette.surfacePrimary)
+                .foregroundStyle(ColorPalette.textInverted)
                 .shadow(
                     color: ColorPalette.brandPrimary.opacity(0.35),
                     radius: 4,
@@ -173,7 +173,7 @@ struct ProfileView: View {
             } label: {
                 Image(systemName: "gearshape")
                     .font(.system(size: 22, weight: .medium))
-                    .foregroundStyle(ColorPalette.surfacePrimary)
+                    .foregroundStyle(ColorPalette.textInverted)
                     .shadow(
                         color: ColorPalette.brandPrimary.opacity(0.35),
                         radius: 4,
@@ -239,7 +239,7 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(viewModel.profile?.name ?? "")
                         .font(.system(size: 21, weight: .bold))
-                        .foregroundStyle(ColorPalette.brandPrimary)
+                        .foregroundStyle(ColorPalette.textPrimary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                         .layoutPriority(1)
@@ -249,7 +249,7 @@ struct ProfileView: View {
                             Text("id: " + id)
                         }
                         .font(.system(size: 15))
-                        .foregroundStyle(ColorPalette.brandPrimary)
+                        .foregroundStyle(ColorPalette.textPrimary)
                     }
                     .padding(5)
                     .background(iconBackground)
@@ -307,7 +307,7 @@ struct ProfileView: View {
                 .fill(iconBackground)
             Image(systemName: "person.circle")
                 .font(.system(size: 66, weight: .light))
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
         }
     }
 

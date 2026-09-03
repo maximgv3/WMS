@@ -37,6 +37,7 @@ struct PutawayContainerView: View {
                 .frame(maxWidth: .infinity, minHeight: 56, maxHeight: .infinity)
         }
         .padding([.horizontal, .top], 16)
+        .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
             title: "Не удалось начать раскладку",
             message: errorMessage
@@ -112,7 +113,7 @@ struct PutawayContainerView: View {
             }
         } label: {
             Image(systemName: "ellipsis.circle")
-                .foregroundStyle(ColorPalette.brandPrimary)
+                .foregroundStyle(ColorPalette.textPrimary)
         }
         #if DEBUG
             .confirmationDialog(
@@ -174,7 +175,7 @@ struct PutawayContainerView: View {
                 } label: {
                     Text("Контейнер")
                         .font(.system(size: 20, weight: .bold))
-                        .foregroundStyle(ColorPalette.surfacePrimary)
+                        .foregroundStyle(ColorPalette.textInverted)
                         .frame(maxWidth: .infinity)
                         .frame(height: 56)
                         .background(ColorPalette.brandPrimary)
@@ -242,7 +243,7 @@ struct PutawayContainerView: View {
             }
         }
         .padding(.horizontal, 16)
-        .foregroundStyle(ColorPalette.brandPrimary)
+        .foregroundStyle(ColorPalette.textPrimary)
         .frame(maxWidth: .infinity, minHeight: 140)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
