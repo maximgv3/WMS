@@ -2,10 +2,13 @@ import SwiftUI
 
 struct ReturnsTaskView: View {
 
+    @AppStorage("isReturnsOnboardingComplete") private
+        var isReturnsOnboardingComplete = false
     @State private var viewModel: ReturnsTaskViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State private var isScanningEnabled = false
     @State private var isEarlyFinishPresented = false
+    @State private var isOnboardingPresented = false
     @State private var pendingDecision: ReturnDecision?
     @State private var photoThumbnails: [Item.ID: Image] = [:]
 
@@ -80,6 +83,14 @@ struct ReturnsTaskView: View {
         }
         .onAppear {
             disableDemoMode()
+        }
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
+            OnboardingView(
+                pages: OnboardingPages.Returns.pages,
+                completionImage: .returnsOnboardingEnd
+            ) {
+                isReturnsOnboardingComplete = true
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -212,6 +223,17 @@ struct ReturnsTaskView: View {
                     )
                 }
             #endif
+
+            Button {
+                isReturnsOnboardingComplete = false
+                isOnboardingPresented = true
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Пройти обучение",
+                    systemImage: "book.closed"
+                )
+            }
 
             Button(role: .destructive) {
                 path.removeAll()

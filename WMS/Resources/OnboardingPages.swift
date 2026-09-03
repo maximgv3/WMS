@@ -67,4 +67,42 @@ enum OnboardingPages {
             ),
         ]
     }
+
+    enum Returns {
+        static let pages: [OnboardingPage] = [
+            .init(
+                image: .scanReturnsContainer,
+                text: "Найдите тару с возвратами и отсканируйте её код"
+            ),
+            .init(
+                image: .scanResultContainers,
+                text:
+                    "Отсканируйте тары: для годного товара и для товара на проверку"
+            ),
+            .init(
+                image: .scanReturnItem,
+                text: "Достаньте товар из тары и отсканируйте его штрих-код"
+            ),
+            .init(
+                image: .checkReturnItem,
+                text: "Осмотрите товар: тот ли это товар и нет ли повреждений"
+            ),
+            .init(
+                image: .chooseDecision,
+                text: "Выберите решение: годен, брак или подмена"
+            ),
+            .init(
+                image: .photographItem,
+                text: "При браке или подмене сфотографируйте проблему"
+            ),
+            .init(
+                image: .placeItemInResultContainer,
+                text: "Положите товар в тару, соответствующую решению"
+            ),
+            .init(
+                image: .finishReturnsTask,
+                text: "Проверьте так все товары и завершите задание"
+            ),
+        ]
+    }
 }

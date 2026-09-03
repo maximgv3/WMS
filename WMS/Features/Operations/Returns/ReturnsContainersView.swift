@@ -2,9 +2,12 @@ import SwiftUI
 
 struct ReturnsContainersView: View {
 
+    @AppStorage("isReturnsOnboardingComplete") private
+        var isReturnsOnboardingComplete = false
     @State private var viewModel: ReturnsContainersViewModel
     @Binding private var path: [OperationType.WorkRoute]
     @State private var isScanningEnabled = false
+    @State private var isOnboardingPresented = false
 
     #if DEBUG
         @AppStorage("isReturnsDemoModeOn") private var isDemoModeOn = false
@@ -65,7 +68,16 @@ struct ReturnsContainersView: View {
             message: errorMessage
         )
         .onAppear {
+            isOnboardingPresented = !isReturnsOnboardingComplete
             disableDemoMode()
+        }
+        .fullScreenCover(isPresented: $isOnboardingPresented) {
+            OnboardingView(
+                pages: OnboardingPages.Returns.pages,
+                completionImage: .returnsOnboardingEnd
+            ) {
+                isReturnsOnboardingComplete = true
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -122,6 +134,17 @@ struct ReturnsContainersView: View {
                     )
                 }
             #endif
+
+            Button {
+                isReturnsOnboardingComplete = false
+                isOnboardingPresented = true
+                isScanningEnabled = false
+            } label: {
+                Label(
+                    "Пройти обучение",
+                    systemImage: "book.closed"
+                )
+            }
 
             Button(role: .destructive) {
                 path.removeAll()

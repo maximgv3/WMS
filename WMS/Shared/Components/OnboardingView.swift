@@ -101,3 +101,10 @@ struct OnboardingPage {
         completionImage: .putawayOnboardingEnd
     ) {}
 }
+
+#Preview("Возвраты") {
+    OnboardingView(
+        pages: OnboardingPages.Returns.pages,
+        completionImage: .returnsOnboardingEnd
+    ) {}
+}
