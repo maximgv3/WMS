@@ -180,7 +180,6 @@ struct ProfileView: View {
                         y: 2
                     )
             }
-            .hidden()  // Settings are postponed until the app has configurable options.
         }
     }
 

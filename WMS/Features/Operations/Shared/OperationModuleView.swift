@@ -5,6 +5,7 @@ struct OperationModuleView: View {
     let operationType: OperationType
     @State private var viewModel: OperationModuleViewModel
     @State private var path: [OperationType.WorkRoute] = []
+    @AppStorage(AppSettings.Key.isScreenAlwaysOn) private var isScreenAlwaysOn = true
 
     init(
         operationType: OperationType,
@@ -98,6 +99,12 @@ struct OperationModuleView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            UIApplication.shared.isIdleTimerDisabled = isScreenAlwaysOn
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
         }
     }
 
