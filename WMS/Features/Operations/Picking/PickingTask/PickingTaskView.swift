@@ -75,6 +75,7 @@ struct PickingTaskView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
+        .defersSystemGestures(on: .bottom)
         .task {
             await viewModel.preloadImages()
         }

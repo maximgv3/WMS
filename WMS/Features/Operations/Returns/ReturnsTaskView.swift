@@ -63,6 +63,7 @@ struct ReturnsTaskView: View {
             )
         }
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
+        .defersSystemGestures(on: .bottom)
         .errorBanner(
             title: errorTitle,
             message: errorMessage

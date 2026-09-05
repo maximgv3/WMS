@@ -54,6 +54,7 @@ struct PutawayTaskView: View {
             )
         }
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
+        .defersSystemGestures(on: .bottom)
         .errorBanner(
             title: "Не удалось разложить товар",
             message: errorMessage,
