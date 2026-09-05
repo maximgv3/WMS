@@ -17,7 +17,7 @@ struct PrimaryButton: View {
     init(
         _ title: String,
         background: Color = ColorPalette.accentPrimary,
-        foreground: Color = ColorPalette.textPrimary,
+        foreground: Color = ColorPalette.brandPrimary,
         isLoading: Bool = false,
         isDisabled: Bool = false,
         isGlassy: Bool = false,

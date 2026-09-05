@@ -9,7 +9,7 @@ struct ProfileView: View {
 
     private var id: String = "1 023 780"
     private var iconBackground: Color {
-        ColorPalette.accentPrimary.opacity(0.18)
+        ColorPalette.surfaceChip
     }
     private var detailsItems: [ProfileMenuItem] {
         [

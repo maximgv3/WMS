@@ -9,6 +9,8 @@ enum ColorPalette {
         static let brandSecondary = Color(.citrusBrandSecondary)
         static let error = Color(.citrusError)
         static let success = Color(.citrusSuccess)
+        static let surfaceAccent = Color(.citrusSurfaceAccent)
+        static let surfaceChip = Color(.citrusSurfaceChip)
         static let surfacePrimary = Color(.citrusSurfacePrimary)
         static let textInverted = Color(.citrusTextInverted)
         static let textPrimary = Color(.citrusTextPrimary)
@@ -21,6 +23,8 @@ enum ColorPalette {
     static var brandSecondary: Color { Citrus.brandSecondary }
     static var error: Color { Citrus.error }
     static var success: Color { Citrus.success }
+    static var surfaceAccent: Color { Citrus.surfaceAccent }
+    static var surfaceChip: Color { Citrus.surfaceChip }
     static var surfacePrimary: Color { Citrus.surfacePrimary }
     static var textInverted: Color { Citrus.textInverted }
     static var textPrimary: Color { Citrus.textPrimary }
@@ -39,7 +43,9 @@ enum ColorPalette {
         ("Success", ColorPalette.Citrus.success),
         ("Error", ColorPalette.Citrus.error),
         ("TextPrimary", ColorPalette.Citrus.textPrimary),
-        ("TextInverted", ColorPalette.Citrus.textInverted)
+        ("TextInverted", ColorPalette.Citrus.textInverted),
+        ("SurfaceAccent", ColorPalette.Citrus.surfaceAccent),
+        ("SurfaceChip", ColorPalette.Citrus.surfaceChip)
     ]
 
     VStack(alignment: .leading, spacing: 16) {

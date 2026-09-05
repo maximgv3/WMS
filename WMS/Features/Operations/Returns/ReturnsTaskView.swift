@@ -454,7 +454,7 @@ struct ReturnsTaskView: View {
         .frame(maxWidth: .infinity, minHeight: 140)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous).fill(
-                ColorPalette.accentPrimary.opacity(0.18)
+                ColorPalette.surfaceAccent
             )
         )
     }

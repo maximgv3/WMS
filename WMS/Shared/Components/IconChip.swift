@@ -7,9 +7,9 @@ struct IconChip: View {
     var body: some View {
         Image(systemName: systemName)
             .font(.system(size: size * 0.5))
-            .foregroundStyle(ColorPalette.brandPrimary)
+            .foregroundStyle(ColorPalette.textPrimary)
             .frame(width: size, height: size)
-            .background(ColorPalette.accentPrimary.opacity(0.18))
+            .background(ColorPalette.surfaceChip)
             .clipShape(RoundedRectangle(cornerRadius: size * 0.27, style: .continuous))
     }
 }

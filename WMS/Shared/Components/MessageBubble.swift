@@ -26,7 +26,7 @@ struct MessageBubble: View {
             .padding(.horizontal, 14)
             .padding(.vertical, 10)
             .background(
-                message.fromUser ? ColorPalette.brandPrimary : ColorPalette.accentPrimary.opacity(0.18),
+                message.fromUser ? ColorPalette.brandPrimary : ColorPalette.surfaceAccent,
                 in: UnevenRoundedRectangle(
                     topLeadingRadius: 20,
                     bottomLeadingRadius: message.fromUser ? 20 : 4,
