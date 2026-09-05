@@ -100,6 +100,7 @@ struct OperationModuleView: View {
                 }
             }
         }
+        .defersSystemGestures(on: .bottom)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = isScreenAlwaysOn
         }
