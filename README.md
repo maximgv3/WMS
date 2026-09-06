@@ -7,7 +7,7 @@
 
 A warehouse operations app built with SwiftUI. Three warehouse flows are implemented, all driven by API-style mock JSON. In Putaway, an operator receives a task, reviews a short onboarding flow, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request. In Returns check, the operator receives a task of returned items, reviews a short onboarding flow, scans the container they arrived in, binds a container for good items and one for items going to inspection, scans an item to take it in hand, reads why the customer sent it back, inspects it, taps one of three decisions, photographs the item when the decision is defect or a wrong item, and finishes by encoding a decision, a target container, and a photo for every checked item.
 
-Putaway, Picking, and Returns check are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, and a support chat. The app is designed to grow into a larger warehouse app with additional warehouse operations.
+Putaway, Picking, and Returns check are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, a support chat, and the app settings. The app is designed to grow into a larger warehouse app with additional warehouse operations.
 
 ## Project Status
 
@@ -40,6 +40,9 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 - Navigation with `NavigationStack(path:)`.
 - `@Observable` ViewModel.
 - Camera permission blocker before warehouse operations, with first-run guidance and Settings recovery after denied access.
+- Light and dark themes: the app follows the system appearance or the one picked in the settings, and switching cross-fades the whole window.
+- The home indicator gesture is deferred for as long as a warehouse operation is open, so a swipe near the bottom edge raises the indicator first instead of dropping the operator out of a task.
+- The screen is kept awake for the length of a warehouse operation and released on the way out.
 
 ### Putaway
 
@@ -97,13 +100,16 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 - Tariffs screen with rates grouped by warehouse zone and a popover filter by zone and operation.
 - Documents screen with a PDFKit preview and an acknowledge action that updates the document state through the service.
 - Support chat screen with messages that appear instantly and roll back if sending fails, and replies that arrive from the service on a delay.
+- Settings screen with a theme picker, switches for the scan sound and for keeping the screen awake during a task, and the app version.
 
 ### Shared and data
 
 - Animated error banner in the navigation bar.
 - One onboarding component shared by all three modules, with the pages of each module kept as data.
 - Camera wrapper around the system camera that hands back a compressed photo and a list thumbnail in one shot.
-- System sound feedback for successful and failed scans.
+- System sound feedback for successful and failed scans, which the settings can switch off.
+- Semantic color tokens in the asset catalog named by role - background, surface, text, brand, accent - each carrying a light and a dark value, so both themes come from one set of names.
+- App settings kept in `UserDefaults` through `@AppStorage`, with defaults registered at launch so readers outside SwiftUI see the same values.
 - Mock API-style JSON resources for profile, picking, putaway, and returns task loading.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking, putaway, and returns tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
@@ -225,7 +231,9 @@ Where to start reading:
 - `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
 - `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
 - `SupportService.swift` - Support chat service protocol, with server-initiated messages exposed as an `AsyncStream`.
+- `SettingsView.swift` - Theme picker and the switches that change how a task behaves.
 - `PDFKitView.swift` - SwiftUI wrapper around PDFKit.
+- `ColorPalette.swift` - Semantic color tokens backed by the asset catalog.
 - `MockJSONLoader.swift` - Helper for decoding bundled mock JSON resources.
 - `WMSTests/` - Swift Testing suites for the Picking, Putaway, Returns, Tariffs, Profile, Rating, and Documents ViewModels.
 
@@ -258,7 +266,7 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - All three modules replay their onboarding from the menu in the navigation bar.
 - All three warehouse modules include debug-only demo controls that replace the camera with buttons, so the flows can be walked in the simulator, where no camera exists.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
-- The settings entry point is hidden until the app has configurable options.
+- Settings are stored locally with `@AppStorage`: the theme, the scan sound, and whether the screen stays awake during a task.
 - Camera permission handling blocks warehouse operations when camera access is missing.
 - Further warehouse operations are planned as future modules.
 
