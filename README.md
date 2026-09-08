@@ -1,13 +1,13 @@
 # WMS
 
-| Putaway | Picking |
-|:---:|:---:|
-| <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> |
-| **Putaway:** the operator places items into freely selected storage cells. | **Picking:** the operator collects items according to the task list. |
+| Putaway | Picking | Returns check |
+|:---:|:---:|:---:|
+| <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> | <img src="assets/returns-demo.gif" width="260" height="565" alt="Returns check flow demo"> |
+| **Putaway:** place items into freely selected storage cells. | **Picking:** collect items according to the task list. | **Returns check:** inspect returned items and record a decision. |
 
-A warehouse operations app built with SwiftUI. Three warehouse flows are implemented, all driven by API-style mock JSON. In Putaway, an operator receives a task, reviews a short onboarding flow, finds the container the items arrived in and scans it, scans a storage cell, scans items into it one by one, switches cells when one is full, and finishes by encoding where every item ended up. In Picking, the operator receives a task, reviews a short onboarding flow, sees the current item, scans a numeric label code, handles missing or replacement items, moves to the next item, and finishes the task by encoding the result into an API-style JSON request. In Returns check, the operator receives a task of returned items, reviews a short onboarding flow, scans the container they arrived in, binds a container for good items and one for items going to inspection, scans an item to take it in hand, reads why the customer sent it back, inspects it, taps one of three decisions, photographs the item when the decision is defect or a wrong item, and finishes by encoding a decision, a target container, and a photo for every checked item.
+A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns check. Tasks are loaded from bundled mock JSON, and completed results are encoded as API-style requests.
 
-Putaway, Picking, and Returns check are the implemented warehouse modules. The Profile tab is the other developed area and covers earnings history, an operator rating chart, warehouse tariffs, work documents, a support chat, and the app settings. The app is designed to grow into a larger warehouse app with additional warehouse operations.
+The Profile tab covers earnings history, operator ratings, warehouse tariffs, work documents, support chat, and settings. The app supports light and dark themes.
 
 ## Project Status
 
@@ -15,21 +15,39 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 ## Screenshots
 
-| Operations menu | Get task | Item & scanner |
-|:---:|:---:|:---:|
-| <img src="assets/operations-list.png" width="230"> | <img src="assets/picking-get-task.png" width="230"> | <img src="assets/picking-task.png" width="230"> |
+### Operations menu
 
-| Task complete | Profile | Finance history |
-|:---:|:---:|:---:|
-| <img src="assets/picking-finish.png" width="230"> | <img src="assets/profile.png" width="230"> | <img src="assets/profile-operations.png" width="230"> |
+<img src="assets/operations-list.png" width="230" alt="Warehouse operations menu">
 
-| Rating | Documents | Tariffs |
-|:---:|:---:|:---:|
-| <img src="assets/profile-rating.png" width="230"> | <img src="assets/profile-documents.png" width="230"> | <img src="assets/profile-tariffs.png" width="230"> |
+### Putaway
 
-| Support chat |
-|:---:|
-| <img src="assets/profile-support.png" width="230"> |
+| Get task | Choose a cell |
+|:---:|:---:|
+| <img src="assets/putaway-get-task.png" width="230" alt="Get a putaway task"> | <img src="assets/putaway-task-main.png" width="230" alt="Putaway task before choosing a storage cell"> |
+| **Items in the cell** | **Task complete** |
+| <img src="assets/putaway-task-cell.png" width="230" alt="Putaway task with two items placed in a cell"> | <img src="assets/putaway-finish.png" width="230" alt="Completed putaway task"> |
+
+### Picking
+
+| Get task | Item & scanner | Task complete |
+|:---:|:---:|:---:|
+| <img src="assets/picking-get-task.png" width="230" alt="Get a picking task"> | <img src="assets/picking-task.png" width="230" alt="Picking task with the current item and scanner"> | <img src="assets/picking-finish.png" width="230" alt="Completed picking task"> |
+
+### Returns check
+
+| Get task | Items & containers | Task complete |
+|:---:|:---:|:---:|
+| <img src="assets/returns-get-task.png" width="230" alt="Get a returns check task"> | <img src="assets/returns-task.png" width="230" alt="Returns task with the scanner, result containers, and items to check"> | <img src="assets/returns-finish.png" width="230" alt="Completed returns task with decision totals"> |
+
+### Profile
+
+| Light theme | Dark theme | Settings |
+|:---:|:---:|:---:|
+| <img src="assets/profile.png" width="230" alt="Profile in the light theme"> | <img src="assets/profile-dark.png" width="230" alt="Profile in the dark theme"> | <img src="assets/profile-settings.png" width="230" alt="Theme, scan sound, and screen settings"> |
+| **Finance history** | **Rating** | **Tariffs** |
+| <img src="assets/profile-operations.png" width="230" alt="Finance history"> | <img src="assets/profile-rating.png" width="230" alt="Rating chart and per-operation ratings"> | <img src="assets/profile-tariffs.png" width="230" alt="Warehouse tariffs including returns checks"> |
+| **Documents** | **Support chat** | |
+| <img src="assets/profile-documents.png" width="230" alt="Work documents"> | <img src="assets/profile-support.png" width="230" alt="Support chat"> | |
 
 ## Features
 
@@ -53,7 +71,8 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 - Storage cell card with a fill indicator against the cell capacity of the task.
 - Item list that switches by phase: items left in the cart before a cell is chosen, items already placed once it is.
 - The item just scanned moves to the top of the list, so the list itself confirms the scan.
-- Rejection only when the cell is out of space; re-scanning an item that already lies in the current cell is accepted.
+- An item outside the task is rejected on its first scan and accepted after the same code is scanned again for confirmation; it occupies cell capacity without increasing task progress.
+- Re-scanning an item that already lies in the current cell is accepted, while a new placement is rejected when the cell is out of space.
 - Task progress in the navigation bar, with a menu breaking it down into placed and untouched items.
 - Finish button that appears once the last item is placed, instead of jumping to the finish screen on its own.
 - Early finish from the task menu, behind a confirmation dialog, for when the rest of the items cannot be placed.
@@ -75,7 +94,7 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 ### Returns check
 
-- Returns flow: fetch task, onboarding, scan the returns container, bind the result containers, scan a returned item, review the return reason, choose a decision, photograph the item, finish screen.
+- Returns flow: fetch task, onboarding, scan the returns container, bind the result containers, scan a returned item, review the return reason, choose a decision, photograph the item when required, finish screen.
 - One-time illustrated Returns onboarding stored with `@AppStorage`, with replay from the container and task menus.
 - Container check before the task opens: a card names the container the returns arrived in and where it stands, and only the code of that container starts the check.
 - Two result containers bound by scanning on the same screen, one for good items and one for items going to inspection; a code that is not a container, the source container itself, and a code already bound are all rejected.
@@ -85,12 +104,12 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 - Photo required for the defect and wrong item decisions: the camera opens with a hint written for that decision, and a cancelled shot leaves the item unchecked.
 - The shot is downscaled to 2048 px and compressed to JPEG for the request, with a separate thumbnail kept for the list row.
 - Scanning the next item is rejected until the item in hand gets a decision.
-- The whole task in one list: items left to check on top, checked items below with the newest first and the photo of the check on the row, badged with the decision.
+- The whole task in one list: items left to check on top, checked items below with the newest first and the decision shown as either an icon or a badged photo.
 - Re-scanning a checked item takes it back in hand, and a new decision overwrites the old one without moving the progress count.
 - Task progress in the navigation bar, with a menu breaking it down into checked and remaining items.
 - Finish button that appears once every item is checked and nothing is left in hand.
 - Early finish from the task menu, behind a confirmation dialog, for when the rest of the items cannot be checked.
-- API-style finish request encoding with a decision, a target container, and a photo per item, plus the IDs of the items left unchecked after an early finish.
+- API-style finish request encoding with a decision and target container per item, a photo when required, plus the IDs of the items left unchecked after an early finish.
 - Manual debug-only demo controls for walking the container and item scans without the camera.
 
 ### Profile
@@ -117,7 +136,8 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 ## Main Flows
 
-### Putaway
+<details>
+<summary>Putaway</summary>
 
 1. Open the Putaway module.
 2. Fetch a putaway task.
@@ -130,7 +150,10 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 9. After the last item is placed, the finish button appears; items that cannot be placed are left behind by finishing early from the task menu.
 10. Finish the task through the mock service, which encodes every item-to-cell placement into JSON.
 
-### Picking
+</details>
+
+<details>
+<summary>Picking</summary>
 
 1. Open the Picking module.
 2. Fetch a picking task.
@@ -143,7 +166,10 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 9. After all items are collected or skipped, the finish screen opens.
 10. Finish the task through the mock service, which encodes the result into JSON.
 
-### Returns check
+</details>
+
+<details>
+<summary>Returns check</summary>
 
 1. Open the Returns check module.
 2. Fetch a returns task.
@@ -155,10 +181,12 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 8. Inspect the item and tap one of the three decisions; until then the next scan is rejected.
 9. For the defect and wrong item decisions, photograph the item; the decision is not recorded without a shot.
 10. Put the item into the container its decision points to; either container can be swapped mid-task by tapping its chip and scanning a new code.
-11. The checked item moves into the checked part of the list and carries the photo of the check, badged with the decision.
+11. The checked item moves into the checked part of the list and shows its decision as an icon or a badged photo.
 12. Re-scan a checked item to take it back in hand and overwrite the decision.
 13. After the last item is checked, the finish button appears; unchecked items are left behind by finishing early from the task menu.
-14. Finish the task through the mock service, which encodes a decision, a container, and a photo for every checked item into JSON.
+14. Finish the task through the mock service, which encodes a decision and container for every checked item, plus a photo when required, into JSON.
+
+</details>
 
 ## Tech Stack
 
@@ -258,7 +286,7 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - The mock service includes a test user ID for checking the task fetching error state.
 - Profile and warehouse task data are loaded from bundled mock JSON files.
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
-- The putaway finish flow encodes item-to-cell placements the same way, and the returns finish flow encodes a decision, a container, and a photo for every checked item.
+- The putaway finish flow encodes item-to-cell placements the same way, and the returns finish flow encodes a decision and container for every checked item, plus a photo when required.
 - The picking, putaway, and returns mock tasks share item IDs, so one set of printed codes works in all three modules. The returns task adds the reason each item came back.
 - The putaway and returns tasks open with a container scan, and the container card on screen shows the code the mock task expects. The returns module then takes the good and inspection containers from any two other codes carrying the container prefix.
 - Returns demo mode fills the photo step with a placeholder shot, because the simulator has no camera.
