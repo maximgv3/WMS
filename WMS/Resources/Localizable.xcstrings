@@ -194,7 +194,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Block"
+            "value": "Zone"
           }
         },
         "ru": {
@@ -2965,7 +2965,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Block %lld"
+            "value": "Zone %lld"
           }
         },
         "ru": {
