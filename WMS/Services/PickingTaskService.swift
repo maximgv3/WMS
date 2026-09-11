@@ -18,7 +18,10 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
                 code: 666,
                 userInfo: [
                     NSLocalizedDescriptionKey:
-                        "Задание недоступно для данного пользователя"
+                        String(
+                            localized:
+                                .commonThisTaskIsUnavailableForThisUser
+                        )
                 ]
             )
         }
@@ -44,7 +47,10 @@ final class PickingListServiceMock: PickingTaskServiceProtocol {
                 code: 666,
                 userInfo: [
                     NSLocalizedDescriptionKey:
-                        "Не удалось отправить результат для данного пользователя"
+                        String(
+                            localized:
+                                .commonTaskResultSubmissionFailed
+                        )
                 ]
             )
         }

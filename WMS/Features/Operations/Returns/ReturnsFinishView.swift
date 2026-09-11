@@ -40,7 +40,7 @@ struct ReturnsFinishView: View {
                 checkmarkImage
                 #endif
 
-                Text("Задание проверки закрыто")
+                Text(.returnsReturnsInspectionCompleted)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.textPrimary)
 
@@ -59,7 +59,7 @@ struct ReturnsFinishView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
+        .errorBanner(title: .commonCouldNotCompleteTheTask, message: $viewModel.errorMessage)
     }
 
     private var checkmarkImage: some View {
@@ -69,7 +69,7 @@ struct ReturnsFinishView: View {
     }
 
     private var finishButton: some View {
-        PrimaryButton("Выгрузить результаты", isLoading: viewModel.isFinishingTask) {
+        PrimaryButton(.commonSubmitResults, isLoading: viewModel.isFinishingTask) {
             Task {
                 await finish()
             }

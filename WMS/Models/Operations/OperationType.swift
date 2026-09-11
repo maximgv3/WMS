@@ -6,14 +6,14 @@ nonisolated enum OperationType: String, CaseIterable, Identifiable {
     case returns
 
     var id: String { rawValue }
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .putaway:
-            "Раскладка"
+            .operationsPutaway
         case .picking:
-            "Сборка"
+            .operationsPicking
         case .returns:
-            "Проверка возвратов"
+            .operationsReturnsInspection
         }
     }
     var iconName: String {
@@ -26,14 +26,14 @@ nonisolated enum OperationType: String, CaseIterable, Identifiable {
             "shippingbox.and.arrow.backward"
         }
     }
-    var fetchErrorTitle: String {
+    var fetchErrorTitle: LocalizedStringResource {
         switch self {
         case .putaway:
-            "Не удалось получить задание"
+            .operationsCouldNotRetrieveTheTask
         case .picking:
-            "Не удалось получить сборочный лист"
+            .operationsPickingListFetchFailed
         case .returns:
-            "Не удалось получить задание"
+            .operationsCouldNotRetrieveTheTask
         }
     }
 

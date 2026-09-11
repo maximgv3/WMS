@@ -46,7 +46,7 @@ struct ReturnsTaskView: View {
             ZStack {
                 if isFinishAvailable {
                     PrimaryButton(
-                        "Закончить задание",
+                        .commonFinishTask,
                         background: ColorPalette.success,
                         foreground: ColorPalette.textInverted,
                         isGlassy: true
@@ -101,9 +101,9 @@ struct ReturnsTaskView: View {
                     totalCount: viewModel.allItemsCount
                 ) {
                     if viewModel.checkedItemsCount > 0 {
-                        Text("Проверено \(viewModel.checkedItemsCount)")
+                        Text(.returnsInspectedCount(viewModel.checkedItemsCount))
                     }
-                    Text("Осталось \(viewModel.leftItems.count) шт.")
+                    Text(.commonRemainingCount(viewModel.leftItems.count))
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -119,26 +119,26 @@ struct ReturnsTaskView: View {
     private var errorText: String? {
         switch viewModel.lastError {
         case .notAnItem:
-            return "Отсканируйте товар"
+            return String(localized: .commonScanItemAction)
         case .itemNotInTask:
-            return "Товара нет в задании"
+            return String(localized: .returnsThisItemIsNotInTheTask)
         case .decisionRequired:
-            return "Сначала выберите решение по товару"
+            return String(localized: .returnsDecisionRequired)
         case .notAContainer:
-            return "Отсканируйте тару"
+            return String(localized: .returnsScanToteAction)
         case .containerAlreadyUsed:
-            return "Эта тара уже занята"
+            return String(localized: .returnsThisToteIsAlreadyInUse)
         case .wrongContainer, nil:
             return nil
         }
     }
 
-    private var errorTitle: String {
+    private var errorTitle: LocalizedStringResource {
         switch viewModel.lastError {
         case .notAContainer, .containerAlreadyUsed:
-            "Не удалось сменить тару"
+            .returnsCouldNotSwitchTheTote
         default:
-            "Не удалось проверить товар"
+            .returnsCouldNotInspectTheItem
         }
     }
 
@@ -207,7 +207,7 @@ struct ReturnsTaskView: View {
                     isEarlyFinishPresented = true
                 } label: {
                     Label(
-                        "Завершить досрочно",
+                        .commonFinishEarlyAction,
                         systemImage: "flag.checkered"
                     )
                 }
@@ -218,7 +218,7 @@ struct ReturnsTaskView: View {
                     demoButtonTapped()
                 } label: {
                     Label(
-                        "Демо-режим",
+                        .commonDemoMode,
                         systemImage:
                             "arrow.trianglehead.2.clockwise.rotate.90.camera"
                     )
@@ -231,7 +231,7 @@ struct ReturnsTaskView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Пройти обучение",
+                    .commonViewTutorial,
                     systemImage: "book.closed"
                 )
             }
@@ -240,7 +240,7 @@ struct ReturnsTaskView: View {
                 path.removeAll()
             } label: {
                 Label(
-                    "Выйти из модуля",
+                    .commonExitOperation,
                     systemImage: "rectangle.portrait.and.arrow.right"
                 )
             }
@@ -249,30 +249,30 @@ struct ReturnsTaskView: View {
                 .foregroundStyle(ColorPalette.textPrimary)
         }
         .confirmationDialog(
-            "Досрочное завершение",
+            .commonEarlyFinishTitle,
             isPresented: $isEarlyFinishPresented,
             titleVisibility: .visible
         ) {
-            Button("Завершить", role: .destructive) {
+            Button(.commonFinish, role: .destructive) {
                 path.append(.returns(.finish(viewModel.result)))
             }
         } message: {
             Text(
-                "Остались непроверенные товары. В случае досрочного завершения, новые задания проверки нельзя будет брать до следующей смены. Вы уверены?"
+                .returnsEarlyFinishWarning
             )
         }
         #if DEBUG
             .confirmationDialog(
-                "Демо-режим",
+                .commonDemoMode,
                 isPresented: $isDemoConfirmationPresented,
                 titleVisibility: .visible
             ) {
-                Button("Включить") {
+                Button(.commonEnable) {
                     demoModeToggle()
                 }
             } message: {
                 Text(
-                    "Демо-режим заменит камеру на кнопки: ошибочный скан и скан следующего товара из задания. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                    .returnsTaskDemoModeDescription
                 )
             }
         #endif
@@ -295,9 +295,9 @@ struct ReturnsTaskView: View {
         ScannerView(
             isScanningEnabled: $isScanningEnabled,
             idleText: isRebindingAnySlot
-                ? "Сканируйте тару" : "Сканируйте товар",
+                ? .returnsScanTotePrompt : .commonScanItemPrompt,
             activeText: isRebindingAnySlot
-                ? "Сканируем тару..." : "Сканируем товар...",
+                ? .returnsScanningTote : .commonScanningItem,
             onScan: { code in processScan(code) }
         )
     }
@@ -327,7 +327,7 @@ struct ReturnsTaskView: View {
                     Button {
                         processScan(demoContainerCode)
                     } label: {
-                        Text("Тара")
+                        Text(.returnsTote)
                             .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)
@@ -347,7 +347,7 @@ struct ReturnsTaskView: View {
                     Button {
                         processScan(String(returnItem.id))
                     } label: {
-                        Text("Товар")
+                        Text(.returnsItem)
                             .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)
@@ -411,7 +411,7 @@ struct ReturnsTaskView: View {
         VStack(spacing: 12) {
             Image(systemName: "barcode.viewfinder")
                 .font(.system(size: 40, weight: .light))
-            Text("Товар не отсканирован")
+            Text(.returnsItemNotScanned)
                 .font(.system(size: 20, weight: .medium))
         }
         .foregroundStyle(ColorPalette.textPrimary)
@@ -444,7 +444,7 @@ struct ReturnsTaskView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: "arrow.uturn.backward")
-                Text("Причина: " + returnItem.reason)
+                Text(.returnsReason(returnItem.reason))
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
             }
@@ -477,7 +477,7 @@ struct ReturnsTaskView: View {
 
     private var decisions: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Осмотрите товар и выберите решение")
+            Text(.returnsChooseItemDecision)
                 .font(.headline)
             ForEach(ReturnDecision.allCases) { decision in
                 decisionButton(decision)
@@ -526,14 +526,14 @@ struct ReturnsTaskView: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 8) {
                 if !viewModel.leftItems.isEmpty {
-                    Text("Осталось проверить")
+                    Text(.returnsRemainingToInspect)
                         .font(.headline)
                 }
 
                 // One ForEach for both groups keeps a row alive when it moves down
                 ForEach(listedItems) { returnItem in
                     if returnItem.id == viewModel.checkedItems.first?.id {
-                        Text("Проверено")
+                        Text(.returnsInspected)
                             .font(.headline)
                             .padding(.top, 12)
                     }

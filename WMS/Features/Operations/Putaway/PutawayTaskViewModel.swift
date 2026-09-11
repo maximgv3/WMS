@@ -129,7 +129,7 @@ final class PutawayTaskViewModel {
             barcode: "",
             article: "",
             brand: nil,
-            title: "Неизвестный товар",
+            title: String(localized: .putawayUnknownItem),
             size: nil,
             color: nil,
             imageUrl: nil,

@@ -28,7 +28,7 @@ struct DocumentsView: View {
             ErrorView(
                 type: .other(
                     icon: "doc.text",
-                    title: "Документы недоступны.\nПопробуйте позже.",
+                    title: .documentsUnavailableMessage,
                     autoDismiss: false
                 )
             )
@@ -43,7 +43,7 @@ struct DocumentsView: View {
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
-            PrimaryButton("Попробовать снова", variant: .capsule) {
+            PrimaryButton(.commonTryAgain, variant: .capsule) {
                 Task { await viewModel.loadDocuments() }
             }
         }
@@ -72,8 +72,8 @@ struct DocumentsView: View {
     private var title: some View {
         #if DEBUG
             Menu {
-                Button("Без ошибок") { viewModel.debugSetError(nil) }
-                Button("Ошибка подписи") {
+                Button(.documentsNoErrors) { viewModel.debugSetError(nil) }
+                Button(.documentsSignatureError) {
                     viewModel.debugSetError(.acknowledgeFailed)
                 }
             } label: {
@@ -86,7 +86,7 @@ struct DocumentsView: View {
     }
 
     private var titleText: some View {
-        Text("Документы")
+        Text(.profileDocuments)
             .font(.largeTitle).bold()
             .foregroundStyle(ColorPalette.textInverted)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -128,7 +128,7 @@ struct DocumentsView: View {
                     .font(.body)
                     .foregroundStyle(ColorPalette.textPrimary)
                     .multilineTextAlignment(.leading)
-                Text("Обновлён " + document.updatedAt.formattedAsDocumentDate())
+                Text(.documentsUpdatedDate(document.updatedAt.formattedAsDocumentDate()))
                     .font(.system(size: 13))
                     .foregroundStyle(ColorPalette.brandMuted)
             }

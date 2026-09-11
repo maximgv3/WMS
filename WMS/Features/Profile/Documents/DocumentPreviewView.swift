@@ -18,7 +18,7 @@ struct DocumentPreviewView: View {
             }
         }
         .errorBanner(
-            title: "Не удалось отметить",
+            title: .documentsCouldNotMarkAsReviewed,
             message: $viewModel.errorMessage
         )
         .task {
@@ -36,7 +36,7 @@ struct DocumentPreviewView: View {
             ErrorView(
                 type: .other(
                     icon: "doc.text",
-                    title: "Файл недоступен",
+                    title: .documentsFileUnavailable,
                     autoDismiss: false
                 )
             )
@@ -49,7 +49,7 @@ struct DocumentPreviewView: View {
             acknowledgedLabel
         } else {
             PrimaryButton(
-                "Ознакомлен",
+                .documentsReviewed,
                 isLoading: viewModel.isAcknowledging(document.id)
             ) {
                 Task { await viewModel.acknowledge(document.id) }
@@ -62,7 +62,7 @@ struct DocumentPreviewView: View {
     private var acknowledgedLabel: some View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
-            Text("Вы ознакомились с документом")
+            Text(.documentsYouHaveReviewedThisDocument)
         }
         .font(.system(size: 15, weight: .medium))
         .foregroundStyle(ColorPalette.brandMuted)

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ErrorBannerView: View {
-    let title: String
+    let title: LocalizedStringResource
     let message: String?
 
     private let shape = RoundedRectangle(cornerRadius: 20)
@@ -40,11 +40,11 @@ struct ErrorBannerView: View {
 #Preview {
     VStack(spacing: 16) {
         ErrorBannerView(
-            title: "Не удалось получить сборочный лист",
-            message: "Проверьте соединение и попробуйте снова"
+            title: .operationsPickingListFetchFailed,
+            message: "Check your connection and try again"
         )
 
-        ErrorBannerView(title: "Что-то пошло не так", message: nil)
+        ErrorBannerView(title: .commonSomethingWentWrong, message: nil)
     }
     .padding()
     .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -16,7 +16,10 @@ final class ReturnsTaskServiceMock: ReturnsTaskServiceProtocol {
                 code: 666,
                 userInfo: [
                     NSLocalizedDescriptionKey:
-                        "Задание недоступно для данного пользователя"
+                        String(
+                            localized:
+                                .commonThisTaskIsUnavailableForThisUser
+                        )
                 ]
             )
         }
@@ -32,7 +35,10 @@ final class ReturnsTaskServiceMock: ReturnsTaskServiceProtocol {
                 code: 666,
                 userInfo: [
                     NSLocalizedDescriptionKey:
-                        "Не удалось отправить результат для данного пользователя"
+                        String(
+                            localized:
+                                .commonTaskResultSubmissionFailed
+                        )
                 ]
             )
         }

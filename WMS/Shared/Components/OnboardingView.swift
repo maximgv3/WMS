@@ -44,7 +44,7 @@ struct OnboardingView: View {
                 .clipShape(Circle())
                 .padding(48)
             Spacer()
-            PrimaryButton("Завершить обучение") {
+            PrimaryButton(.onboardingFinishTutorial) {
                 onFinish()
                 dismiss()
             }
@@ -54,7 +54,10 @@ struct OnboardingView: View {
         .background(ColorPalette.backgroundPrimary)
     }
 
-    private func onboardingPage(image: ImageResource, text: String) -> some View {
+    private func onboardingPage(
+        image: ImageResource,
+        text: LocalizedStringResource
+    ) -> some View {
         VStack {
             Spacer()
             onboardingText(text)
@@ -72,7 +75,7 @@ struct OnboardingView: View {
         .ignoresSafeArea()
     }
 
-    private func onboardingText(_ text: String) -> some View {
+    private func onboardingText(_ text: LocalizedStringResource) -> some View {
         Text(text)
             .font(.system(size: 20, weight: .semibold))
             .foregroundStyle(ColorPalette.textPrimary)
@@ -85,24 +88,24 @@ struct OnboardingView: View {
 
 struct OnboardingPage {
     let image: ImageResource
-    let text: String
+    let text: LocalizedStringResource
 }
 
-#Preview("Сборка") {
+#Preview("Picking") {
     OnboardingView(
         pages: OnboardingPages.Picking.pages,
         completionImage: .pickingOnboardingEnd
     ) {}
 }
 
-#Preview("Раскладка") {
+#Preview("Putaway") {
     OnboardingView(
         pages: OnboardingPages.Putaway.pages,
         completionImage: .putawayOnboardingEnd
     ) {}
 }
 
-#Preview("Возвраты") {
+#Preview("Returns") {
     OnboardingView(
         pages: OnboardingPages.Returns.pages,
         completionImage: .returnsOnboardingEnd

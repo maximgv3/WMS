@@ -6,20 +6,27 @@ struct ItemInfoTable: View {
     var body: some View {
         VStack(spacing: 0) {
             infoRow(
-                title: "Ячейка",
+                title: .commonBin,
                 value: item.placement ?? "—",
                 isPrimary: true
             )
-            infoRow(title: "Размер", value: item.size ?? "—")
-            infoRow(title: "Цвет", value: item.color ?? "—")
-            infoRow(title: "Артикул", value: item.article)
-            infoRow(title: "Бренд", value: item.brand ?? "—")
-            infoRow(title: "Остаток", value: "\(item.stock) шт.")
+            infoRow(title: .pickingSize, value: item.size ?? "—")
+            infoRow(title: .pickingColor, value: item.color ?? "—")
+            infoRow(title: .pickingSku, value: item.article)
+            infoRow(title: .pickingBrand, value: item.brand ?? "—")
+            infoRow(
+                title: .pickingStock,
+                value: String(localized: .commonPiecesCount(item.stock))
+            )
         }
         .padding(.horizontal, 16)
     }
 
-    private func infoRow(title: String, value: String, isPrimary: Bool = false)
+    private func infoRow(
+        title: LocalizedStringResource,
+        value: String,
+        isPrimary: Bool = false
+    )
         -> some View
     {
         HStack {

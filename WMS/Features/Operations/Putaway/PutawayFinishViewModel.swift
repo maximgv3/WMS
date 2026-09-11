@@ -13,10 +13,14 @@ final class PutawayFinishViewModel {
     var resultText: String {
         var resultDraft = ""
         if !result.placedItems.isEmpty {
-            resultDraft += "Разложено товаров: \(result.placedItems.count)\n"
+            resultDraft += String(
+                localized: .putawayPlacedItemsCount(result.placedItems.count)
+            )
         }
         if !result.skippedItemIds.isEmpty {
-            resultDraft += "Пропущено товаров: \(result.skippedItemIds.count)"
+            resultDraft += String(
+                localized: .commonSkippedItemsCount(result.skippedItemIds.count)
+            )
         }
         return resultDraft
     }

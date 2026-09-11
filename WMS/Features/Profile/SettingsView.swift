@@ -26,31 +26,32 @@ struct SettingsView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
-                    section(header: "Оформление") {
+                    section(header: .settingsAppearance) {
                         themeCard
                     }
-                    section(header: "Во время задания") {
+                    section(header: .settingsDuringATask) {
                         taskCard
                     }
-                    section(header: "О приложении") {
+                    section(header: .settingsAbout) {
                         aboutCard
                     }
                 }
                 .padding(20)
             }
         }
-        .navigationTitle("Настройки")
+        .navigationTitle(.profileSettings)
         .navigationBarTitleDisplayMode(.inline)
     }
 
     // MARK: - Layout
 
     private func section<Content: View>(
-        header: String,
+        header: LocalizedStringResource,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(header.uppercased())
+            Text(header)
+                .textCase(.uppercase)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(ColorPalette.brandMuted)
                 .padding(.horizontal, 12)
@@ -65,7 +66,7 @@ struct SettingsView: View {
     }
 
     private func toggleRow(
-        title: String,
+        title: LocalizedStringResource,
         icon: String,
         isOn: Binding<Bool>
     ) -> some View {
@@ -85,7 +86,7 @@ struct SettingsView: View {
     // MARK: - Sections
 
     private var themeCard: some View {
-        Picker("Тема", selection: $appColorScheme) {
+        Picker(.settingsTheme, selection: $appColorScheme) {
             ForEach(AppColorScheme.allCases) { scheme in
                 Text(scheme.title).tag(scheme)
             }
@@ -98,13 +99,13 @@ struct SettingsView: View {
     private var taskCard: some View {
         VStack(spacing: .zero) {
             toggleRow(
-                title: "Звук сканирования",
+                title: .settingsScanSound,
                 icon: "speaker.wave.2",
                 isOn: $isScanSoundOn
             )
             Divider().padding(.horizontal, 16)
             toggleRow(
-                title: "Не гасить экран",
+                title: .settingsKeepScreenOn,
                 icon: "display",
                 isOn: $isScreenAlwaysOn
             )
@@ -114,7 +115,7 @@ struct SettingsView: View {
 
     private var aboutCard: some View {
         MenuRow(
-            title: "Версия",
+            title: .settingsVersion,
             icon: "info.circle",
             value: versionText,
             showsChevron: false

@@ -14,27 +14,26 @@ struct PutawayFinishViewModelTests {
             placedItems: [1: "A1", 2: "A2"],
             skippedItemIds: [3]
         )
+        let placed = String(localized: .putawayPlacedItemsCount(2))
+        let skipped = String(localized: .commonSkippedItemsCount(1))
 
-        #expect(
-            viewModel.resultText == """
-                Разложено товаров: 2
-                Пропущено товаров: 1
-                """
-        )
+        #expect(viewModel.resultText == placed + skipped)
     }
 
     @Test
     func resultTextSkipsPlacedLineWithoutPlacedItems() {
         let viewModel = makeViewModel(skippedItemIds: [1, 2, 3])
+        let expected = String(localized: .commonSkippedItemsCount(3))
 
-        #expect(viewModel.resultText == "Пропущено товаров: 3")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test
     func resultTextSkipsSkippedLineWithoutSkippedItems() {
         let viewModel = makeViewModel(placedItems: [1: "A1"])
+        let expected = String(localized: .putawayPlacedItemsCount(1))
 
-        #expect(viewModel.resultText == "Разложено товаров: 1\n")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test

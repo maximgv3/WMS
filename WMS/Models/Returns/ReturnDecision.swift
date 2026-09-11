@@ -6,24 +6,24 @@ nonisolated enum ReturnDecision: String, CaseIterable, Identifiable, Sendable, H
     case wrongItem
 
     var id: String { rawValue }
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .good:
-            "Годен"
+            .returnsDecisionSellable
         case .defect:
-            "Брак"
+            .returnsDefective
         case .wrongItem:
-            "Подмена"
+            .returnsWrongItem
         }
     }
-    var subtitle: String {
+    var subtitle: LocalizedStringResource {
         switch self {
         case .good:
-            "Вернуть в продажу"
+            .returnsReturnToStock
         case .defect:
-            "Отправить в зону брака"
+            .returnsSendToTheDefectiveItemsArea
         case .wrongItem:
-            "Вернулся не тот товар"
+            .returnsADifferentItemWasReturned
         }
     }
     var iconName: String {
@@ -57,14 +57,14 @@ nonisolated enum ReturnDecision: String, CaseIterable, Identifiable, Sendable, H
         }
     }
 
-    var photoHint: String {
+    var photoHint: LocalizedStringResource {
         switch self {
         case .good:
-            "Сфотографируйте товар"
+            .returnsPhotographTheItem
         case .defect:
-            "Сфотографируйте повреждение"
+            .returnsPhotographTheDamage
         case .wrongItem:
-            "Сфотографируйте товар, который вернули"
+            .returnsPhotographTheReturnedItem
         }
     }
 }

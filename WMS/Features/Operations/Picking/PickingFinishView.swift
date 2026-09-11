@@ -40,7 +40,7 @@ struct PickingFinishView: View {
                 checkmarkImage
                 #endif
 
-                Text("Сборка завершена")
+                Text(.pickingPickingCompleted)
                     .font(.system(size: 30, weight: .bold))
                     .foregroundStyle(ColorPalette.textPrimary)
 
@@ -59,7 +59,7 @@ struct PickingFinishView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary)
-        .errorBanner(title: "Не удалось завершить задание", message: $viewModel.errorMessage)
+        .errorBanner(title: .commonCouldNotCompleteTheTask, message: $viewModel.errorMessage)
     }
 
     private var checkmarkImage: some View {
@@ -69,7 +69,7 @@ struct PickingFinishView: View {
     }
 
     private var finishButton: some View {
-        PrimaryButton("Завершить задание", isLoading: viewModel.isFinishingTask) {
+        PrimaryButton(.pickingCompleteTask, isLoading: viewModel.isFinishingTask) {
             Task {
                 await finish()
             }

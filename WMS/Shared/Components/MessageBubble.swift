@@ -18,7 +18,7 @@ struct MessageBubble: View {
                 Spacer(minLength: 60)
             }
             
-            (Text(message.text) + Text("  ") + time.foregroundStyle(.clear))
+            (Text(message.text) + Text(.commonSpacing) + time.foregroundStyle(.clear))
             .foregroundStyle(textColor)
             .overlay(alignment: .bottomTrailing) {
                 time.foregroundStyle(textColor.opacity(0.7))
@@ -45,8 +45,8 @@ struct MessageBubble: View {
 }
 
 #Preview {
-    MessageBubble(message: .init(date: .now, fromUser: true, text: "Это текст от пользователя. У меня случилась такая-то проблема", id: UUID().uuidString))
+    MessageBubble(message: .init(date: .now, fromUser: true, text: "This is a user message describing an issue", id: UUID().uuidString))
 
-    MessageBubble(message: .init(date: .now, fromUser: false, text: "Это текст от поддержки. Вашу проблему можно решить так-то так-то", id: UUID().uuidString)
+    MessageBubble(message: .init(date: .now, fromUser: false, text: "This is a support reply explaining the solution", id: UUID().uuidString)
     )
 }

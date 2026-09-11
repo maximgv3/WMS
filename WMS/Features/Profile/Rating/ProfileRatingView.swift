@@ -33,7 +33,7 @@ struct ProfileRatingView: View {
         } else if let error = viewModel.errorMessage, viewModel.history.isEmpty {
             errorState(error)
         } else if viewModel.history.isEmpty {
-            ErrorView(type: .other(icon: "chart.xyaxis.line", title: "Недостаточно данных о рейтинге.\nПроверьте спустя несколько дней.", autoDismiss: false))
+            ErrorView(type: .other(icon: "chart.xyaxis.line", title: .ratingInsufficientDataMessage, autoDismiss: false))
         } else {
             loadedState
         }
@@ -45,7 +45,7 @@ struct ProfileRatingView: View {
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
-            PrimaryButton("Попробовать снова", variant: .capsule) {
+            PrimaryButton(.commonTryAgain, variant: .capsule) {
                 Task { await viewModel.loadRating() }
             }
         }
@@ -79,7 +79,7 @@ struct ProfileRatingView: View {
 
         ScrollView {
             VStack(spacing: 40) {
-                Text("Рейтинг по операциям")
+                Text(.ratingRatingByOperation)
                     .font(.title3).bold()
                 LazyVGrid(columns: columns, alignment: .leading, spacing: 24) {
                     ForEach(viewModel.operations) { operation in
@@ -92,10 +92,10 @@ struct ProfileRatingView: View {
         .padding(.horizontal)
         .padding(.top, 32)
         .overlay(alignment: .bottom) {
-            PrimaryButton("О рейтинге", variant: .capsule, action: { showAboutRating = true })
+            PrimaryButton(.ratingAboutRating, variant: .capsule, action: { showAboutRating = true })
                 .glassIfAvailable()
                 .popover(isPresented: $showAboutRating) {
-                    Text("Рейтинг — это оценка вашей работы на складе. Он складывается из скорости и качества выполнения операций: сборки, раскладки, проверки возвратов и других.\nЧем меньше ошибок и простоев, тем выше рейтинг. Значение пересчитывается каждый день по итогам смен за последний месяц.\nРейтинг влияет на приоритет при выдаче заданий и на расчёт премий.")
+                    Text(.ratingExplanation)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .padding()
@@ -110,8 +110,8 @@ struct ProfileRatingView: View {
         Chart {
             ForEach(viewModel.history) { point in
                 LineMark(
-                    x: .value("Дата", point.date),
-                    y: .value("Рейтинг", point.value)
+                    x: .value(.ratingDate, point.date),
+                    y: .value(.profileRating, point.value)
                 )
                 .foregroundStyle(ColorPalette.accentPrimary)
                 .lineStyle(.init(lineWidth: 4, lineCap: .round))
@@ -119,12 +119,12 @@ struct ProfileRatingView: View {
             }
 
             if let selectedPoint {
-                RuleMark(x: .value("Дата", selectedPoint.date))
+                RuleMark(x: .value(.ratingDate, selectedPoint.date))
                     .foregroundStyle(ColorPalette.textInverted.opacity(0.4))
 
                 PointMark(
-                    x: .value("Дата", selectedPoint.date),
-                    y: .value("Рейтинг", selectedPoint.value)
+                    x: .value(.ratingDate, selectedPoint.date),
+                    y: .value(.profileRating, selectedPoint.value)
                 )
                 .foregroundStyle(ColorPalette.textInverted)
                 .symbolSize(150)

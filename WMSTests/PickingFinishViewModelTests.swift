@@ -11,20 +11,17 @@ struct PickingFinishViewModelTests {
     @Test
     func resultTextShowsCollectedCount() {
         let viewModel = makeViewModel(collectedIds: [1, 2])
+        let expected = String(localized: .pickingPickedItemsCount(2))
 
-        #expect(viewModel.resultText == "Собрано товаров: 2")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test
     func resultTextAddsSkippedLine() {
         let viewModel = makeViewModel(collectedIds: [1, 2], skippedIds: [3])
+        let expected = String(localized: .pickingResultSummary(2, 1))
 
-        #expect(
-            viewModel.resultText == """
-                Собрано товаров: 2
-                Пропущено: 1
-                """
-        )
+        #expect(viewModel.resultText == expected)
     }
 
     @Test
@@ -33,15 +30,17 @@ struct PickingFinishViewModelTests {
             collectedIds: [1],
             replacements: [2: 0, 3: 0]
         )
+        let expected = String(localized: .pickingPickedItemsCount(3))
 
-        #expect(viewModel.resultText == "Собрано товаров: 3")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test
     func resultTextShowsZeroWithoutCollectedItems() {
         let viewModel = makeViewModel()
+        let expected = String(localized: .pickingPickedItemsCount(0))
 
-        #expect(viewModel.resultText == "Собрано товаров: 0")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test

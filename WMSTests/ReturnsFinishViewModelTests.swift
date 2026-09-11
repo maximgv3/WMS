@@ -14,13 +14,17 @@ struct ReturnsFinishViewModelTests {
             decisions: [1: .good, 2: .defect, 3: .defect, 4: .wrongItem],
             skippedItemIds: [5, 6]
         )
+        let good = String(localized: ReturnDecision.good.title)
+        let defect = String(localized: ReturnDecision.defect.title)
+        let wrongItem = String(localized: ReturnDecision.wrongItem.title)
+        let skipped = String(localized: .commonSkippedItemsCount(2))
 
         #expect(
             viewModel.resultText == """
-                Годен: 1
-                Брак: 2
-                Подмена: 1
-                Пропущено товаров: 2
+                \(good): 1
+                \(defect): 2
+                \(wrongItem): 1
+                \(skipped)
                 """
         )
     }
@@ -28,15 +32,17 @@ struct ReturnsFinishViewModelTests {
     @Test
     func resultTextSkipsDecisionsWithoutItems() {
         let viewModel = makeViewModel(decisions: [1: .good])
+        let good = String(localized: ReturnDecision.good.title)
 
-        #expect(viewModel.resultText == "Годен: 1\n")
+        #expect(viewModel.resultText == "\(good): 1\n")
     }
 
     @Test
     func resultTextCountsSkippedItemsWithoutDecisions() {
         let viewModel = makeViewModel(skippedItemIds: [1, 2, 3])
+        let expected = String(localized: .commonSkippedItemsCount(3))
 
-        #expect(viewModel.resultText == "Пропущено товаров: 3")
+        #expect(viewModel.resultText == expected)
     }
 
     @Test

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MenuRow: View {
-    let title: String
+    let title: LocalizedStringResource
     let icon: String
     var value: String?
     var showsChevron = true
@@ -32,5 +32,5 @@ struct MenuRow: View {
 }
 
 #Preview() {
-    MenuRow(title: "Menu Test", icon: "star", value: "25", showsChevron: true)
+    MenuRow(title: .previewMenuRow, icon: "star", value: "25", showsChevron: true)
 }

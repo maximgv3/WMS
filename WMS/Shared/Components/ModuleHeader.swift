@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ModuleHeader: View {
-    let title: String
+    let title: LocalizedStringResource
     var onBack: (() -> Void)? = nil
 
     var body: some View {
@@ -35,8 +35,8 @@ struct ModuleHeader: View {
 
 #Preview {
     VStack(spacing: 0) {
-        ModuleHeader(title: "Сборка", onBack: {})
-        ModuleHeader(title: "Операции")
+        ModuleHeader(title: .operationsPicking, onBack: {})
+        ModuleHeader(title: .operationsTitle)
         Spacer()
     }
     .background(ColorPalette.brandPrimary)

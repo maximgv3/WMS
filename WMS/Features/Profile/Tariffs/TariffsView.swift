@@ -36,7 +36,7 @@ struct TariffsView: View {
 
     private var filterList: some View {
         List {
-            Section("Блок") {
+            Section(.tariffsBlock) {
                 ForEach(viewModel.allZones, id: \.self) { zone in
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -58,7 +58,7 @@ struct TariffsView: View {
                     .buttonStyle(.plain)
                 }
             }
-            Section("Операция") {
+            Section(.tariffsOperation) {
                 ForEach(viewModel.allOperations, id: \.self) { operation in
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
@@ -82,7 +82,7 @@ struct TariffsView: View {
             }
             if viewModel.hasActiveFilters {
                 Section {
-                    Button("Сбросить", role: .destructive) {
+                    Button(.tariffsReset, role: .destructive) {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             viewModel.resetFilters()
                         }
@@ -107,7 +107,7 @@ struct TariffsView: View {
             ErrorView(
                 type: .other(
                     icon: "shippingbox",
-                    title: "Тарифы недоступны.\nПопробуйте позже.",
+                    title: .tariffsRatesAreUnavailableTryAgainLater,
                     autoDismiss: false
                 )
             )
@@ -122,7 +122,7 @@ struct TariffsView: View {
                 .font(.system(size: 22, weight: .semibold))
                 .foregroundStyle(ColorPalette.textInverted)
                 .multilineTextAlignment(.center)
-            PrimaryButton("Попробовать снова", variant: .capsule) {
+            PrimaryButton(.commonTryAgain, variant: .capsule) {
                 Task { await viewModel.loadTariffs() }
             }
         }
@@ -131,7 +131,7 @@ struct TariffsView: View {
 
     private var loadedState: some View {
         VStack(spacing: .zero) {
-            Text("Тарифы")
+            Text(.profileTariffs)
                 .font(.largeTitle).bold()
                 .foregroundStyle(ColorPalette.textInverted)
                 .frame(maxWidth: .infinity, alignment: .leading)

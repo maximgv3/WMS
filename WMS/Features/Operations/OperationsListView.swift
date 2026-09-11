@@ -19,7 +19,7 @@ struct OperationsListView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    ModuleHeader(title: "Операции")
+                    ModuleHeader(title: .operationsTitle)
 
                     operationsList
                         .background(ColorPalette.surfacePrimary)

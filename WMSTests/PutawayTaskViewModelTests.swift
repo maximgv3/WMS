@@ -257,7 +257,10 @@ struct PutawayTaskViewModelTests {
 
         #expect(viewModel.lastError == nil)
         #expect(viewModel.placedItems[999] == cellA)
-        #expect(viewModel.lastPlacedItem?.title == "Неизвестный товар")
+        #expect(
+            viewModel.lastPlacedItem?.title
+                == String(localized: .putawayUnknownItem)
+        )
     }
 
     @Test

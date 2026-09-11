@@ -36,12 +36,12 @@ struct ProfileFinanceView: View {
                 .frame(maxHeight: .infinity)
             HStack(spacing: 16) {
                 fundsCard(
-                    title: "За 30 дней",
+                    title: .financeLast30Days,
                     funds: viewModel.summary?.incomeLast30Days
                 )
                 .frame(maxWidth: .infinity)
                 fundsCard(
-                    title: "За год",
+                    title: .financeThisYear,
                     funds: viewModel.summary?.incomeLastYear
                 )
                 .frame(maxWidth: .infinity)
@@ -88,7 +88,7 @@ struct ProfileFinanceView: View {
                                     .foregroundStyle(ColorPalette.textPrimary)
                                     .multilineTextAlignment(.center)
                                 PrimaryButton(
-                                    "Попробовать снова",
+                                    .commonTryAgain,
                                     variant: .capsule
                                 ) {
                                     Task {
@@ -115,7 +115,7 @@ struct ProfileFinanceView: View {
                         } else if viewModel.transactionSections.isEmpty
                             && !viewModel.isLoading
                         {
-                            Text("Транзакций нет")
+                            Text(.financeNoTransactions)
                                 .padding(16)
                                 .frame(
                                     maxWidth: .infinity,
@@ -201,7 +201,10 @@ struct ProfileFinanceView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private func fundsCard(title: String, funds: Int?) -> some View {
+    private func fundsCard(
+        title: LocalizedStringResource,
+        funds: Int?
+    ) -> some View {
         VStack(spacing: 6) {
             Group {
                 if viewModel.isLoading && viewModel.summary == nil {
@@ -211,7 +214,7 @@ struct ProfileFinanceView: View {
                         .font(.system(size: 20))
                         .bold()
                 } else {
-                    Text("—")
+                    Text(.commonPlaceholder)
                         .font(.system(size: 20))
                         .bold()
                 }

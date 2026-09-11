@@ -13,10 +13,13 @@ final class ReturnsFinishViewModel {
     var resultText: String {
         var resultDraft = ""
         for decision in ReturnDecision.allCases where result.count(of: decision) > 0 {
-            resultDraft += decision.title + ": \(result.count(of: decision))\n"
+            let decisionTitle = String(localized: decision.title)
+            resultDraft += "\(decisionTitle): \(result.count(of: decision))\n"
         }
         if !result.skippedItemIds.isEmpty {
-            resultDraft += "Пропущено товаров: \(result.skippedItemIds.count)"
+            resultDraft += String(
+                localized: .commonSkippedItemsCount(result.skippedItemIds.count)
+            )
         }
         return resultDraft
     }

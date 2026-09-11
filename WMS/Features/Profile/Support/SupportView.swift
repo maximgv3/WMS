@@ -18,9 +18,9 @@ struct SupportView: View {
                 .padding(.horizontal, 12)
                 .padding(.bottom, 8)
         }
-        .navigationTitle("Поддержка")
+        .navigationTitle(.profileSupport)
         .navigationBarTitleDisplayMode(.inline)
-        .errorBanner(title: "Ошибка", message: $viewModel.errorMessage)
+        .errorBanner(title: .commonError, message: $viewModel.errorMessage)
         .task {
             await viewModel.loadMessages()
             await viewModel.observeIncoming()
@@ -50,7 +50,10 @@ struct SupportView: View {
 
     private var replyBar: some View {
         HStack(spacing: 12) {
-            TextField("Сообщение...", text: $viewModel.replyDraft)
+            TextField(
+                String(localized: .supportMessage),
+                text: $viewModel.replyDraft
+            )
                 .textFieldStyle(.plain)
                 .onSubmit(send)
                 .padding(.horizontal, 16)

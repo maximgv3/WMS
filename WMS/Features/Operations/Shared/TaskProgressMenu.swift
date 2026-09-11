@@ -26,7 +26,7 @@ struct TaskProgressMenu<MenuContent: View>: View {
         HStack(spacing: 10) {
             circularProgress
             Text(
-                "\(doneCount)/\(totalCount)"
+                .commonFraction(doneCount, totalCount)
             )
             .font(.system(size: 14, weight: .semibold))
             .foregroundStyle(ColorPalette.textPrimary)
@@ -66,5 +66,5 @@ struct TaskProgressMenu<MenuContent: View>: View {
 }
 
 #Preview {
-TaskProgressMenu(doneCount: 6, totalCount: 10, menuContent: { Text("Собрано 6 из 10") })
+TaskProgressMenu(doneCount: 6, totalCount: 10, menuContent: { Text(.previewPickingProgress) })
 }

@@ -12,9 +12,14 @@ final class PickingFinishViewModel {
 
     var resultText: String {
         if result.skippedCount > 0 {
-            return "Собрано товаров: \(result.collectedCount)\nПропущено: \(result.skippedCount)"
+            return String(
+                localized:
+                    .pickingResultSummary(result.collectedCount, result.skippedCount)
+            )
         } else {
-            return "Собрано товаров: \(result.collectedCount)"
+            return String(
+                localized: .pickingPickedItemsCount(result.collectedCount)
+            )
         }
     }
 

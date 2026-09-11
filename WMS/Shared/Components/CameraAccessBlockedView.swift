@@ -13,11 +13,11 @@ struct CameraAccessBlockedView: View {
             VStack(spacing: 16) {
                 Image(systemName: "camera.fill")
                     .font(.system(size: 40))
-                Text("Нет доступа к камере")
+                Text(.cameraNoCameraAccess)
                     .font(.system(size: 24, weight: .semibold))
                 switch blockReason {
                 case .notDetermined:
-                    Text("Нажмите продолжить и разрешите доступ к камере в системном окне.")
+                    Text(.cameraRequestAccessPrompt)
                         .font(.system(size: 16))
                         .foregroundStyle(ColorPalette.brandMuted)
                         .multilineTextAlignment(.center)
@@ -29,12 +29,12 @@ struct CameraAccessBlockedView: View {
                             .animation(.easeOut(duration: 0.35), value: isArrowVisible)
                     Spacer()
                 case .denied:
-                    Text("Включите доступ к камере в настройках приложения.")
+                    Text(.cameraEnableInSettings)
                         .font(.system(size: 16))
                         .foregroundStyle(ColorPalette.brandMuted)
                         .multilineTextAlignment(.center)
 
-                    Button("Открыть настройки") {
+                    Button(.cameraOpenSettings) {
                         openAppSettings()
                     }
                     .buttonStyle(.borderedProminent)

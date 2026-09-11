@@ -145,7 +145,7 @@ struct OperationModuleView: View {
                 operationImage
             #endif
             PrimaryButton(
-                "Получить задание",
+                .operationsGetTask,
                 isLoading: viewModel.isLoadingTask
             ) {
                 Task {
@@ -191,13 +191,12 @@ struct OperationModuleView: View {
 
 }
 
-#Preview("Сборка") {
+#Preview("Picking") {
     OperationModuleView(operationType: .picking)
 }
-#Preview("Раскладка") {
+#Preview("Putaway") {
     OperationModuleView(operationType: .putaway)
 }
-#Preview("Проверка возвратов") {
+#Preview("Returns inspection") {
     OperationModuleView(operationType: .returns)
 }
-

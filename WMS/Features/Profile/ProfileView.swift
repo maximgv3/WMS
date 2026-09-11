@@ -13,16 +13,16 @@ struct ProfileView: View {
     }
     private var detailsItems: [ProfileMenuItem] {
         [
-            .init(title: "Финансы", icon: "creditcard", destination: .finances),
+            .init(title: .profileFinances, icon: "creditcard", destination: .finances),
             .init(
-                title: "Рейтинг",
+                title: .profileRating,
                 icon: "star",
                 value: viewModel.profile?.rating.formatted(),
                 destination: .rating
             ),
-            .init(title: "Документы", icon: "doc.text", destination: .documents),
-            .init(title: "Тарифы", icon: "shippingbox", destination: .tariffs),
-            .init(title: "Поддержка", icon: "questionmark.bubble", destination: .support)
+            .init(title: .profileDocuments, icon: "doc.text", destination: .documents),
+            .init(title: .profileTariffs, icon: "shippingbox", destination: .tariffs),
+            .init(title: .profileSupport, icon: "questionmark.bubble", destination: .support)
         ]
     }
 
@@ -61,7 +61,7 @@ struct ProfileView: View {
                 .easeInOut(duration: 0.25),
                 value: viewModel.profile != nil
             )
-            .navigationTitle("Профиль")
+            .navigationTitle(.profileTitle)
             .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: ProfileDestination.self) { item in
                 destination(for: item)
@@ -84,7 +84,7 @@ struct ProfileView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     profileHeader
                     profileCard
-                    section(header: "Финансы") {
+                    section(header: .profileFinances) {
                         financeStack
                     }
                     detailsSection
@@ -111,9 +111,9 @@ struct ProfileView: View {
         ZStack {
             ColorPalette.backgroundPrimary.ignoresSafeArea()
             VStack(spacing: 32) {
-                Text("Не удалось загрузить профиль")
+                Text(.profileCouldNotLoadProfile)
                     .font(.system(size: 22, weight: .semibold))
-                PrimaryButton("Попробовать снова", variant: .capsule) {
+                PrimaryButton(.commonTryAgain, variant: .capsule) {
                     Task {
                         await viewModel.loadProfile()
                     }
@@ -142,11 +142,12 @@ struct ProfileView: View {
     }
 
     private func section<Content: View>(
-        header: String,
+        header: LocalizedStringResource,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(header.uppercased())
+            Text(header)
+                .textCase(.uppercase)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(ColorPalette.brandMuted)
                 .padding(.horizontal, 12)
@@ -158,7 +159,7 @@ struct ProfileView: View {
 
     private var profileHeader: some View {
         HStack(alignment: .center) {
-            Text("Профиль")
+            Text(.profileTitle)
                 .font(.system(size: 32, weight: .bold))
                 .foregroundStyle(ColorPalette.textInverted)
                 .shadow(
@@ -184,7 +185,7 @@ struct ProfileView: View {
     }
 
     private var detailsSection: some View {
-        section(header: "Подробнее") {
+        section(header: .profileMore) {
             VStack(spacing: .zero) {
                 ForEach(detailsItems) { item in
                     NavigationLink(value: item.destination) {
@@ -245,7 +246,7 @@ struct ProfileView: View {
                     HStack {
                         Group {
                             Image(systemName: "person.text.rectangle")
-                            Text("id: " + id)
+                            Text(.profileEmployeeId(id))
                         }
                         .font(.system(size: 15))
                         .foregroundStyle(ColorPalette.textPrimary)
@@ -317,19 +318,23 @@ struct ProfileView: View {
             HStack(spacing: 8) {
                 financeBlock(
                     value: viewModel.profile?.pendingFundsKopecks ?? 0,
-                    type: "Ожидается",
+                    type: .profilePending,
                     icon: "creditcard"
                 )
                 financeBlock(
                     value: viewModel.profile?.balanceFundsKopecks ?? 0,
-                    type: "Баланс",
+                    type: .profileBalance,
                     icon: "rublesign.circle"
                 )
             }
         }
     }
 
-    private func financeBlock(value: Int, type: String, icon: String)
+    private func financeBlock(
+        value: Int,
+        type: LocalizedStringResource,
+        icon: String
+    )
         -> some View
     {
         HStack {
@@ -370,14 +375,14 @@ private enum ProfileDestination: Hashable {
 }
 
 private struct ProfileMenuItem: Identifiable {
-    var id: String { title }
-    let title: String
+    var id: String { icon }
+    let title: LocalizedStringResource
     let icon: String
     let value: String?
     let destination: ProfileDestination?
 
     init(
-        title: String,
+        title: LocalizedStringResource,
         icon: String,
         value: String? = nil,
         destination: ProfileDestination? = nil

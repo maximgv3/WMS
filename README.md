@@ -1,17 +1,17 @@
 # WMS
 
-| Putaway | Picking | Returns check |
+| Putaway | Picking | Returns inspection |
 |:---:|:---:|:---:|
-| <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> | <img src="assets/returns-demo.gif" width="260" height="565" alt="Returns check flow demo"> |
-| **Putaway:** place items into freely selected storage cells. | **Picking:** collect items according to the task list. | **Returns check:** inspect returned items and record a decision. |
+| <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> | <img src="assets/returns-demo.gif" width="260" height="565" alt="Returns inspection flow demo"> |
+| **Putaway:** place items into freely selected storage cells. | **Picking:** collect items according to the task list. | **Returns inspection:** check returned items and record a decision. |
 
-A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns check. Tasks are loaded from bundled mock JSON, and completed results are encoded as API-style requests.
+A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns inspection. Tasks are loaded from bundled mock JSON, and completed results are encoded as API-style requests.
 
 The Profile tab covers earnings history, operator ratings, warehouse tariffs, work documents, support chat, and settings. The app supports light and dark themes.
 
 ## Project Status
 
-In development. Putaway, Picking, and Returns check are complete end to end and covered by ViewModel tests; further warehouse modules are planned.
+In development. Putaway, Picking, and Returns inspection are complete end to end and covered by ViewModel tests; further warehouse modules are planned.
 
 ## Screenshots
 
@@ -33,11 +33,11 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 |:---:|:---:|:---:|
 | <img src="assets/picking-get-task.png" width="230" alt="Get a picking task"> | <img src="assets/picking-task.png" width="230" alt="Picking task with the current item and scanner"> | <img src="assets/picking-finish.png" width="230" alt="Completed picking task"> |
 
-### Returns check
+### Returns inspection
 
 | Get task | Items & containers | Task complete |
 |:---:|:---:|:---:|
-| <img src="assets/returns-get-task.png" width="230" alt="Get a returns check task"> | <img src="assets/returns-task.png" width="230" alt="Returns task with the scanner, result containers, and items to check"> | <img src="assets/returns-finish.png" width="230" alt="Completed returns task with decision totals"> |
+| <img src="assets/returns-get-task.png" width="230" alt="Get a returns inspection task"> | <img src="assets/returns-task.png" width="230" alt="Returns task with the scanner, result containers, and items to check"> | <img src="assets/returns-finish.png" width="230" alt="Completed returns task with decision totals"> |
 
 ### Profile
 
@@ -45,7 +45,7 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 |:---:|:---:|:---:|
 | <img src="assets/profile.png" width="230" alt="Profile in the light theme"> | <img src="assets/profile-dark.png" width="230" alt="Profile in the dark theme"> | <img src="assets/profile-settings.png" width="230" alt="Theme, scan sound, and screen settings"> |
 | **Finance history** | **Rating** | **Tariffs** |
-| <img src="assets/profile-operations.png" width="230" alt="Finance history"> | <img src="assets/profile-rating.png" width="230" alt="Rating chart and per-operation ratings"> | <img src="assets/profile-tariffs.png" width="230" alt="Warehouse tariffs including returns checks"> |
+| <img src="assets/profile-operations.png" width="230" alt="Finance history"> | <img src="assets/profile-rating.png" width="230" alt="Rating chart and per-operation ratings"> | <img src="assets/profile-tariffs.png" width="230" alt="Warehouse tariffs including returns inspection"> |
 | **Documents** | **Support chat** | |
 | <img src="assets/profile-documents.png" width="230" alt="Work documents"> | <img src="assets/profile-support.png" width="230" alt="Support chat"> | |
 
@@ -53,7 +53,7 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 
 ### App
 
-- Warehouse operations menu: Putaway, Picking, Returns check.
+- Warehouse operations menu: Putaway, Picking, Returns inspection.
 - Tab-based app shell with Operations and Profile sections.
 - Navigation with `NavigationStack(path:)`.
 - `@Observable` ViewModel.
@@ -92,7 +92,7 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 - API-style finish request encoding with collected, skipped, and replacement item IDs.
 - Manual debug-only demo controls for testing successful and failed collection without the camera.
 
-### Returns check
+### Returns inspection
 
 - Returns flow: fetch task, onboarding, scan the returns container, bind the result containers, scan a returned item, review the return reason, choose a decision, photograph the item when required, finish screen.
 - One-time illustrated Returns onboarding stored with `@AppStorage`, with replay from the container and task menus.
@@ -169,9 +169,9 @@ In development. Putaway, Picking, and Returns check are complete end to end and 
 </details>
 
 <details>
-<summary>Returns check</summary>
+<summary>Returns inspection</summary>
 
-1. Open the Returns check module.
+1. Open the Returns inspection module.
 2. Fetch a returns task.
 3. Complete the Returns onboarding on first launch, or replay it from the container or task menu.
 4. Find the container the returns arrived in and scan its code; any other code is rejected.

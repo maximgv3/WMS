@@ -38,15 +38,19 @@ struct PickingTaskView: View {
     private var currentItem: Item? { viewModel.currentItem }
     private var currentItemPriceText: String {
         guard let currentItem else { return "—" }
-        return String(format: "%.0f₽", currentItem.price)
+        return currentItem.price.formatted(
+            .currency(code: "RUB")
+                .locale(.current)
+                .precision(.fractionLength(0))
+        )
     }
-    private var scannerIdleText: String {
+    private var scannerIdleText: LocalizedStringResource {
         isReplacementModeOn
-            ? "Отсканируйте замену"
-            : "Удерживайте для сканирования"
+            ? .pickingScanAReplacement
+            : .pickingPressAndHoldToScan
     }
-    private var scannerActiveText: String {
-        isReplacementModeOn ? "Сканирование замены..." : "Сканирование..."
+    private var scannerActiveText: LocalizedStringResource {
+        isReplacementModeOn ? .pickingScanningReplacement : .pickingScanning
     }
 
     // MARK: - Body
@@ -89,15 +93,15 @@ struct PickingTaskView: View {
                 isPickingOnboardingComplete = true
             }
         }
-        .alert("Уверены?", isPresented: $isSkipConfirmationPresented) {
-            Button("Отмена", role: .cancel) {}
+        .alert(.pickingAreYouSure, isPresented: $isSkipConfirmationPresented) {
+            Button(.pickingCancel, role: .cancel) {}
 
-            Button("Пропустить", role: .destructive) {
+            Button(.pickingSkip, role: .destructive) {
                 viewModel.skipCurrentItem()
             }
         } message: {
             Text(
-                "Информация о потерянном товаре будет передана руководителю. Стоимость товара: \(currentItemPriceText)"
+                .pickingMissingItemWarning(currentItemPriceText)
             )
         }
         .onDisappear {
@@ -178,10 +182,10 @@ struct PickingTaskView: View {
             totalCount: viewModel.allItemsCount
         ) {
             Text(
-                "Собрано \(viewModel.collectedItemsCount) из \(viewModel.allItemsCount)"
+                .pickingProgress(viewModel.collectedItemsCount, viewModel.allItemsCount)
             )
             if viewModel.skippedItemsCount > 0 {
-                Text("Пропущено \(viewModel.skippedItemsCount)")
+                Text(.commonSkippedCount(viewModel.skippedItemsCount))
             }
         }
     }
@@ -194,7 +198,7 @@ struct PickingTaskView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Собрать замену",
+                    .pickingPickReplacement,
                     systemImage: "arrow.triangle.2.circlepath"
                 )
             }
@@ -203,7 +207,7 @@ struct PickingTaskView: View {
                     demoButtonTapped()
                 } label: {
                     Label(
-                        "Демо-режим",
+                        .commonDemoMode,
                         systemImage:
                             "arrow.trianglehead.2.clockwise.rotate.90.camera"
                     )
@@ -218,7 +222,7 @@ struct PickingTaskView: View {
                 disableDemoMode()
             } label: {
                 Label(
-                    "Пройти обучение",
+                    .commonViewTutorial,
                     systemImage: "book.closed"
                 )
             }
@@ -226,7 +230,7 @@ struct PickingTaskView: View {
                 isSkipConfirmationPresented = true
             } label: {
                 Label(
-                    "Пропустить товар",
+                    .pickingSkipItem,
                     systemImage: "xmark.bin"
                 )
             }
@@ -234,7 +238,7 @@ struct PickingTaskView: View {
                 path.removeAll()
             } label: {
                 Label(
-                    "Выйти из модуля",
+                    .commonExitOperation,
                     systemImage: "rectangle.portrait.and.arrow.right"
                 )
             }
@@ -243,16 +247,16 @@ struct PickingTaskView: View {
         }
         #if DEBUG
             .confirmationDialog(
-                "Демо-режим",
+                .commonDemoMode,
                 isPresented: $isDemoConfirmationPresented,
                 titleVisibility: .visible
             ) {
-                Button("Включить") {
+                Button(.commonEnable) {
                     demoModeToggle()
                 }
             } message: {
                 Text(
-                    "Демо-режим заменит камеру на две кнопки: ошибочный скан и успешную сборку товара. Это удобно для демонстрации функционала без использования реальной камеры. Доступен только в debug-сборке."
+                    .pickingDemoModeDescription
                 )
             }
         #endif
@@ -333,11 +337,11 @@ struct PickingTaskView: View {
         }
         switch pickingError {
         case .wrongId:
-            return "Это не тот товар"
+            return String(localized: .pickingWrongItem)
         case .alreadyCollected:
-            return "Этот ШК уже собран"
+            return String(localized: .pickingThisBarcodeHasAlreadyBeenPicked)
         case .cantUseForReplacement:
-            return "Замена не подходит"
+            return String(localized: .pickingThisReplacementIsNotAllowed)
         }
     }
 
@@ -392,7 +396,7 @@ struct PickingTaskView: View {
                     Button {
                         tryToCollect(itemId: currentItem.id)
                     } label: {
-                        Text("Собрать")
+                        Text(.pickingPick)
                             .font(.system(size: 20, weight: .bold))
                             .foregroundStyle(ColorPalette.textInverted)
                             .frame(maxWidth: .infinity)

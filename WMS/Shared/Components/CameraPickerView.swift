@@ -7,7 +7,7 @@ struct CameraShot {
 }
 
 struct CameraPickerView: UIViewControllerRepresentable {
-    let hint: String
+    let hint: LocalizedStringResource
     var onFinish: (CameraShot?) -> Void
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -35,7 +35,7 @@ struct CameraPickerView: UIViewControllerRepresentable {
         overlay.isUserInteractionEnabled = false
 
         let label = UILabel()
-        label.text = hint
+        label.text = String(localized: hint)
         label.font = .systemFont(ofSize: 18, weight: .bold)
         label.textColor = .white
         label.textAlignment = .center

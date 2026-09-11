@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct ErrorBannerModifier: ViewModifier {
-    let title: String
+    let title: LocalizedStringResource
     @Binding var message: String?
     var autoDismissAfter: Duration = .seconds(3)
 
@@ -50,7 +50,7 @@ struct ErrorBannerModifier: ViewModifier {
 
 extension View {
     func errorBanner(
-        title: String,
+        title: LocalizedStringResource,
         message: Binding<String?>,
         autoDismissAfter: Duration = .seconds(3)
     ) -> some View {

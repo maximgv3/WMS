@@ -23,11 +23,11 @@ enum AppColorScheme: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
-        case .system: "Системная"
-        case .light: "Светлая"
-        case .dark: "Тёмная"
+        case .system: .settingsSystem
+        case .light: .settingsLight
+        case .dark: .settingsDark
         }
     }
 

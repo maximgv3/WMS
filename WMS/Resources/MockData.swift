@@ -43,48 +43,46 @@ struct MockData {
     }()
     
     static let operationsRatings: [OperationRating] = [
-        .init(name: "Сборка",         value: 24.20, iconName: "cart",                  didGoUp: true),
-        .init(name: "Приёмка",        value: 11.43, iconName: "tray.and.arrow.down",   didGoUp: false),
-        .init(name: "Инвент",         value: 0.00,  iconName: "checklist",             didGoUp: nil),
-        .init(name: "Упаковка",       value: 8.10,  iconName: "archivebox",            didGoUp: true),
-        .init(name: "Раскладка",      value: 5.32,  iconName: "square.grid.3x3",       didGoUp: true),
-        .init(name: "Возвраты",       value: 7.46,  iconName: "shippingbox.and.arrow.backward", didGoUp: true),
-        .init(name: "Обмеры",          value: 3.14,  iconName: "ruler",                 didGoUp: false),
-        .init(name: "Сортировка",     value: 1.20,  iconName: "arrow.up.arrow.down",   didGoUp: nil),
-        .init(name: "Брак",           value: 0.00,  iconName: "exclamationmark.triangle", didGoUp: nil)
+        .init(name: localized(.operationsPicking), value: 24.20, iconName: "cart", didGoUp: true),
+        .init(name: localized(.commonReceiving), value: 11.43, iconName: "tray.and.arrow.down", didGoUp: false),
+        .init(name: localized(.commonInventory), value: 0.00, iconName: "checklist", didGoUp: nil),
+        .init(name: localized(.commonPacking), value: 8.10, iconName: "archivebox", didGoUp: true),
+        .init(name: localized(.operationsPutaway), value: 5.32, iconName: "square.grid.3x3", didGoUp: true),
+        .init(name: localized(.commonReturns), value: 7.46, iconName: "shippingbox.and.arrow.backward", didGoUp: true),
+        .init(name: localized(.commonMeasurements), value: 3.14, iconName: "ruler", didGoUp: false),
+        .init(name: localized(.commonSorting), value: 1.20, iconName: "arrow.up.arrow.down", didGoUp: nil),
+        .init(name: localized(.returnsDefective), value: 0.00, iconName: "exclamationmark.triangle", didGoUp: nil)
     ]
 
-    static let operationTariffs: [OperationTariff] = [
-        .init(operation: "Сборка",             zone: "Блок 1", rateKopecks: 1250),
-        .init(operation: "Проверка возвратов", zone: "Блок 1", rateKopecks: 1100),
-        .init(operation: "Приёмка",            zone: "Блок 1", rateKopecks: 980),
-        .init(operation: "Раскладка",          zone: "Блок 1", rateKopecks: 740),
-        .init(operation: "Упаковка",           zone: "Блок 1", rateKopecks: 620),
+    static let operationTariffs: [OperationTariff] = {
+        let operations = [
+            localized(.operationsPicking),
+            localized(.operationsReturnsInspection),
+            localized(.commonReceiving),
+            localized(.operationsPutaway),
+            localized(.commonPacking),
+        ]
+        let rates = [
+            [1250, 1100, 980, 740, 620],
+            [1400, 1230, 1120, 860, 700],
+            [1650, 1450, 1300, 1010, 840],
+            [1800, 1580, 1450, 1150, 960],
+            [1950, 1710, 1580, 1260, 1080],
+        ]
 
-        .init(operation: "Сборка",             zone: "Блок 2", rateKopecks: 1400),
-        .init(operation: "Проверка возвратов", zone: "Блок 2", rateKopecks: 1230),
-        .init(operation: "Приёмка",            zone: "Блок 2", rateKopecks: 1120),
-        .init(operation: "Раскладка",          zone: "Блок 2", rateKopecks: 860),
-        .init(operation: "Упаковка",           zone: "Блок 2", rateKopecks: 700),
-
-        .init(operation: "Сборка",             zone: "Блок 3", rateKopecks: 1650),
-        .init(operation: "Проверка возвратов", zone: "Блок 3", rateKopecks: 1450),
-        .init(operation: "Приёмка",            zone: "Блок 3", rateKopecks: 1300),
-        .init(operation: "Раскладка",          zone: "Блок 3", rateKopecks: 1010),
-        .init(operation: "Упаковка",           zone: "Блок 3", rateKopecks: 840),
-
-        .init(operation: "Сборка",             zone: "Блок 4", rateKopecks: 1800),
-        .init(operation: "Проверка возвратов", zone: "Блок 4", rateKopecks: 1580),
-        .init(operation: "Приёмка",            zone: "Блок 4", rateKopecks: 1450),
-        .init(operation: "Раскладка",          zone: "Блок 4", rateKopecks: 1150),
-        .init(operation: "Упаковка",           zone: "Блок 4", rateKopecks: 960),
-
-        .init(operation: "Сборка",             zone: "Блок 5", rateKopecks: 1950),
-        .init(operation: "Проверка возвратов", zone: "Блок 5", rateKopecks: 1710),
-        .init(operation: "Приёмка",            zone: "Блок 5", rateKopecks: 1580),
-        .init(operation: "Раскладка",          zone: "Блок 5", rateKopecks: 1260),
-        .init(operation: "Упаковка",           zone: "Блок 5", rateKopecks: 1080)
-    ]
+        return rates.enumerated().flatMap { zoneIndex, zoneRates in
+            let zone = String(
+                localized: .tariffsBlockNumber(zoneIndex + 1)
+            )
+            return zip(operations, zoneRates).map { operation, rate in
+                OperationTariff(
+                    operation: operation,
+                    zone: zone,
+                    rateKopecks: rate
+                )
+            }
+        }
+    }()
 
     static let warehouseDocuments: [WarehouseDocument] = {
         let today = Calendar.current.startOfDay(for: .now)
@@ -93,25 +91,25 @@ struct MockData {
         }
         return [
             .init(
-                title: "Инструкция по охране труда",
+                title: localized(.commonWorkplaceSafetyInstructions),
                 fileName: "safety_instruction",
                 updatedAt: date(daysAgo: 45),
                 isAcknowledged: true
             ),
             .init(
-                title: "Регламент сборки заказов",
+                title: localized(.commonOrderPickingProcedure),
                 fileName: "picking_regulations",
                 updatedAt: date(daysAgo: 12),
                 isAcknowledged: true
             ),
             .init(
-                title: "Приказ о режиме работы склада",
+                title: localized(.commonWarehouseOperatingHoursPolicy),
                 fileName: "warehouse_order",
                 updatedAt: date(daysAgo: 3),
                 isAcknowledged: false
             ),
             .init(
-                title: "Памятка новому сотруднику",
+                title: localized(.commonNewEmployeeGuide),
                 fileName: "newcomer_guide",
                 updatedAt: date(daysAgo: 60),
                 isAcknowledged: false
@@ -120,14 +118,20 @@ struct MockData {
     }()
     
     static let firstSupportMessages: [ChatMessage] = [
-        .init(date: .now - 61 * 60, fromUser: false, text: "Здравствуйте! Чем можем помочь?", id: "1"),
-        .init(date: .now - 60 * 60, fromUser: true,  text: "Не засчитывается завершение задания приёмки", id: "2"),
-        .init(date: .now - 59 * 60, fromUser: false, text: "Проверила, всё успешно засчитано", id: "3"),
+        .init(date: .now - 61 * 60, fromUser: false, text: localized(.commonHelloHowCanWeHelp), id: "1"),
+        .init(date: .now - 60 * 60, fromUser: true, text: localized(.supportReceivingTaskCompletionIssue), id: "2"),
+        .init(date: .now - 59 * 60, fromUser: false, text: localized(.supportTaskRecordedConfirmation), id: "3"),
     ]
 
     static var replySupportMessages: [ChatMessage] { [
-        .init(date: .now, fromUser: false, text: "Соединяю вас с оператором, отвечающим за данную область.", id: UUID().uuidString),
-        .init(date: .now, fromUser: false, text: "Пожалуйста, учтите, что время ответа может составлять до 24 часов из-за высокой нагрузки.", id: UUID().uuidString),
-        .init(date: .now, fromUser: false, text: "Пока что Вы можете продолжить вашу работу.", id: UUID().uuidString),
+        .init(date: .now, fromUser: false, text: localized(.supportConnectingToSpecialist), id: UUID().uuidString),
+        .init(date: .now, fromUser: false, text: localized(.supportHighDemandDelayNotice), id: UUID().uuidString),
+        .init(date: .now, fromUser: false, text: localized(.supportContinueWorkNotice), id: UUID().uuidString),
     ] }
+
+    private static func localized(
+        _ resource: LocalizedStringResource
+    ) -> String {
+        String(localized: resource)
+    }
 }

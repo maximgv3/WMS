@@ -49,7 +49,7 @@ enum ColorPalette {
     ]
 
     VStack(alignment: .leading, spacing: 16) {
-        Text("Citrus Palette")
+        Text(.previewColorPalette)
             .font(.headline)
 
         LazyVGrid(

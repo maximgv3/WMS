@@ -47,7 +47,7 @@ struct ReturnsContainersView: View {
             ZStack {
                 if let containers = viewModel.containers {
                     PrimaryButton(
-                        "Начать проверку",
+                        .returnsStartInspection,
                         background: ColorPalette.success,
                         foreground: ColorPalette.textInverted,
                         isGlassy: true
@@ -65,7 +65,7 @@ struct ReturnsContainersView: View {
         }
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
-            title: "Не удалось начать проверку",
+            title: .returnsCouldNotStartInspection,
             message: errorMessage
         )
         .onAppear {
@@ -88,28 +88,28 @@ struct ReturnsContainersView: View {
         }
     }
 
-    private var hint: String {
+    private var hint: LocalizedStringResource {
         guard viewModel.isContainerScanned else {
-            return "Найдите тару с возвратами\nи отсканируйте её код"
+            return .returnsScanSourceTotePrompt
         }
         switch viewModel.nextSlot {
         case .good:
-            return "Отсканируйте тару, в которую\nбудете класть годный товар"
+            return .returnsScanTheToteForSellableItems
         case .inspection:
-            return "Отсканируйте тару для товара,\nкоторый уйдёт на проверку"
+            return .returnsScanInspectionTotePrompt
         case nil:
-            return "Тары привязаны, можно начинать"
+            return .returnsTotesLinkedReadyToStart
         }
     }
 
     private var errorText: String? {
         switch viewModel.lastError {
         case .wrongContainer:
-            return "Это не та тара"
+            return String(localized: .returnsWrongTote)
         case .notAContainer:
-            return "Отсканируйте тару"
+            return String(localized: .returnsScanToteAction)
         case .containerAlreadyUsed:
-            return "Эта тара уже занята"
+            return String(localized: .returnsThisToteIsAlreadyInUse)
         case .notAnItem, .itemNotInTask, .decisionRequired, nil:
             return nil
         }
@@ -129,7 +129,7 @@ struct ReturnsContainersView: View {
                     demoButtonTapped()
                 } label: {
                     Label(
-                        "Демо-режим",
+                        .commonDemoMode,
                         systemImage:
                             "arrow.trianglehead.2.clockwise.rotate.90.camera"
                     )
@@ -142,7 +142,7 @@ struct ReturnsContainersView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Пройти обучение",
+                    .commonViewTutorial,
                     systemImage: "book.closed"
                 )
             }
@@ -151,7 +151,7 @@ struct ReturnsContainersView: View {
                 path.removeAll()
             } label: {
                 Label(
-                    "Выйти из модуля",
+                    .commonExitOperation,
                     systemImage: "rectangle.portrait.and.arrow.right"
                 )
             }
@@ -161,16 +161,16 @@ struct ReturnsContainersView: View {
         }
         #if DEBUG
             .confirmationDialog(
-                "Демо-режим",
+                .commonDemoMode,
                 isPresented: $isDemoConfirmationPresented,
                 titleVisibility: .visible
             ) {
-                Button("Включить") {
+                Button(.commonEnable) {
                     demoModeToggle()
                 }
             } message: {
                 Text(
-                    "Демо-режим заменит камеру на кнопки: ошибочный скан и скан нужной тары. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                    .returnsContainerDemoModeDescription
                 )
             }
         #endif
@@ -192,8 +192,8 @@ struct ReturnsContainersView: View {
     private var scannerView: some View {
         ScannerView(
             isScanningEnabled: $isScanningEnabled,
-            idleText: "Сканируйте тару",
-            activeText: "Сканируем тару...",
+            idleText: .returnsScanTotePrompt,
+            activeText: .returnsScanningTote,
             previewHeight: 240,
             onScan: { code in processScan(code) }
         )
@@ -217,7 +217,7 @@ struct ReturnsContainersView: View {
                 Button {
                     processScan(demoNextCode)
                 } label: {
-                    Text("Тара")
+                    Text(.returnsTote)
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(ColorPalette.textInverted)
                         .frame(maxWidth: .infinity)
@@ -277,7 +277,7 @@ struct ReturnsContainersView: View {
             Image(systemName: "shippingbox")
                 .font(.system(size: 40))
             VStack(alignment: .leading, spacing: 12) {
-                Text("Тара с возвратами")
+                Text(.returnsReturnsTote)
                 Text(viewModel.container.id)
                     .font(.system(size: 24, weight: .medium))
                     .lineLimit(1)
@@ -324,7 +324,10 @@ struct ReturnsContainersView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(slot.title)
                     .font(.system(size: 16, weight: .semibold))
-                Text(viewModel.boundContainers[slot] ?? "Тара не привязана")
+                Text(
+                    viewModel.boundContainers[slot]
+                        ?? String(localized: .returnsToteNotLinked)
+                )
                     .font(.system(size: 14))
                     .foregroundStyle(ColorPalette.brandMuted)
                     .monospacedDigit()

@@ -5,32 +5,32 @@ enum OnboardingPages {
         static let pages: [OnboardingPage] = [
             .init(
                 image: .goToPlace,
-                text: "Пройдите к ячейке, указанной на экране"
+                text: .onboardingGoToTheBinShownOnTheScreen
             ),
             .init(
                 image: .checkItemId,
-                text: "Найдите вещь с нужным штрих-кодом"
+                text: .onboardingPickingFindMatchingBarcode
             ),
             .init(
                 image: .checkIsItemRight,
-                text: "Проверьте соответствие характеристик товара"
+                text: .onboardingCheckThatTheItemDetailsMatch
             ),
-            .init(image: .scanItem, text: "Отсканируйте штрих-код"),
+            .init(image: .scanItem, text: .onboardingScanTheBarcode),
             .init(
                 image: .collectOtherItems,
-                text: "Таким же образом соберите оставшиеся предметы"
+                text: .onboardingPickingContinueRemainingItems
             ),
             .init(
                 image: .scanFinishPlace,
-                text: "Пройдите к точке сброса вещей, отсканируйте QR места"
+                text: .onboardingPickingScanDropOffPoint
             ),
             .init(
                 image: .scanFinishContainer,
-                text: "Отсканируйте контейнер"
+                text: .onboardingScanTheContainer
             ),
             .init(
                 image: .placeItemsInContainer,
-                text: "Сложите вещи в контейнер"
+                text: .onboardingPlaceTheItemsInTheContainer
             ),
         ]
     }
@@ -39,31 +39,31 @@ enum OnboardingPages {
         static let pages: [OnboardingPage] = [
             .init(
                 image: .scanContainer,
-                text: "Найдите нужный контейнер и отсканируйте его"
+                text: .onboardingPutawayScanRequiredContainer
             ),
             .init(
                 image: .placeItemsInCart,
-                text: "Переложите товары из контейнера в тележку"
+                text: .onboardingPutawayMoveItemsToCart
             ),
             .init(
                 image: .scanPlace,
-                text: "Выберите любую свободную ячейку и отсканируйте её"
+                text: .onboardingPutawayScanAvailableBin
             ),
             .init(
                 image: .scanItemInCell,
-                text: "Отсканируйте товар и положите его в ячейку"
+                text: .onboardingPutawayScanItemIntoBin
             ),
             .init(
                 image: .changeCell,
-                text: "Когда место в ячейке закончилось, смените её"
+                text: .onboardingPutawaySwitchFullBin
             ),
             .init(
                 image: .finishTask,
-                text: "Разложите таким образом все товары и завершите задание"
+                text: .onboardingPutawayCompleteAllItems
             ),
             .init(
                 image: .returnEmptyContainer,
-                text: "Откатите пустой контейнер в зону хранения"
+                text: .onboardingPutawayReturnEmptyContainer
             ),
         ]
     }
@@ -72,36 +72,36 @@ enum OnboardingPages {
         static let pages: [OnboardingPage] = [
             .init(
                 image: .scanReturnsContainer,
-                text: "Найдите тару с возвратами и отсканируйте её код"
+                text: .onboardingReturnsScanReturnsTote
             ),
             .init(
                 image: .scanResultContainers,
                 text:
-                    "Отсканируйте тары: для годного товара и для товара на проверку"
+                    .onboardingReturnsScanDestinationTotes
             ),
             .init(
                 image: .scanReturnItem,
-                text: "Достаньте товар из тары и отсканируйте его штрих-код"
+                text: .onboardingReturnsScanItemFromTote
             ),
             .init(
                 image: .checkReturnItem,
-                text: "Осмотрите товар: тот ли это товар и нет ли повреждений"
+                text: .onboardingPickingVerifyItem
             ),
             .init(
                 image: .chooseDecision,
-                text: "Выберите решение: годен, брак или подмена"
+                text: .onboardingReturnsChooseDecision
             ),
             .init(
                 image: .photographItem,
-                text: "При браке или подмене сфотографируйте проблему"
+                text: .onboardingReturnsPhotographIssue
             ),
             .init(
                 image: .placeItemInResultContainer,
-                text: "Положите товар в тару, соответствующую решению"
+                text: .onboardingReturnsPlaceItemByDecision
             ),
             .init(
                 image: .finishReturnsTask,
-                text: "Проверьте так все товары и завершите задание"
+                text: .onboardingReturnsCompleteAllItems
             ),
         ]
     }

@@ -14,13 +14,13 @@ struct ErrorView: View {
         }
     }
 
-    private var text: String {
+    private var text: LocalizedStringResource {
         switch type {
         case .inDevelopment:
-            return "Раздел в разработке"
+            return .commonSectionUnderDevelopment
         case .noAccess:
             return
-                "Доступ к операции ограничен.\n\nОбратитесь к руководителю для получения разрешения."
+                .operationsAccessRestrictedMessage
         case .other(_, let title, _):
             return title
         }
@@ -55,7 +55,11 @@ struct ErrorView: View {
 enum ErrorViewType {
     case noAccess
     case inDevelopment
-    case other(icon: String, title: String, autoDismiss: Bool)
+    case other(
+        icon: String,
+        title: LocalizedStringResource,
+        autoDismiss: Bool
+    )
 }
 
 #Preview {
@@ -65,5 +69,5 @@ enum ErrorViewType {
     ErrorView(type: .noAccess)
 }
 #Preview {
-    ErrorView(type: .other(icon: "shippingbox", title: "Error", autoDismiss: false))
+    ErrorView(type: .other(icon: "shippingbox", title: .previewError, autoDismiss: false))
 }

@@ -6,7 +6,7 @@ struct PrimaryButton: View {
         case capsule
     }
 
-    private let title: String
+    private let title: LocalizedStringResource
     private let background: Color
     private let foreground: Color
     private let isLoading: Bool
@@ -15,7 +15,7 @@ struct PrimaryButton: View {
     private let variant: Variant
     private let action: () -> Void
     init(
-        _ title: String,
+        _ title: LocalizedStringResource,
         background: Color = ColorPalette.accentPrimary,
         foreground: Color = ColorPalette.brandPrimary,
         isLoading: Bool = false,
@@ -119,23 +119,23 @@ private struct Style {
 
 #Preview {
     VStack(spacing: 20) {
-        PrimaryButton("Получить задание") {}
+        PrimaryButton(.operationsGetTask) {}
             .padding(.horizontal, 64)
 
-        PrimaryButton("Завершить задание", isLoading: true) {}
+        PrimaryButton(.pickingCompleteTask, isLoading: true) {}
             .padding(.horizontal, 64)
 
         PrimaryButton(
-            "Закончить задание",
+            .commonFinishTask,
             background: ColorPalette.success,
             foreground: ColorPalette.textInverted,
             isGlassy: true
         ) {}
         .padding(.horizontal, 64)
 
-        PrimaryButton("Попробовать снова", variant: .capsule) {}
+        PrimaryButton(.commonTryAgain, variant: .capsule) {}
 
-        PrimaryButton("Попробовать снова", isLoading: true, variant: .capsule) {}
+        PrimaryButton(.commonTryAgain, isLoading: true, variant: .capsule) {}
     }
     .padding()
     .background(ColorPalette.backgroundPrimary)

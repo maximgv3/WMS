@@ -9,13 +9,13 @@ struct ContentView: View {
             OperationsListView()
                 .tint(nil)
                 .tabItem {
-                    Label("Операции", systemImage: "shippingbox")
+                    Label(.operationsTitle, systemImage: "shippingbox")
                 }
 
             ProfileView(profileService: ProfileServiceMock())
                 .tint(nil)
                 .tabItem {
-                    Label("Профиль", systemImage: "person.crop.circle")
+                    Label(.profileTitle, systemImage: "person.crop.circle")
                 }
         }
         .tint(ColorPalette.accentPrimary)

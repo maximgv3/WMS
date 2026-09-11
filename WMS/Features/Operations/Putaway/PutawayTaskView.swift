@@ -37,7 +37,7 @@ struct PutawayTaskView: View {
             ZStack {
                 if viewModel.isAllItemsPlaced {
                     PrimaryButton(
-                        "Закончить задание",
+                        .commonFinishTask,
                         background: ColorPalette.success,
                         foreground: ColorPalette.textInverted,
                         isGlassy: true
@@ -55,7 +55,7 @@ struct PutawayTaskView: View {
         }
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
-            title: "Не удалось разложить товар",
+            title: .putawayCouldNotPutAwayTheItem,
             message: errorMessage,
             autoDismissAfter: errorAutoDismiss
         )
@@ -78,9 +78,9 @@ struct PutawayTaskView: View {
                     totalCount: viewModel.allItemsCount
                 ) {
                     if viewModel.placedItemsCount > 0 {
-                        Text("Разложено \(viewModel.placedItemsCount)")
+                        Text(.putawayPlacedCount(viewModel.placedItemsCount))
                     }
-                    Text("Необработано \(viewModel.leftItems.count) шт.")
+                    Text(.putawayUnprocessedCount(viewModel.leftItems.count))
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -97,13 +97,16 @@ struct PutawayTaskView: View {
     private var errorText: String? {
         switch viewModel.lastError {
         case .notACell:
-            return "Сначала отсканируйте ячейку"
+            return String(localized: .putawayScanABinFirst)
         case .notAnItem:
-            return "Отсканируйте товар"
+            return String(localized: .commonScanItemAction)
         case .itemNotInTask:
-            return "Товара нет в задании. Отсканируйте ещё раз, чтобы всё равно разложить"
+            return String(
+                localized:
+                    .putawayForeignItemConfirmation
+            )
         case .cellIsFull:
-            return "В ячейке нет места"
+            return String(localized: .putawayTheBinIsFull)
         case .wrongContainer, nil:
             return nil
         }
@@ -128,7 +131,7 @@ struct PutawayTaskView: View {
                     isEarlyFinishPresented = true
                 } label: {
                     Label(
-                        "Завершить досрочно",
+                        .commonFinishEarlyAction,
                         systemImage: "flag.checkered"
                     )
                 }
@@ -139,7 +142,7 @@ struct PutawayTaskView: View {
                     demoButtonTapped()
                 } label: {
                     Label(
-                        "Демо-режим",
+                        .commonDemoMode,
                         systemImage:
                             "arrow.trianglehead.2.clockwise.rotate.90.camera"
                     )
@@ -152,7 +155,7 @@ struct PutawayTaskView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Пройти обучение",
+                    .commonViewTutorial,
                     systemImage: "book.closed"
                 )
             }
@@ -161,7 +164,7 @@ struct PutawayTaskView: View {
                 path.removeAll()
             } label: {
                 Label(
-                    "Выйти из модуля",
+                    .commonExitOperation,
                     systemImage: "rectangle.portrait.and.arrow.right"
                 )
             }
@@ -170,30 +173,30 @@ struct PutawayTaskView: View {
                 .foregroundStyle(ColorPalette.textPrimary)
         }
         .confirmationDialog(
-            "Досрочное завершение",
+            .commonEarlyFinishTitle,
             isPresented: $isEarlyFinishPresented,
             titleVisibility: .visible
         ) {
-            Button("Завершить", role: .destructive) {
+            Button(.commonFinish, role: .destructive) {
                 path.append(.putaway(.finish(viewModel.result)))
             }
         } message: {
             Text(
-                "Остались неразложенные товары. В случае досрочного завершения, новые задания раскладки нельзя будет брать до следующей смены. Вы уверены?"
+                .putawayEarlyFinishWarning
             )
         }
         #if DEBUG
             .confirmationDialog(
-                "Демо-режим",
+                .commonDemoMode,
                 isPresented: $isDemoConfirmationPresented,
                 titleVisibility: .visible
             ) {
-                Button("Включить") {
+                Button(.commonEnable) {
                     demoModeToggle()
                 }
             } message: {
                 Text(
-                    "Демо-режим заменит камеру на кнопки: ошибочный скан, выбор ячейки и укладка товара. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                    .putawayTaskDemoModeDescription
                 )
             }
         #endif
@@ -217,9 +220,9 @@ struct PutawayTaskView: View {
         ScannerView(
             isScanningEnabled: $isScanningEnabled,
             idleText: isCellSelected
-                ? "Сканируйте товар" : "Сканируйте ячейку",
+                ? .commonScanItemPrompt : .putawayScanABin,
             activeText: isCellSelected
-                ? "Сканируем товар..." : "Сканируем ячейку...",
+                ? .commonScanningItem : .putawayScanningBin,
             onScan: { code in processScan(code) }
         )
     }
@@ -241,12 +244,12 @@ struct PutawayTaskView: View {
 
                 if isCellSelected {
                     if let item = viewModel.leftItems.first {
-                        demoPrimaryButton("Разложить") {
+                        demoPrimaryButton(.putawayPutAway) {
                             processScan(String(item.id))
                         }
                     }
                 } else {
-                    demoPrimaryButton("Ячейка") {
+                    demoPrimaryButton(.commonBin) {
                         processScan(randomDemoCellCode())
                     }
                 }
@@ -264,7 +267,7 @@ struct PutawayTaskView: View {
         }
 
         private func demoPrimaryButton(
-            _ title: String,
+            _ title: LocalizedStringResource,
             action: @escaping () -> Void
         ) -> some View {
             Button(action: action) {
@@ -306,7 +309,7 @@ struct PutawayTaskView: View {
             VStack(spacing: 12) {
                 Image(systemName: "qrcode.viewfinder")
                     .font(.system(size: 40, weight: .light))
-                Text("Ячейка не выбрана")
+                Text(.putawayNoBinSelected)
                     .font(.system(size: 20, weight: .medium))
             }
             .foregroundStyle(ColorPalette.textPrimary)
@@ -322,20 +325,22 @@ struct PutawayTaskView: View {
 
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
-                    Text("Ячейка")
+                    Text(.commonBin)
                     Spacer()
                     changeCellButton
                         .padding(.horizontal, -6)
                 }
-                Text(viewModel.currentCell?.id ?? "Ячейка не выбрана")
+                Text(
+                    viewModel.currentCell?.id
+                        ?? String(localized: .putawayNoBinSelected)
+                )
                     .font(.system(size: 24, weight: .medium))
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                 ProgressView(value: viewModel.currentCellProgress)
                     .tint(ColorPalette.accentPrimary)
                 Text(
-                    String(viewModel.currentCellItemsCount) + " из "
-                        + String(viewModel.task.cellCapacity)
+                    .commonProgress(viewModel.currentCellItemsCount, viewModel.task.cellCapacity)
                 )
                 .contentTransition(
                     .numericText(value: Double(viewModel.currentCellItemsCount))
@@ -360,7 +365,7 @@ struct PutawayTaskView: View {
         Button {
             viewModel.clearCurrentCell()
         } label: {
-            Text("Сменить ячейку")
+            Text(.putawaySwitchBin)
                 .padding(6)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -377,7 +382,7 @@ struct PutawayTaskView: View {
     @ViewBuilder
     private var itemsList: some View {
         if listedItems.isEmpty {
-            Text(isCellSelected ? "В ячейке пока пусто" : "Всё разложено")
+            Text(isCellSelected ? .putawayThisBinIsEmpty : .putawayAllItemsPutAway)
                 .foregroundStyle(ColorPalette.brandMuted)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -385,7 +390,7 @@ struct PutawayTaskView: View {
                 LazyVStack(alignment: .leading) {
                     Text(
                         isCellSelected
-                            ? "Разложенные товары" : "Осталось разложить"
+                            ? .putawayItemsInThisBin : .putawayRemainingToPutAway
                     )
                     .font(.headline)
                     ForEach(listedItems) { item in

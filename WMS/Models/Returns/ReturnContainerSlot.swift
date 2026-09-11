@@ -7,12 +7,12 @@ nonisolated enum ReturnContainerSlot: String, CaseIterable, Identifiable,
     case inspection
 
     var id: String { rawValue }
-    var title: String {
+    var title: LocalizedStringResource {
         switch self {
         case .good:
-            "Годное"
+            .returnsContainerSellable
         case .inspection:
-            "На проверку"
+            .returnsForInspection
         }
     }
     var iconName: String {

@@ -31,7 +31,7 @@ struct PutawayContainerView: View {
         VStack(spacing: 16) {
             containerCard
             scanner
-            Text("Найдите контейнер на месте\nи отсканируйте его код")
+            Text(.putawayScanSourceContainerPrompt)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(ColorPalette.brandMuted)
                 .frame(maxWidth: .infinity, minHeight: 56, maxHeight: .infinity)
@@ -39,7 +39,7 @@ struct PutawayContainerView: View {
         .padding([.horizontal, .top], 16)
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .errorBanner(
-            title: "Не удалось начать раскладку",
+            title: .putawayCouldNotStartPutaway,
             message: errorMessage
         )
         .onAppear {
@@ -65,7 +65,7 @@ struct PutawayContainerView: View {
     private var errorText: String? {
         switch viewModel.lastError {
         case .wrongContainer:
-            return "Это не тот контейнер"
+            return String(localized: .putawayWrongContainer)
         case .notACell, .notAnItem, .itemNotInTask, .cellIsFull, nil:
             return nil
         }
@@ -85,7 +85,7 @@ struct PutawayContainerView: View {
                     demoButtonTapped()
                 } label: {
                     Label(
-                        "Демо-режим",
+                        .commonDemoMode,
                         systemImage:
                             "arrow.trianglehead.2.clockwise.rotate.90.camera"
                     )
@@ -98,7 +98,7 @@ struct PutawayContainerView: View {
                 isScanningEnabled = false
             } label: {
                 Label(
-                    "Пройти обучение",
+                    .commonViewTutorial,
                     systemImage: "book.closed"
                 )
             }
@@ -107,7 +107,7 @@ struct PutawayContainerView: View {
                 path.removeAll()
             } label: {
                 Label(
-                    "Выйти из модуля",
+                    .commonExitOperation,
                     systemImage: "rectangle.portrait.and.arrow.right"
                 )
             }
@@ -117,16 +117,16 @@ struct PutawayContainerView: View {
         }
         #if DEBUG
             .confirmationDialog(
-                "Демо-режим",
+                .commonDemoMode,
                 isPresented: $isDemoConfirmationPresented,
                 titleVisibility: .visible
             ) {
-                Button("Включить") {
+                Button(.commonEnable) {
                     demoModeToggle()
                 }
             } message: {
                 Text(
-                    "Демо-режим заменит камеру на кнопки: ошибочный скан и скан нужного контейнера. Это удобно для прохождения флоу без реальной камеры. Доступен только в debug-сборке."
+                    .putawayContainerDemoModeDescription
                 )
             }
         #endif
@@ -148,8 +148,8 @@ struct PutawayContainerView: View {
     private var scannerView: some View {
         ScannerView(
             isScanningEnabled: $isScanningEnabled,
-            idleText: "Сканируйте контейнер",
-            activeText: "Сканируем контейнер...",
+            idleText: .putawayScanTheContainer,
+            activeText: .putawayScanningContainer,
             previewHeight: 400,
             onScan: { code in processScan(code) }
         )
@@ -173,7 +173,7 @@ struct PutawayContainerView: View {
                 Button {
                     processScan(viewModel.container.id)
                 } label: {
-                    Text("Контейнер")
+                    Text(.putawayContainer)
                         .font(.system(size: 20, weight: .bold))
                         .foregroundStyle(ColorPalette.textInverted)
                         .frame(maxWidth: .infinity)
@@ -227,7 +227,7 @@ struct PutawayContainerView: View {
                 Image(systemName: "tray.full")
                     .font(.system(size: 40))
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Контейнер")
+                    Text(.putawayContainer)
                     Text(viewModel.container.id)
                         .font(.system(size: 24, weight: .medium))
                         .lineLimit(1)

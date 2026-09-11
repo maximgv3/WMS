@@ -2,8 +2,8 @@ import SwiftUI
 
 struct ScannerView: View {
     @Binding var isScanningEnabled: Bool
-    let idleText: String
-    let activeText: String
+    let idleText: LocalizedStringResource
+    let activeText: LocalizedStringResource
     var previewHeight: CGFloat = 130
     let onScan: (String) -> Void
 
