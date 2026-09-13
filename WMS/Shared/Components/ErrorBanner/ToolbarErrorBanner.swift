@@ -18,15 +18,13 @@ final class ToolbarErrorBanner {
         isPresented = true
         isVisible = false
 
-        Task {
+        dismissTask = Task {
             try? await Task.sleep(for: .milliseconds(50))
             guard !Task.isCancelled else { return }
             areSideItemsPresented = false
             isVisible = true
             pulse()
-        }
 
-        dismissTask = Task {
             try? await Task.sleep(for: .seconds(2))
             guard !Task.isCancelled else { return }
             await hide()
