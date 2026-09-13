@@ -76,8 +76,8 @@ final class PickingTaskViewModel {
     }
 
     func tryToReplace(replacementId: Int) async throws {
-        guard let currentItem else { return }
-        guard currentItem.id != replacementId else {
+        guard let item = currentItem else { return }
+        guard item.id != replacementId else {
             try tryToCollect(itemId: replacementId)
             return
         }
@@ -85,10 +85,13 @@ final class PickingTaskViewModel {
             throw PickingTaskError.alreadyCollected
         }
         if await pickingTaskService.checkIfIdAvailableForReplacement(
-            id: currentItem.id,
+            id: item.id,
             replacementId: replacementId
         ) {
-            registerReplacement(replacementId: replacementId)
+            guard currentItem?.id == item.id else {
+                throw PickingTaskError.alreadyCollected
+            }
+            replacements[item.id] = replacementId
         } else {
             throw PickingTaskError.cantUseForReplacement
         }
@@ -107,10 +110,6 @@ final class PickingTaskViewModel {
                 }
             }
         }
-    }
-    private func registerReplacement(replacementId: Int) {
-        guard let currentItem else { return }
-        replacements[currentItem.id] = replacementId
     }
 
     private func isCollectedOrReplacementIdAlreadyUsed(_ itemId: Int) -> Bool {

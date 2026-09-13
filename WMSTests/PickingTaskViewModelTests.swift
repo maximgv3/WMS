@@ -138,6 +138,22 @@ struct PickingTaskViewModelTests {
     }
     
     @Test
+    func secondScanDuringReplacementCheckDoesNotReplaceNextItem() async {
+        let item1 = makeItem(id: 123)
+        let item2 = makeItem(id: 456)
+        let task = PickingTask(allItems: [item1, item2])
+        let viewModel = makeViewModel(pickingTask: task)
+
+        async let firstScan: Void = viewModel.tryToReplace(replacementId: 111)
+        async let secondScan: Void = viewModel.tryToReplace(replacementId: 111)
+        _ = try? await firstScan
+        _ = try? await secondScan
+
+        #expect(viewModel.replacements == [item1.id: 111])
+        #expect(viewModel.currentItem == item2)
+    }
+
+    @Test
     func pickingResultCountsItems() {
         let collectedItems = [makeItem(id: 1), makeItem(id: 2)]
         let skippedItems = [makeItem(id: 3)]
