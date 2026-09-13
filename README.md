@@ -7,7 +7,7 @@
 
 A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns inspection. Tasks are loaded from bundled mock JSON, and completed results are encoded as API-style requests.
 
-The Profile tab covers earnings history, operator ratings, warehouse tariffs, work documents, support chat, and settings. The app supports light and dark themes.
+The Profile tab covers earnings history, operator ratings, warehouse tariffs, work documents, support chat, and settings. The app supports light and dark themes and comes in Russian and English.
 
 ## Project Status
 
@@ -59,6 +59,7 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - `@Observable` ViewModel.
 - Camera permission blocker before warehouse operations, with first-run guidance and Settings recovery after denied access.
 - Light and dark themes: the app follows the system appearance or the one picked in the settings, and switching cross-fades the whole window.
+- Russian and English interface that follows the iOS language setting, down to the item names and return reasons in the mock tasks.
 - The home indicator gesture is deferred for as long as a warehouse operation is open, so a swipe near the bottom edge raises the indicator first instead of dropping the operator out of a task.
 - The screen is kept awake for the length of a warehouse operation and released on the way out.
 
@@ -128,8 +129,9 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - Camera wrapper around the system camera that hands back a compressed photo and a list thumbnail in one shot.
 - System sound feedback for successful and failed scans, which the settings can switch off.
 - Semantic color tokens in the asset catalog named by role - background, surface, text, brand, accent - each carrying a light and a dark value, so both themes come from one set of names.
+- Interface strings in a String Catalog under semantic keys, each with a Russian and an English value, used in code through generated symbols such as `.operationsTitle`.
 - App settings kept in `UserDefaults` through `@AppStorage`, with defaults registered at launch so readers outside SwiftUI see the same values.
-- Mock API-style JSON resources for profile, picking, putaway, and returns task loading.
+- Mock API-style JSON resources for profile, picking, putaway, and returns task loading, with a Russian and an English copy of each task.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking, putaway, and returns tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
 - Swift Testing coverage for core picking, putaway, and returns ViewModel/result behavior, tariff grouping and filtering, Profile and Rating ViewModel loading states, and document acknowledgement.
@@ -197,6 +199,7 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - AVFoundation
 - Swift Charts
 - PDFKit
+- String Catalogs
 - Swift Testing
 - Mock service layer with API-style JSON
 
@@ -233,10 +236,13 @@ WMS/
 ├── Resources/
 │   ├── Assets.xcassets/
 │   ├── MockJSON/
+│   │   ├── en.lproj/
+│   │   └── ru.lproj/
 │   └── MockPDF/
 ├── Services/
 ├── Shared/
 │   └── Components/
+│       └── ErrorBanner/
 └── Utilities/
 ```
 
@@ -295,6 +301,7 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - All three warehouse modules include debug-only demo controls that replace the camera with buttons, so the flows can be walked in the simulator, where no camera exists.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - Settings are stored locally with `@AppStorage`: the theme, the scan sound, and whether the screen stays awake during a task.
+- Screenshots and demos show the Russian interface. To see the English one, switch the device language to English, or set App Language to English in the Run options of the Xcode scheme.
 - Camera permission handling blocks warehouse operations when camera access is missing.
 - Further warehouse operations are planned as future modules.
 
