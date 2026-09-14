@@ -11,14 +11,16 @@ struct OperationModuleView: View {
         operationType: OperationType,
         pickingService: PickingTaskServiceProtocol = PickingListServiceMock(),
         putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock(),
-        returnsService: ReturnsTaskServiceProtocol = ReturnsTaskServiceMock()
+        returnsService: ReturnsTaskServiceProtocol = ReturnsTaskServiceMock(),
+        putawayProgressStore: PutawayProgressStoreProtocol = PutawayProgressStore()
     ) {
         self.operationType = operationType
         self.viewModel = OperationModuleViewModel(
             operationType: operationType,
             pickingService: pickingService,
             putawayService: putawayService,
-            returnsService: returnsService
+            returnsService: returnsService,
+            putawayProgressStore: putawayProgressStore
         )
     }
     var body: some View {
@@ -69,13 +71,19 @@ struct OperationModuleView: View {
                     case .container(let task):
                         PutawayContainerView(task: task, path: $path)
                     case .task(let task):
-                        PutawayTaskView(task: task, service: viewModel.putawayService, path: $path)
+                        PutawayTaskView(
+                            task: task,
+                            service: viewModel.putawayService,
+                            progressStore: viewModel.putawayProgressStore,
+                            path: $path
+                        )
                     case .finish(let result):
                         PutawayFinishView(
                             path: $path,
                             result: result,
                             userId: viewModel.userId,
-                            taskService: viewModel.putawayService
+                            taskService: viewModel.putawayService,
+                            progressStore: viewModel.putawayProgressStore
                         )
                     }
                 case .returns(let returnsRoute):

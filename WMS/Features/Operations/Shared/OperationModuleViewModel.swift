@@ -11,12 +11,20 @@ final class OperationModuleViewModel {
     let pickingService: PickingTaskServiceProtocol
     let putawayService: PutawayTaskServiceProtocol
     let returnsService: ReturnsTaskServiceProtocol
+    let putawayProgressStore: PutawayProgressStoreProtocol
 
-    init(operationType: OperationType, pickingService: PickingTaskServiceProtocol, putawayService: PutawayTaskServiceProtocol, returnsService: ReturnsTaskServiceProtocol) {
+    init(
+        operationType: OperationType,
+        pickingService: PickingTaskServiceProtocol,
+        putawayService: PutawayTaskServiceProtocol,
+        returnsService: ReturnsTaskServiceProtocol,
+        putawayProgressStore: PutawayProgressStoreProtocol
+    ) {
         self.operationType = operationType
         self.pickingService = pickingService
         self.putawayService = putawayService
         self.returnsService = returnsService
+        self.putawayProgressStore = putawayProgressStore
     }
 
     func fetchTask() async -> OperationType.WorkRoute? {
@@ -29,7 +37,12 @@ final class OperationModuleViewModel {
             switch operationType {
             case .putaway:
                 let task = try await putawayService.fetchTask(userId: userId)
-                return .putaway(.container(task))
+                let savedProgress = putawayProgressStore.load(
+                    for: task.container.id
+                )
+                return savedProgress == nil
+                    ? .putaway(.container(task))
+                    : .putaway(.task(task))
             case .picking:
                 let task = try await pickingService.fetchTask(userId: userId)
                 return .picking(.task(task))

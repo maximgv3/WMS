@@ -45,24 +45,34 @@ struct PutawayFinishViewModelTests {
 
     @Test
     func finishTaskSucceedsWithoutError() async {
-        let viewModel = makeViewModel()
+        let progressStore = PutawayProgressStoreFake(
+            progress: makeProgress()
+        )
+        let viewModel = makeViewModel(progressStore: progressStore)
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress == nil)
     }
 
     @Test
     func finishTaskFailsWithErrorMessage() async {
-        let viewModel = makeViewModel(userId: failingUserId)
+        let progress = makeProgress()
+        let progressStore = PutawayProgressStoreFake(progress: progress)
+        let viewModel = makeViewModel(
+            userId: failingUserId,
+            progressStore: progressStore
+        )
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished == false)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress == progress)
     }
 
     @Test
@@ -90,7 +100,8 @@ struct PutawayFinishViewModelTests {
     private func makeViewModel(
         placedItems: [Item.ID: StorageCell.ID] = [:],
         skippedItemIds: [Item.ID] = [],
-        userId: Int = 1
+        userId: Int = 1,
+        progressStore: PutawayProgressStoreProtocol = PutawayProgressStoreFake()
     ) -> PutawayFinishViewModel {
         PutawayFinishViewModel(
             result: PutawayResult(
@@ -98,7 +109,15 @@ struct PutawayFinishViewModelTests {
                 skippedItemIds: skippedItemIds
             ),
             userId: userId,
-            taskService: PutawayTaskServiceMock()
+            taskService: PutawayTaskServiceMock(),
+            progressStore: progressStore
+        )
+    }
+
+    private func makeProgress() -> PutawayProgress {
+        PutawayProgress(
+            containerId: "container-1",
+            placedItems: [1: "01.02.03.04.05.06"]
         )
     }
 }

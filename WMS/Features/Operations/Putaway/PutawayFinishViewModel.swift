@@ -6,6 +6,7 @@ final class PutawayFinishViewModel {
     private let result: PutawayResult
     private var userId: Int
     private let taskService: PutawayTaskServiceProtocol
+    private let progressStore: PutawayProgressStoreProtocol
 
     var isFinishingTask = false
     var errorMessage: String?
@@ -28,11 +29,13 @@ final class PutawayFinishViewModel {
     init(
         result: PutawayResult,
         userId: Int,
-        taskService: PutawayTaskServiceProtocol
+        taskService: PutawayTaskServiceProtocol,
+        progressStore: PutawayProgressStoreProtocol
     ) {
         self.result = result
         self.userId = userId
         self.taskService = taskService
+        self.progressStore = progressStore
     }
 
     func finishTask() async -> Bool {
@@ -47,6 +50,7 @@ final class PutawayFinishViewModel {
 
         do {
             try await taskService.finishTask(result: result, userId: userId)
+            progressStore.clear()
             return true
         } catch {
             FeedbackService.playErrorHaptic()

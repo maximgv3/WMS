@@ -18,9 +18,14 @@ struct PutawayTaskView: View {
     init(
         task: PutawayTask,
         service: PutawayTaskServiceProtocol,
+        progressStore: PutawayProgressStoreProtocol = PutawayProgressStore(),
         path: Binding<[OperationType.WorkRoute]>
     ) {
-        self.viewModel = PutawayTaskViewModel(task: task, service: service)
+        self.viewModel = PutawayTaskViewModel(
+            task: task,
+            service: service,
+            progressStore: progressStore
+        )
         self._path = path
     }
 

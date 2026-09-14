@@ -67,7 +67,11 @@ struct PutawayTaskViewModelTests {
     @Test
     func itemScanPlacesItemIntoCurrentCell() {
         let item = makeItem()
-        let viewModel = makeViewModel(items: [item])
+        let progressStore = PutawayProgressStoreFake()
+        let viewModel = makeViewModel(
+            items: [item],
+            progressStore: progressStore
+        )
 
         viewModel.processCode(cellA)
         viewModel.processCode("\(item.id)")
@@ -78,6 +82,13 @@ struct PutawayTaskViewModelTests {
         #expect(viewModel.lastPlacedItem == item)
         #expect(viewModel.leftItems.isEmpty)
         #expect(viewModel.isAllItemsPlaced)
+        #expect(
+            progressStore.progress
+                == PutawayProgress(
+                    containerId: "container-1",
+                    placedItems: [item.id: cellA]
+                )
+        )
     }
 
     @Test
@@ -318,6 +329,56 @@ struct PutawayTaskViewModelTests {
         #expect(viewModel.currentCellItems.count == 1)
     }
 
+    @Test
+    func savedProgressRestoresPlacedItemsWithoutCurrentCell() {
+        let item1 = makeItem(id: 1)
+        let item2 = makeItem(id: 2)
+        let progressStore = PutawayProgressStoreFake(
+            progress: PutawayProgress(
+                containerId: "container-1",
+                placedItems: [
+                    item1.id: cellA,
+                    item2.id: cellA,
+                    999: cellB,
+                ]
+            )
+        )
+
+        let viewModel = makeViewModel(
+            items: [item1, item2],
+            progressStore: progressStore
+        )
+
+        #expect(viewModel.currentCell == nil)
+        #expect(viewModel.placedItemsCount == 2)
+        #expect(viewModel.leftItems.isEmpty)
+
+        viewModel.processCode(cellA)
+
+        #expect(viewModel.currentCellItems == [item1, item2])
+    }
+
+    @Test
+    func progressFromAnotherContainerIsIgnored() {
+        let item = makeItem()
+        let progressStore = PutawayProgressStoreFake(
+            progress: PutawayProgress(
+                containerId: "another-container",
+                placedItems: [item.id: cellA]
+            )
+        )
+
+        let viewModel = makeViewModel(
+            items: [item],
+            progressStore: progressStore
+        )
+
+        #expect(viewModel.currentCell == nil)
+        #expect(viewModel.placedItems.isEmpty)
+        #expect(viewModel.leftItems == [item])
+        #expect(progressStore.progress == nil)
+    }
+
     private func makeItem(id: Int = 123) -> Item {
         Item(
             id: id,
@@ -336,15 +397,20 @@ struct PutawayTaskViewModelTests {
 
     private func makeViewModel(
         items: [Item],
-        cellCapacity: Int = 2
+        cellCapacity: Int = 2,
+        progressStore: PutawayProgressStoreProtocol = PutawayProgressStoreFake()
     ) -> PutawayTaskViewModel {
         PutawayTaskViewModel(
             task: PutawayTask(
                 items: items,
                 cellCapacity: cellCapacity,
-                container: PutawayContainer(id: "", location: "")
+                container: PutawayContainer(
+                    id: "container-1",
+                    location: ""
+                )
             ),
-            service: PutawayTaskServiceMock()
+            service: PutawayTaskServiceMock(),
+            progressStore: progressStore
         )
     }
 }

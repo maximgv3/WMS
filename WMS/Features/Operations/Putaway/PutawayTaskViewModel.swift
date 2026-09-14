@@ -6,6 +6,7 @@ final class PutawayTaskViewModel {
     
     let task: PutawayTask
     let service: PutawayTaskServiceProtocol
+    private let progressStore: PutawayProgressStoreProtocol
     
     private(set) var currentCell: StorageCell?
     private(set) var placedItems: [Item.ID : StorageCell.ID] = [:]
@@ -44,9 +45,16 @@ final class PutawayTaskViewModel {
     var isAllItemsPlaced: Bool { leftItems.isEmpty }
     var result: PutawayResult { PutawayResult(placedItems: placedItems, skippedItemIds: leftItems.map(\.id)) }
     
-    init(task: PutawayTask, service: PutawayTaskServiceProtocol) {
+    init(
+        task: PutawayTask,
+        service: PutawayTaskServiceProtocol,
+        progressStore: PutawayProgressStoreProtocol
+    ) {
         self.task = task
         self.service = service
+        self.progressStore = progressStore
+
+        restoreProgress()
     }
     
     func processCode(_ code: String) {
@@ -121,6 +129,7 @@ final class PutawayTaskViewModel {
             placedItems[item.id] = cell.id
         }
         markAsLastPlaced(item)
+        saveProgress()
     }
 
     private func unknownItem(id: Int) -> Item {
@@ -142,6 +151,31 @@ final class PutawayTaskViewModel {
     private func markAsLastPlaced(_ item: Item) {
         placementOrder.removeAll { $0.id == item.id }
         placementOrder.insert(item, at: 0)
+    }
+
+    private func restoreProgress() {
+        guard let progress = progressStore.load(for: task.container.id) else {
+            return
+        }
+
+        placedItems = progress.placedItems
+        placementOrder = task.items.filter { placedItems[$0.id] != nil }
+
+        let taskItemIds = Set(task.items.map(\.id))
+        let foreignItems = placedItems.keys
+            .filter { !taskItemIds.contains($0) }
+            .sorted()
+            .map { unknownItem(id: $0) }
+        placementOrder += foreignItems
+    }
+
+    private func saveProgress() {
+        progressStore.save(
+            PutawayProgress(
+                containerId: task.container.id,
+                placedItems: placedItems
+            )
+        )
     }
     
     private func isCellCode(_ code: String) -> Bool {

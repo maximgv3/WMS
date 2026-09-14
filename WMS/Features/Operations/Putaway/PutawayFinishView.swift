@@ -8,13 +8,15 @@ struct PutawayFinishView: View {
         path: Binding<[OperationType.WorkRoute]>,
         result: PutawayResult,
         userId: Int,
-        taskService: PutawayTaskServiceProtocol
+        taskService: PutawayTaskServiceProtocol,
+        progressStore: PutawayProgressStoreProtocol = PutawayProgressStore()
     ) {
         self._path = path
         self.viewModel = .init(
             result: result,
             userId: userId,
-            taskService: taskService
+            taskService: taskService,
+            progressStore: progressStore
         )
     }
 
