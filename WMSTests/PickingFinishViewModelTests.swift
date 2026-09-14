@@ -45,24 +45,41 @@ struct PickingFinishViewModelTests {
 
     @Test
     func finishTaskSucceedsWithoutError() async {
-        let viewModel = makeViewModel()
+        let progress = PickingProgress(
+            collectedItemIds: [1],
+            skippedItemIds: [],
+            replacements: [:]
+        )
+        let progressStore = PickingProgressStoreFake(progress: progress)
+        let viewModel = makeViewModel(progressStore: progressStore)
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress == nil)
     }
 
     @Test
     func finishTaskFailsWithErrorMessage() async {
-        let viewModel = makeViewModel(userId: failingUserId)
+        let progress = PickingProgress(
+            collectedItemIds: [1],
+            skippedItemIds: [],
+            replacements: [:]
+        )
+        let progressStore = PickingProgressStoreFake(progress: progress)
+        let viewModel = makeViewModel(
+            userId: failingUserId,
+            progressStore: progressStore
+        )
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished == false)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress == progress)
     }
 
     @Test
@@ -107,7 +124,8 @@ struct PickingFinishViewModelTests {
         collectedIds: [Int] = [],
         skippedIds: [Int] = [],
         replacements: [Item.ID: Int] = [:],
-        userId: Int = 1
+        userId: Int = 1,
+        progressStore: PickingProgressStoreProtocol = PickingProgressStoreFake()
     ) -> PickingFinishViewModel {
         PickingFinishViewModel(
             result: PickingResult(
@@ -116,7 +134,8 @@ struct PickingFinishViewModelTests {
                 replacements: replacements
             ),
             userId: userId,
-            taskService: PickingListServiceMock()
+            taskService: PickingListServiceMock(),
+            progressStore: progressStore
         )
     }
 }

@@ -8,25 +8,42 @@ struct PickingTaskViewModelTests {
     func correctItemIdCollectsCurrentItem() throws {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = makeViewModel(pickingTask: task)
+        let progressStore = PickingProgressStoreFake()
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
 
         try viewModel.tryToCollect(itemId: item.id)
 
         #expect(viewModel.collectedItems.count == 1)
         #expect(viewModel.collectedItems == [item])
         #expect(viewModel.isPickingEnded)
+        #expect(
+            progressStore.progress
+                == PickingProgress(
+                    collectedItemIds: [item.id],
+                    skippedItemIds: [],
+                    replacements: [:]
+                )
+        )
     }
 
     @Test
     func wrongItemIdThrowsWrongId() throws {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = makeViewModel(pickingTask: task)
+        let progressStore = PickingProgressStoreFake()
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
 
         #expect(throws: PickingTaskError.wrongId) { try viewModel.tryToCollect(itemId: -1) }
         #expect(viewModel.collectedItems.isEmpty)
         #expect(viewModel.collectedItemsCount == 0)
         #expect(viewModel.isPickingEnded == false)
+        #expect(progressStore.progress == nil)
     }
 
     @Test
@@ -62,7 +79,11 @@ struct PickingTaskViewModelTests {
     func skipCurrentItemMovesItemToSkippedAndEndsSingleItemTask() {
         let item = makeItem()
         let task = PickingTask(allItems: [item])
-        let viewModel = makeViewModel(pickingTask: task)
+        let progressStore = PickingProgressStoreFake()
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
 
         viewModel.skipCurrentItem()
 
@@ -70,6 +91,14 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.skippedItemsCount == 1)
         #expect(viewModel.leftItems.isEmpty)
         #expect(viewModel.isPickingEnded)
+        #expect(
+            progressStore.progress
+                == PickingProgress(
+                    collectedItemIds: [],
+                    skippedItemIds: [item.id],
+                    replacements: [:]
+                )
+        )
     }
 
     @Test
@@ -78,7 +107,11 @@ struct PickingTaskViewModelTests {
         let item2 = makeItem(id: 456)
         let item3 = makeItem(id: 789)
         let task = PickingTask(allItems: [item1, item2, item3])
-        let viewModel = makeViewModel(pickingTask: task)
+        let progressStore = PickingProgressStoreFake()
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
         let cheatCode = PickingTaskViewModel.collectAllItemsCheatCode
 
         viewModel.skipCurrentItem()
@@ -88,6 +121,14 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.skippedItems == [item1])
         #expect(viewModel.collectedItems == [item2, item3])
         #expect(viewModel.isPickingEnded)
+        #expect(
+            progressStore.progress
+                == PickingProgress(
+                    collectedItemIds: [item2.id, item3.id],
+                    skippedItemIds: [item1.id],
+                    replacements: [:]
+                )
+        )
     }
 
     @Test
@@ -95,7 +136,11 @@ struct PickingTaskViewModelTests {
         let item1 = makeItem(id: 123)
         let item2 = makeItem(id: 456)
         let task = PickingTask(allItems: [item1, item2])
-        let viewModel = makeViewModel(pickingTask: task)
+        let progressStore = PickingProgressStoreFake()
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
 
         try await viewModel.tryToReplace(replacementId: 111)
 
@@ -103,6 +148,39 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.collectedItemsCount == 1)
         #expect(viewModel.currentItem == item2)
         #expect(viewModel.isPickingEnded == false)
+        #expect(
+            progressStore.progress
+                == PickingProgress(
+                    collectedItemIds: [],
+                    skippedItemIds: [],
+                    replacements: [item1.id: 111]
+                )
+        )
+    }
+
+    @Test
+    func savedProgressIsRestored() {
+        let item1 = makeItem(id: 123)
+        let item2 = makeItem(id: 456)
+        let item3 = makeItem(id: 789)
+        let task = PickingTask(allItems: [item1, item2, item3])
+        let progressStore = PickingProgressStoreFake(
+            progress: PickingProgress(
+                collectedItemIds: [item1.id],
+                skippedItemIds: [item2.id],
+                replacements: [item3.id: 111]
+            )
+        )
+
+        let viewModel = makeViewModel(
+            pickingTask: task,
+            progressStore: progressStore
+        )
+
+        #expect(viewModel.collectedItems == [item1])
+        #expect(viewModel.skippedItems == [item2])
+        #expect(viewModel.replacements == [item3.id: 111])
+        #expect(viewModel.isPickingEnded)
     }
 
     @Test
@@ -186,11 +264,13 @@ struct PickingTaskViewModelTests {
     }
 
     private func makeViewModel(
-        pickingTask: PickingTask
+        pickingTask: PickingTask,
+        progressStore: PickingProgressStoreProtocol = PickingProgressStoreFake()
     ) -> PickingTaskViewModel {
         PickingTaskViewModel(
             pickingTask: pickingTask,
-            pickingTaskService: PickingListServiceMock()
+            pickingTaskService: PickingListServiceMock(),
+            progressStore: progressStore
         )
     }
 }

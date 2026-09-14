@@ -10,6 +10,7 @@ final class PickingTaskViewModel {
 
     private var pickingTask: PickingTask
     private var pickingTaskService: PickingTaskServiceProtocol
+    private let progressStore: PickingProgressStoreProtocol
 
     var allItemsCount: Int { pickingTask.allItems.count }
     var collectedItemsCount: Int { collectedItems.count + replacements.count }
@@ -38,10 +39,14 @@ final class PickingTaskViewModel {
 
     init(
         pickingTask: PickingTask,
-        pickingTaskService: PickingTaskServiceProtocol
+        pickingTaskService: PickingTaskServiceProtocol,
+        progressStore: PickingProgressStoreProtocol
     ) {
         self.pickingTask = pickingTask
         self.pickingTaskService = pickingTaskService
+        self.progressStore = progressStore
+
+        restoreProgress()
     }
 
     func tryToCollect(scannedCode: String) throws {
@@ -55,6 +60,7 @@ final class PickingTaskViewModel {
         #if DEBUG
             if itemId == Self.collectAllItemsCheatCode {
                 collectedItems += leftItems
+                saveProgress()
                 return
             }
         #endif
@@ -65,6 +71,7 @@ final class PickingTaskViewModel {
 
         if currentItem.id == itemId {
             collectedItems.append(currentItem)
+            saveProgress()
         } else {
             throw PickingTaskError.wrongId
         }
@@ -73,6 +80,7 @@ final class PickingTaskViewModel {
     func skipCurrentItem() {
         guard let currentItem else { return }
         skippedItems.append(currentItem)
+        saveProgress()
     }
 
     func tryToReplace(replacementId: Int) async throws {
@@ -92,6 +100,7 @@ final class PickingTaskViewModel {
                 throw PickingTaskError.alreadyCollected
             }
             replacements[item.id] = replacementId
+            saveProgress()
         } else {
             throw PickingTaskError.cantUseForReplacement
         }
@@ -109,6 +118,34 @@ final class PickingTaskViewModel {
                     }
                 }
             }
+        }
+    }
+
+    private func restoreProgress() {
+        guard let progress = progressStore.load() else { return }
+        collectedItems = items(with: progress.collectedItemIds)
+        skippedItems = items(with: progress.skippedItemIds)
+        replacements = progress.replacements
+    }
+
+    private func saveProgress() {
+        let progress = PickingProgress(
+            collectedItemIds: collectedItems.map(\.id),
+            skippedItemIds: skippedItems.map(\.id),
+            replacements: replacements
+        )
+
+        progressStore.save(progress)
+    }
+
+    private func items(with ids: [Item.ID]) -> [Item] {
+        ids.compactMap { id in
+            guard let item = pickingTask.allItems.first(where: { $0.id == id }) else {
+                print("⚠️ Saved Picking item \(id) is missing from the current task")
+                return nil
+            }
+
+            return item
         }
     }
 

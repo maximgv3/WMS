@@ -9,6 +9,7 @@ struct PickingTaskView: View {
     @State private var isSkipConfirmationPresented = false
     @State private var isOnboardingPresented = false
     @State private var isReplacementModeOn = false
+    @State private var hasNavigatedToFinish = false
 
     #if DEBUG
         @State private var isDemoModeOn = false
@@ -25,11 +26,13 @@ struct PickingTaskView: View {
     init(
         pickingTask: PickingTask,
         pickingTaskService: PickingTaskServiceProtocol,
+        progressStore: PickingProgressStoreProtocol = PickingProgressStore(),
         path: Binding<[OperationType.WorkRoute]>
     ) {
         self.viewModel = PickingTaskViewModel(
             pickingTask: pickingTask,
-            pickingTaskService: pickingTaskService
+            pickingTaskService: pickingTaskService,
+            progressStore: progressStore
         )
         self._path = path
     }
@@ -55,7 +58,7 @@ struct PickingTaskView: View {
 
     // MARK: - Body
     var body: some View {
-        Group {
+        ZStack {
             if let currentItem {
                 ScrollView {
                     VStack {
@@ -75,12 +78,18 @@ struct PickingTaskView: View {
                     .padding(.bottom, 24)
                 }
                 .padding(.top, -12)
+            } else {
+                ProgressView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(ColorPalette.backgroundPrimary.ignoresSafeArea())
         .task {
             await viewModel.preloadImages()
+        }
+        .task {
+            await Task.yield()
+            navigateToFinishIfNeeded()
         }
         .onAppear {
             isOnboardingPresented = !isPickingOnboardingComplete
@@ -112,17 +121,7 @@ struct PickingTaskView: View {
         }
         .onChange(of: viewModel.isPickingEnded) { _, newValue in
             if newValue {
-                path.append(
-                    .picking(
-                        .finish(
-                            PickingResult(
-                                collectedItems: viewModel.collectedItems,
-                                skippedItems: viewModel.skippedItems,
-                                replacements: viewModel.replacements
-                            )
-                        )
-                    )
-                )
+                navigateToFinishIfNeeded()
             }
         }
         .navigationBarBackButtonHidden(true)
@@ -172,6 +171,22 @@ struct PickingTaskView: View {
                 }
             }
         }
+    }
+
+    private func navigateToFinishIfNeeded() {
+        guard viewModel.isPickingEnded, !hasNavigatedToFinish else { return }
+        hasNavigatedToFinish = true
+        path.append(
+            .picking(
+                .finish(
+                    PickingResult(
+                        collectedItems: viewModel.collectedItems,
+                        skippedItems: viewModel.skippedItems,
+                        replacements: viewModel.replacements
+                    )
+                )
+            )
+        )
     }
 
     // MARK: - Progress
