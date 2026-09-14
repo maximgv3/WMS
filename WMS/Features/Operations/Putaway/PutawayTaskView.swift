@@ -13,8 +13,6 @@ struct PutawayTaskView: View {
     #if DEBUG
         @AppStorage("isPutawayDemoModeOn") private var isDemoModeOn = false
         @State private var isDemoConfirmationPresented = false
-
-        private let demoWrongCode = "0000000000"
     #endif
 
     init(
@@ -231,7 +229,7 @@ struct PutawayTaskView: View {
         private var demoControls: some View {
             HStack(spacing: 12) {
                 Button {
-                    processScan(demoWrongCode)
+                    processScan(randomDemoWrongCode())
                 } label: {
                     Image(systemName: "xmark.circle.fill")
                         .font(.system(size: 28, weight: .semibold))
@@ -288,6 +286,10 @@ struct PutawayTaskView: View {
             (0..<6)
                 .map { _ in String(format: "%02d", Int.random(in: 1...99)) }
                 .joined(separator: ".")
+        }
+
+        private func randomDemoWrongCode() -> String {
+            String(Int.random(in: 900_000_000...999_999_999))
         }
 
         private func demoButtonTapped() {
