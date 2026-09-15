@@ -5,6 +5,7 @@ import Observation
 final class ReturnsContainersViewModel {
 
     let container: ReturnsContainer
+    private let progressStore: ReturnsProgressStoreProtocol
 
     private(set) var isContainerScanned = false
     private(set) var boundContainers: [ReturnContainerSlot: String] = [:]
@@ -23,8 +24,13 @@ final class ReturnsContainersViewModel {
         return ReturnsContainers(good: good, inspection: inspection)
     }
 
-    init(container: ReturnsContainer) {
+    init(
+        container: ReturnsContainer,
+        progressStore: ReturnsProgressStoreProtocol
+    ) {
         self.container = container
+        self.progressStore = progressStore
+        self.isContainerScanned = progressStore.load(for: container.id) != nil
     }
 
     func processCode(_ code: String) {
@@ -44,6 +50,14 @@ final class ReturnsContainersViewModel {
         guard isContainerScanned else {
             guard code == container.id else { throw ReturnsError.wrongContainer }
             isContainerScanned = true
+            progressStore.save(
+                ReturnsProgress(
+                    sourceContainerId: container.id,
+                    decisions: [:],
+                    photos: [:],
+                    itemContainers: [:]
+                )
+            )
             return
         }
         guard let slot = nextSlot else { return }

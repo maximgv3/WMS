@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct ReturnsTaskView: View {
 
@@ -24,14 +25,16 @@ struct ReturnsTaskView: View {
         task: ReturnsTask,
         containers: ReturnsContainers,
         service: ReturnsTaskServiceProtocol,
+        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStore(),
         path: Binding<[OperationType.WorkRoute]>
     ) {
+        self._path = path
         self.viewModel = ReturnsTaskViewModel(
             task: task,
             containers: containers,
-            service: service
+            service: service,
+            progressStore: progressStore
         )
-        self._path = path
     }
 
     var body: some View {
@@ -80,6 +83,7 @@ struct ReturnsTaskView: View {
             .ignoresSafeArea()
         }
         .task {
+            restorePhotoThumbnails()
             await viewModel.preloadImages()
         }
         .onAppear {
@@ -645,10 +649,11 @@ struct ReturnsTaskView: View {
     private func decisionTapped(_ decision: ReturnDecision) {
         #if DEBUG
             if isDemoModeOn && decision.requiresPhoto {
+                guard let photo = demoPhoto else { return }
                 applyDecision(
                     decision,
-                    photo: Data(),
-                    thumbnail: Image(systemName: "photo")
+                    photo: photo.data,
+                    thumbnail: photo.thumbnail
                 )
                 return
             }
@@ -674,6 +679,26 @@ struct ReturnsTaskView: View {
         }
         FeedbackService.playSuccess()
     }
+
+    private func restorePhotoThumbnails() {
+        let thumbnailSize = CGSize(width: 96, height: 96)
+        for (itemId, data) in viewModel.photos {
+            guard let image = UIImage(data: data) else { continue }
+            let thumbnail = image.preparingThumbnail(of: thumbnailSize) ?? image
+            photoThumbnails[itemId] = Image(uiImage: thumbnail)
+        }
+    }
+
+    #if DEBUG
+        private var demoPhoto: CameraShot? {
+            guard let image = UIImage(systemName: "photo"),
+                let data = image.pngData()
+            else {
+                return nil
+            }
+            return CameraShot(data: data, thumbnail: Image(uiImage: image))
+        }
+    #endif
 
     private func processScan(_ code: String) {
         withAnimation(.snappy) {

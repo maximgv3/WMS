@@ -53,7 +53,8 @@ struct ReturnsTaskViewModelTests {
 
     @Test
     func decisionIsStoredAndClearsCurrentItem() {
-        let viewModel = makeViewModel(ids: [123])
+        let progressStore = ReturnsProgressStoreFake()
+        let viewModel = makeViewModel(ids: [123], progressStore: progressStore)
 
         viewModel.processCode("123")
         viewModel.decide(.defect, photo: Data())
@@ -61,6 +62,52 @@ struct ReturnsTaskViewModelTests {
         #expect(viewModel.decisions[123] == .defect)
         #expect(viewModel.currentItem == nil)
         #expect(viewModel.checkedItemsCount == 1)
+        #expect(progressStore.progress?.decisions[123] == .defect)
+        #expect(
+            progressStore.progress?.itemContainers[123]
+                == inspectionContainerId
+        )
+    }
+
+    @Test
+    func savedDecisionContainerAndPhotoAreRestored() {
+        let photo = Data([1, 2, 3])
+        let progressStore = ReturnsProgressStoreFake(
+            progress: ReturnsProgress(
+                sourceContainerId: sourceContainerId,
+                decisions: [123: .defect],
+                photos: [123: photo],
+                itemContainers: [123: "WMSCT-old-inspection"]
+            )
+        )
+
+        let viewModel = makeViewModel(
+            ids: [123, 456],
+            progressStore: progressStore
+        )
+
+        #expect(viewModel.decisions == [123: .defect])
+        #expect(viewModel.photos == [123: photo])
+        #expect(viewModel.result.containers == [123: "WMSCT-old-inspection"])
+        #expect(viewModel.currentItem == nil)
+        #expect(viewModel.leftItems.map(\.id) == [456])
+    }
+
+    @Test
+    func incompleteSavedDecisionIsNotRestored() {
+        let progressStore = ReturnsProgressStoreFake(
+            progress: ReturnsProgress(
+                sourceContainerId: sourceContainerId,
+                decisions: [123: .defect],
+                photos: [123: Data()],
+                itemContainers: [123: inspectionContainerId]
+            )
+        )
+
+        let viewModel = makeViewModel(ids: [123], progressStore: progressStore)
+
+        #expect(viewModel.decisions.isEmpty)
+        #expect(viewModel.leftItems.map(\.id) == [123])
     }
 
     @Test
@@ -342,7 +389,10 @@ struct ReturnsTaskViewModelTests {
         )
     }
 
-    private func makeViewModel(ids: [Int]) -> ReturnsTaskViewModel {
+    private func makeViewModel(
+        ids: [Int],
+        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStoreFake()
+    ) -> ReturnsTaskViewModel {
         ReturnsTaskViewModel(
             task: ReturnsTask(
                 container: ReturnsContainer(id: sourceContainerId, location: ""),
@@ -352,7 +402,8 @@ struct ReturnsTaskViewModelTests {
                 good: goodContainerId,
                 inspection: inspectionContainerId
             ),
-            service: ReturnsTaskServiceMock()
+            service: ReturnsTaskServiceMock(),
+            progressStore: progressStore
         )
     }
 }

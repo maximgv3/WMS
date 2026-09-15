@@ -12,7 +12,8 @@ struct OperationModuleView: View {
         pickingService: PickingTaskServiceProtocol = PickingListServiceMock(),
         putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock(),
         returnsService: ReturnsTaskServiceProtocol = ReturnsTaskServiceMock(),
-        putawayProgressStore: PutawayProgressStoreProtocol = PutawayProgressStore()
+        putawayProgressStore: PutawayProgressStoreProtocol = PutawayProgressStore(),
+        returnsProgressStore: ReturnsProgressStoreProtocol = ReturnsProgressStore()
     ) {
         self.operationType = operationType
         self.viewModel = OperationModuleViewModel(
@@ -20,7 +21,8 @@ struct OperationModuleView: View {
             pickingService: pickingService,
             putawayService: putawayService,
             returnsService: returnsService,
-            putawayProgressStore: putawayProgressStore
+            putawayProgressStore: putawayProgressStore,
+            returnsProgressStore: returnsProgressStore
         )
     }
     var body: some View {
@@ -89,12 +91,17 @@ struct OperationModuleView: View {
                 case .returns(let returnsRoute):
                     switch returnsRoute {
                     case .containers(let task):
-                        ReturnsContainersView(task: task, path: $path)
+                        ReturnsContainersView(
+                            task: task,
+                            progressStore: viewModel.returnsProgressStore,
+                            path: $path
+                        )
                     case .task(let task, let containers):
                         ReturnsTaskView(
                             task: task,
                             containers: containers,
                             service: viewModel.returnsService,
+                            progressStore: viewModel.returnsProgressStore,
                             path: $path
                         )
                     case .finish(let result):
@@ -102,7 +109,8 @@ struct OperationModuleView: View {
                             path: $path,
                             result: result,
                             userId: viewModel.userId,
-                            taskService: viewModel.returnsService
+                            taskService: viewModel.returnsService,
+                            progressStore: viewModel.returnsProgressStore
                         )
                     }
                 }

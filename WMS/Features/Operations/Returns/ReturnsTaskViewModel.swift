@@ -6,6 +6,7 @@ final class ReturnsTaskViewModel {
 
     let task: ReturnsTask
     let service: ReturnsTaskServiceProtocol
+    private let progressStore: ReturnsProgressStoreProtocol
 
     private(set) var containers: ReturnsContainers
     private(set) var rebindingSlot: ReturnContainerSlot?
@@ -35,11 +36,14 @@ final class ReturnsTaskViewModel {
     init(
         task: ReturnsTask,
         containers: ReturnsContainers,
-        service: ReturnsTaskServiceProtocol
+        service: ReturnsTaskServiceProtocol,
+        progressStore: ReturnsProgressStoreProtocol
     ) {
         self.task = task
         self.containers = containers
         self.service = service
+        self.progressStore = progressStore
+        restoreProgress()
     }
 
     func processCode(_ code: String) {
@@ -70,6 +74,7 @@ final class ReturnsTaskViewModel {
         itemContainers[currentItem.id] = containers[decision.containerSlot]
         markAsLastChecked(currentItem)
         self.currentItem = nil
+        saveProgress()
     }
 
     func preloadImages() async {
@@ -125,6 +130,40 @@ final class ReturnsTaskViewModel {
     private func markAsLastChecked(_ returnItem: ReturnItem) {
         decisionOrder.removeAll { $0.id == returnItem.id }
         decisionOrder.insert(returnItem, at: 0)
+    }
+
+    private func restoreProgress() {
+        guard let progress = progressStore.load(for: task.container.id) else {
+            return
+        }
+
+        let taskItemIds = Set(task.items.map(\.id))
+        for (itemId, decision) in progress.decisions {
+            let photo = progress.photos[itemId]
+            guard taskItemIds.contains(itemId),
+                let containerId = progress.itemContainers[itemId],
+                !decision.requiresPhoto || photo?.isEmpty == false
+            else {
+                continue
+            }
+
+            decisions[itemId] = decision
+            itemContainers[itemId] = containerId
+            photos[itemId] = photo
+        }
+
+        decisionOrder = task.items.filter { decisions[$0.id] != nil }
+    }
+
+    private func saveProgress() {
+        progressStore.save(
+            ReturnsProgress(
+                sourceContainerId: task.container.id,
+                decisions: decisions,
+                photos: photos,
+                itemContainers: itemContainers
+            )
+        )
     }
 
     private func selectItem(_ code: String) throws(ReturnsError) {

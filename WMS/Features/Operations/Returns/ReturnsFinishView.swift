@@ -8,13 +8,15 @@ struct ReturnsFinishView: View {
         path: Binding<[OperationType.WorkRoute]>,
         result: ReturnsResult,
         userId: Int,
-        taskService: ReturnsTaskServiceProtocol
+        taskService: ReturnsTaskServiceProtocol,
+        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStore()
     ) {
         self._path = path
         self.viewModel = .init(
             result: result,
             userId: userId,
-            taskService: taskService
+            taskService: taskService,
+            progressStore: progressStore
         )
     }
 

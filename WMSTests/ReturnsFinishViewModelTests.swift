@@ -54,24 +54,31 @@ struct ReturnsFinishViewModelTests {
 
     @Test
     func finishTaskSucceedsWithoutError() async {
-        let viewModel = makeViewModel()
+        let progressStore = makeProgressStore()
+        let viewModel = makeViewModel(progressStore: progressStore)
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished)
         #expect(viewModel.errorMessage == nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress == nil)
     }
 
     @Test
     func finishTaskFailsWithErrorMessage() async {
-        let viewModel = makeViewModel(userId: failingUserId)
+        let progressStore = makeProgressStore()
+        let viewModel = makeViewModel(
+            userId: failingUserId,
+            progressStore: progressStore
+        )
 
         let isFinished = await viewModel.finishTask()
 
         #expect(isFinished == false)
         #expect(viewModel.errorMessage != nil)
         #expect(viewModel.isFinishingTask == false)
+        #expect(progressStore.progress != nil)
     }
 
     @Test
@@ -99,7 +106,8 @@ struct ReturnsFinishViewModelTests {
     private func makeViewModel(
         decisions: [Item.ID: ReturnDecision] = [:],
         skippedItemIds: [Item.ID] = [],
-        userId: Int = 1
+        userId: Int = 1,
+        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStoreFake()
     ) -> ReturnsFinishViewModel {
         ReturnsFinishViewModel(
             result: ReturnsResult(
@@ -110,7 +118,19 @@ struct ReturnsFinishViewModelTests {
                 skippedItemIds: skippedItemIds
             ),
             userId: userId,
-            taskService: ReturnsTaskServiceMock()
+            taskService: ReturnsTaskServiceMock(),
+            progressStore: progressStore
+        )
+    }
+
+    private func makeProgressStore() -> ReturnsProgressStoreFake {
+        ReturnsProgressStoreFake(
+            progress: ReturnsProgress(
+                sourceContainerId: "source",
+                decisions: [1: .good],
+                photos: [:],
+                itemContainers: [1: "good"]
+            )
         )
     }
 }

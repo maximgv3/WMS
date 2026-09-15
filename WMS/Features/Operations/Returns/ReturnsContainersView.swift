@@ -24,10 +24,14 @@ struct ReturnsContainersView: View {
 
     init(
         task: ReturnsTask,
+        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStore(),
         path: Binding<[OperationType.WorkRoute]>
     ) {
         self.task = task
-        self.viewModel = ReturnsContainersViewModel(container: task.container)
+        self.viewModel = ReturnsContainersViewModel(
+            container: task.container,
+            progressStore: progressStore
+        )
         self._path = path
     }
 

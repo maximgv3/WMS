@@ -76,7 +76,8 @@ struct OperationModuleViewModelTests {
             pickingService: PickingListServiceMock(),
             putawayService: PutawayTaskServiceFake(task: task),
             returnsService: ReturnsTaskServiceMock(),
-            putawayProgressStore: progressStore
+            putawayProgressStore: progressStore,
+            returnsProgressStore: ReturnsProgressStoreFake()
         )
     }
 }

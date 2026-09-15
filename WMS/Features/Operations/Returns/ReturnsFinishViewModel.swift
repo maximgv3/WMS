@@ -6,6 +6,7 @@ final class ReturnsFinishViewModel {
     private let result: ReturnsResult
     private var userId: Int
     private let taskService: ReturnsTaskServiceProtocol
+    private let progressStore: ReturnsProgressStoreProtocol
 
     var isFinishingTask = false
     var errorMessage: String?
@@ -27,11 +28,13 @@ final class ReturnsFinishViewModel {
     init(
         result: ReturnsResult,
         userId: Int,
-        taskService: ReturnsTaskServiceProtocol
+        taskService: ReturnsTaskServiceProtocol,
+        progressStore: ReturnsProgressStoreProtocol
     ) {
         self.result = result
         self.userId = userId
         self.taskService = taskService
+        self.progressStore = progressStore
     }
 
     func finishTask() async -> Bool {
@@ -46,6 +49,7 @@ final class ReturnsFinishViewModel {
 
         do {
             try await taskService.finishTask(result: result, userId: userId)
+            progressStore.clear()
             return true
         } catch {
             FeedbackService.playErrorHaptic()

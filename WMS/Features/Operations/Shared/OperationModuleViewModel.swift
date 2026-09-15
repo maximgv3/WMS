@@ -12,19 +12,22 @@ final class OperationModuleViewModel {
     let putawayService: PutawayTaskServiceProtocol
     let returnsService: ReturnsTaskServiceProtocol
     let putawayProgressStore: PutawayProgressStoreProtocol
+    let returnsProgressStore: ReturnsProgressStoreProtocol
 
     init(
         operationType: OperationType,
         pickingService: PickingTaskServiceProtocol,
         putawayService: PutawayTaskServiceProtocol,
         returnsService: ReturnsTaskServiceProtocol,
-        putawayProgressStore: PutawayProgressStoreProtocol
+        putawayProgressStore: PutawayProgressStoreProtocol,
+        returnsProgressStore: ReturnsProgressStoreProtocol
     ) {
         self.operationType = operationType
         self.pickingService = pickingService
         self.putawayService = putawayService
         self.returnsService = returnsService
         self.putawayProgressStore = putawayProgressStore
+        self.returnsProgressStore = returnsProgressStore
     }
 
     func fetchTask() async -> OperationType.WorkRoute? {
