@@ -6,6 +6,7 @@ extension Int {
             .currency(code: "RUB")
                 .locale(.current)
                 .precision(.fractionLength(fractionDigits))
+                .presentation(.narrow)
         )
     }
 }
