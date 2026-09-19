@@ -1,6 +1,6 @@
 @testable import WMS
 
-final class PutawayProgressStoreFake: PutawayProgressStoreProtocol {
+nonisolated final class PutawayProgressStoreFake: PutawayProgressStoreProtocol {
     var progress: PutawayProgress?
 
     init(progress: PutawayProgress? = nil) {

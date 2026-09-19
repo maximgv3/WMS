@@ -20,50 +20,13 @@ struct ReturnsContainersViewModelTests {
 
     @Test
     func sourceContainerCodeIsAccepted() {
-        let progressStore = ReturnsProgressStoreFake()
-        let viewModel = makeViewModel(progressStore: progressStore)
+        let viewModel = makeViewModel()
 
         viewModel.processCode(sourceContainerId)
 
         #expect(viewModel.lastError == nil)
         #expect(viewModel.isContainerScanned)
         #expect(viewModel.nextSlot == .good)
-        #expect(progressStore.progress?.sourceContainerId == sourceContainerId)
-    }
-
-    @Test
-    func savedSourceContainerSkipsItsRepeatedScan() {
-        let progressStore = ReturnsProgressStoreFake(
-            progress: ReturnsProgress(
-                sourceContainerId: sourceContainerId,
-                decisions: [123: .good],
-                photos: [:],
-                itemContainers: [123: "WMSCT770145"]
-            )
-        )
-
-        let viewModel = makeViewModel(progressStore: progressStore)
-
-        #expect(viewModel.isContainerScanned)
-        #expect(viewModel.nextSlot == .good)
-        #expect(viewModel.boundContainers.isEmpty)
-    }
-
-    @Test
-    func anotherSavedSourceContainerIsDiscarded() {
-        let progressStore = ReturnsProgressStoreFake(
-            progress: ReturnsProgress(
-                sourceContainerId: "another-container",
-                decisions: [123: .good],
-                photos: [:],
-                itemContainers: [123: "WMSCT770145"]
-            )
-        )
-
-        let viewModel = makeViewModel(progressStore: progressStore)
-
-        #expect(viewModel.isContainerScanned == false)
-        #expect(progressStore.progress == nil)
     }
 
     @Test
@@ -132,12 +95,9 @@ struct ReturnsContainersViewModelTests {
         #expect(viewModel.lastError == nil)
     }
 
-    private func makeViewModel(
-        progressStore: ReturnsProgressStoreProtocol = ReturnsProgressStoreFake()
-    ) -> ReturnsContainersViewModel {
+    private func makeViewModel() -> ReturnsContainersViewModel {
         ReturnsContainersViewModel(
-            container: ReturnsContainer(id: sourceContainerId, location: ""),
-            progressStore: progressStore
+            container: ReturnsContainer(id: sourceContainerId, location: "")
         )
     }
 }

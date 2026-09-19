@@ -1,6 +1,6 @@
 @testable import WMS
 
-final class PickingProgressStoreFake: PickingProgressStoreProtocol {
+nonisolated final class PickingProgressStoreFake: PickingProgressStoreProtocol {
     var progress: PickingProgress?
 
     init(progress: PickingProgress? = nil) {

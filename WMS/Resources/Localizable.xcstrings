@@ -1242,6 +1242,40 @@
         }
       }
     },
+    "operations.continue_task": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue task"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить задание"
+          }
+        }
+      }
+    },
+    "operations.finish_active_task_first": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finish the active task before starting another one"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сначала завершите активное задание"
+          }
+        }
+      }
+    },
     "operations.title": {
       "extractionState": "manual",
       "localizations": {

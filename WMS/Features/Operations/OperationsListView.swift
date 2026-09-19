@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OperationsListView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(ActiveTaskStore.self) private var activeTaskStore
 
     private let operations: [OperationMenuItem] = [
         .init(operation: .putaway, isEnabled: true),
@@ -33,9 +34,15 @@ struct OperationsListView: View {
                 }
             }
             .toolbar(.hidden, for: .navigationBar)
-            .fullScreenCover(item: $selectedOperation) { operation in
-                OperationModuleView(operationType: operation)
-                    .interactiveDismissDisabled()
+            .fullScreenCover(
+                item: $selectedOperation,
+                onDismiss: activeTaskStore.refresh
+            ) { operation in
+                OperationModuleView(
+                    operationType: operation,
+                    activeTaskStore: activeTaskStore
+                )
+                .interactiveDismissDisabled()
             }
         }
         .onAppear {
@@ -83,14 +90,21 @@ struct OperationsListView: View {
                         HStack(spacing: 12) {
                             IconChip(systemName: operation.iconName, size: 44)
 
-                            Text(operation.title)
-                                .foregroundStyle(ColorPalette.textPrimary)
-                                .font(.system(size: 17, weight: .regular))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .fontWeight(.medium)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(operation.title)
+                                    .foregroundStyle(ColorPalette.textPrimary)
+                                    .font(.system(size: 17, weight: .medium))
+
+                                if activeTaskStore.activeOperation == operation {
+                                    Text(.operationsContinueTask)
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(ColorPalette.success)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                             Image(
-                                systemName: item.isEnabled
+                                systemName: isOperationEnabled(item)
                                     ? "chevron.right" : "lock"
                             )
                             .foregroundStyle(
@@ -102,7 +116,8 @@ struct OperationsListView: View {
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
-                    .disabled(!item.isEnabled)
+                    .disabled(!isOperationEnabled(item))
+                    .opacity(isOperationEnabled(item) ? 1 : 0.5)
 
                     if index < operations.count - 1 {
                         Divider()
@@ -115,8 +130,15 @@ struct OperationsListView: View {
         }
         .scrollDisabled(true)
     }
+
+    private func isOperationEnabled(_ item: OperationMenuItem) -> Bool {
+        let activeOperation = activeTaskStore.activeOperation
+        return item.isEnabled
+            && (activeOperation == nil || activeOperation == item.operation)
+    }
 }
 
 #Preview {
     OperationsListView()
+        .environment(ActiveTaskStore())
 }

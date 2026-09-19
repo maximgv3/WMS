@@ -9,18 +9,22 @@ struct OperationModuleView: View {
 
     init(
         operationType: OperationType,
+        activeTaskStore: ActiveTaskStoreProtocol,
         pickingService: PickingTaskServiceProtocol = PickingListServiceMock(),
         putawayService: PutawayTaskServiceProtocol = PutawayTaskServiceMock(),
         returnsService: ReturnsTaskServiceProtocol = ReturnsTaskServiceMock(),
+        pickingProgressStore: PickingProgressStoreProtocol = PickingProgressStore(),
         putawayProgressStore: PutawayProgressStoreProtocol = PutawayProgressStore(),
         returnsProgressStore: ReturnsProgressStoreProtocol = ReturnsProgressStore()
     ) {
         self.operationType = operationType
         self.viewModel = OperationModuleViewModel(
             operationType: operationType,
+            activeTaskStore: activeTaskStore,
             pickingService: pickingService,
             putawayService: putawayService,
             returnsService: returnsService,
+            pickingProgressStore: pickingProgressStore,
             putawayProgressStore: putawayProgressStore,
             returnsProgressStore: returnsProgressStore
         )
@@ -58,6 +62,7 @@ struct OperationModuleView: View {
                         PickingTaskView(
                             pickingTask: task,
                             pickingTaskService: viewModel.pickingService,
+                            progressStore: viewModel.pickingProgressStore,
                             path: $path
                         )
                     case .finish(let result):
@@ -65,7 +70,8 @@ struct OperationModuleView: View {
                             path: $path,
                             result: result,
                             userId: viewModel.userId,
-                            taskService: viewModel.pickingService
+                            taskService: viewModel.pickingService,
+                            progressStore: viewModel.pickingProgressStore
                         )
                     }
                 case .putaway(let putawayRoute):
@@ -91,11 +97,7 @@ struct OperationModuleView: View {
                 case .returns(let returnsRoute):
                     switch returnsRoute {
                     case .containers(let task):
-                        ReturnsContainersView(
-                            task: task,
-                            progressStore: viewModel.returnsProgressStore,
-                            path: $path
-                        )
+                        ReturnsContainersView(task: task, path: $path)
                     case .task(let task, let containers):
                         ReturnsTaskView(
                             task: task,
@@ -117,6 +119,10 @@ struct OperationModuleView: View {
             }
         }
         .defersSystemGestures(on: .bottom)
+        .onChange(of: path.isEmpty) { _, isBackAtModuleRoot in
+            guard isBackAtModuleRoot else { return }
+            viewModel.activeTaskStore.refresh()
+        }
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = isScreenAlwaysOn
         }
@@ -161,7 +167,8 @@ struct OperationModuleView: View {
                 operationImage
             #endif
             PrimaryButton(
-                .operationsGetTask,
+                viewModel.isCurrentOperationActive
+                    ? .operationsContinueTask : .operationsGetTask,
                 isLoading: viewModel.isLoadingTask
             ) {
                 Task {
@@ -208,11 +215,20 @@ struct OperationModuleView: View {
 }
 
 #Preview("Picking") {
-    OperationModuleView(operationType: .picking)
+    OperationModuleView(
+        operationType: .picking,
+        activeTaskStore: ActiveTaskStore()
+    )
 }
 #Preview("Putaway") {
-    OperationModuleView(operationType: .putaway)
+    OperationModuleView(
+        operationType: .putaway,
+        activeTaskStore: ActiveTaskStore()
+    )
 }
 #Preview("Returns inspection") {
-    OperationModuleView(operationType: .returns)
+    OperationModuleView(
+        operationType: .returns,
+        activeTaskStore: ActiveTaskStore()
+    )
 }
