@@ -306,12 +306,12 @@ struct ReturnsContainersView: View {
                 ColorPalette.surfaceAccent
             )
         )
+        .shimmer(!viewModel.isContainerScanned)
         .glassIfAvailable(
             !viewModel.isContainerScanned,
             shape: RoundedRectangle(cornerRadius: 16, style: .continuous),
             isDimmed: true
         )
-        .shimmer(!viewModel.isContainerScanned)
     }
 
     private var slots: some View {
@@ -355,14 +355,12 @@ struct ReturnsContainersView: View {
             )
         )
         .foregroundStyle(ColorPalette.textPrimary)
+        .shimmer(viewModel.isContainerScanned && viewModel.nextSlot == slot)
         .glassIfAvailable(
             viewModel.isContainerScanned && viewModel.nextSlot == slot,
             shape: RoundedRectangle(cornerRadius: 16, style: .continuous),
             isDimmed: true
         )
-        .shimmer(
-            viewModel.isContainerScanned && viewModel.nextSlot == slot
-            )
     }
 
     private func color(for slot: ReturnContainerSlot) -> Color {
