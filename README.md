@@ -291,7 +291,7 @@ Minimum iOS version: iOS 17.
 
 ## Demo Guide
 
-The repository includes a short picking demo guide with test item IDs and scanning instructions:
+The repository includes a short demo guide with test item IDs and scanning instructions. It covers only the Picking flow for now; a full guide for all three modules will be added later.
 
 - [English demo guide](assets/Guide_Picking_Flow_EN.pdf)
 - [Russian demo guide](assets/Guide_Picking_Flow_RU.pdf)
