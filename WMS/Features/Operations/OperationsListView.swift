@@ -99,6 +99,7 @@ struct OperationsListView: View {
                                     Text(.operationsContinueTask)
                                         .font(.caption.weight(.semibold))
                                         .foregroundStyle(ColorPalette.success)
+                                        .shimmer()
                                 }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
