@@ -5,7 +5,7 @@
 | <img src="assets/putaway-demo.gif" width="260" height="565" alt="Putaway flow demo"> | <img src="assets/picking-demo.gif" width="260" height="565" alt="Picking flow demo"> | <img src="assets/returns-demo.gif" width="260" height="565" alt="Returns inspection flow demo"> |
 | **Putaway:** place items into freely selected storage cells. | **Picking:** collect items according to the task list. | **Returns inspection:** check returned items and record a decision. |
 
-A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns inspection. Tasks are loaded from bundled mock JSON, and completed results are encoded as API-style requests.
+A SwiftUI app for warehouse operators, with three complete flows: Putaway, Picking, and Returns inspection. Tasks are loaded from bundled mock JSON, progress is saved on the device so an interrupted task resumes where it left off, and completed results are encoded as API-style requests.
 
 The Profile tab covers earnings history, operator ratings, warehouse tariffs, work documents, support chat, and settings. The app supports light and dark themes and comes in Russian and English.
 
@@ -54,6 +54,8 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 ### App
 
 - Warehouse operations menu: Putaway, Picking, Returns inspection.
+- One task at a time: once a task is taken, the other operations lock, and the menu marks the open one with Continue task until its results are uploaded.
+- Task progress in all three modules is saved on the device with SwiftData, so an interrupted task resumes where it left off, even after the app is closed. Putaway and Returns inspection tasks reopen at the container scan.
 - Tab-based app shell with Operations and Profile sections.
 - Navigation with `NavigationStack(path:)`.
 - `@Observable` ViewModel.
@@ -100,6 +102,7 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - Container check before the task opens: a card names the container the returns arrived in and where it stands, and only the code of that container starts the check.
 - Two result containers bound by scanning on the same screen, one for good items and one for items going to inspection; a code that is not a container, the source container itself, and a code already bound are all rejected.
 - Result containers carried into the task as chips; tapping one switches the scanner to rebinding that container without leaving the task.
+- The container to scan next is highlighted with a shimmer on a Liquid Glass card, and a chip being rebound in the task gets the same highlight.
 - Item card with the reason the item came back, replaced by a dashed placeholder while nothing is in hand.
 - Three decisions per item: back to sale, defect zone, or a wrong item returned. The decision is a tap, not a scan.
 - Photo required for the defect and wrong item decisions: the camera opens with a hint written for that decision, and a cancelled shot leaves the item unchecked.
@@ -129,12 +132,14 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - Camera wrapper around the system camera that hands back a compressed photo and a list thumbnail in one shot.
 - System sound feedback for successful and failed scans, which the settings can switch off.
 - Semantic color tokens in the asset catalog named by role - background, surface, text, brand, accent - each carrying a light and a dark value, so both themes come from one set of names.
+- Liquid Glass on iOS 26 for buttons, error banners, and highlighted cards, with regular fills on earlier versions.
+- A shimmer highlight that stays off under Reduce Motion, used for Continue task in the menu and for the containers in Returns inspection.
 - Interface strings in a String Catalog under semantic keys, each with a Russian and an English value, used in code through generated symbols such as `.operationsTitle`.
 - App settings kept in `UserDefaults` through `@AppStorage`, with defaults registered at launch so readers outside SwiftUI see the same values.
 - Mock API-style JSON resources for profile, picking, putaway, and returns task loading, with a Russian and an English copy of each task.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking, putaway, and returns tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
-- Swift Testing coverage for core picking, putaway, and returns ViewModel/result behavior, tariff grouping and filtering, Profile and Rating ViewModel loading states, and document acknowledgement.
+- Swift Testing coverage for core picking, putaway, and returns ViewModel/result behavior, saved task progress and the one-task lock, tariff grouping and filtering, Profile and Rating ViewModel loading states, and document acknowledgement.
 
 ## Main Flows
 
@@ -199,6 +204,7 @@ In development. Putaway, Picking, and Returns inspection are complete end to end
 - AVFoundation
 - Swift Charts
 - PDFKit
+- SwiftData
 - String Catalogs
 - Swift Testing
 - Mock service layer with API-style JSON
@@ -261,6 +267,8 @@ Where to start reading:
 - `ReturnsTaskView.swift` - Return card, decision buttons, and the task list of the returns module.
 - `ReturnsTaskViewModel.swift` - Decision recording, photos, container binding, re-checks, and check order.
 - `CameraPickerView.swift` - SwiftUI wrapper around the system camera, returning a compressed photo and a thumbnail.
+- `PickingProgressStore.swift` - SwiftData store behind a protocol that saves, restores, and clears picking progress; Putaway and Returns follow the same pattern.
+- `ActiveTaskStore.swift` - Which operation holds the open task, shared through the environment to lock the rest of the menu.
 - `ProfileRatingView.swift` - Swift Charts rating chart with drag selection.
 - `TariffsViewModel.swift` - Tariff loading, grouping by zone, and filtering.
 - `DocumentPreviewView.swift` - PDF preview with the acknowledge action.
@@ -268,8 +276,9 @@ Where to start reading:
 - `SettingsView.swift` - Theme picker and the switches that change how a task behaves.
 - `PDFKitView.swift` - SwiftUI wrapper around PDFKit.
 - `ColorPalette.swift` - Semantic color tokens backed by the asset catalog.
+- `ShimmerModifier.swift` - Shimmer highlight that respects Reduce Motion.
 - `MockJSONLoader.swift` - Helper for decoding bundled mock JSON resources.
-- `WMSTests/` - Swift Testing suites for the Picking, Putaway, Returns, Tariffs, Profile, Rating, and Documents ViewModels.
+- `WMSTests/` - Swift Testing suites for the operation module and the Picking, Putaway, Returns, Tariffs, Profile, Rating, and Documents ViewModels.
 
 ## How to Run
 
@@ -301,7 +310,8 @@ The repository includes a short picking demo guide with test item IDs and scanni
 - All three warehouse modules include debug-only demo controls that replace the camera with buttons, so the flows can be walked in the simulator, where no camera exists.
 - Support chat replies come from the mock service on a delay, so the conversation continues without a backend.
 - Settings are stored locally with `@AppStorage`: the theme, the scan sound, and whether the screen stays awake during a task.
-- Screenshots and demos show the Russian interface. To see the English one, switch the device language to English, or set App Language to English in the Run options of the Xcode scheme.
+- Task progress is kept between launches, so a task left open in an earlier run keeps the other operations locked. Finish and upload it to unlock them.
+- The demos show the Russian interface and the screenshots show the English one. To switch languages, change the language of WMS in the iOS Settings, or set App Language in the Run options of the Xcode scheme.
 - Camera permission handling blocks warehouse operations when camera access is missing.
 - Further warehouse operations are planned as future modules.
 
