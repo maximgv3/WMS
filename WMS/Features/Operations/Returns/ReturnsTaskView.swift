@@ -182,15 +182,15 @@ struct ReturnsTaskView: View {
                     color(for: slot).opacity(isRebinding(slot) ? 0.28 : 0.12)
                 )
             )
-            .overlay {
-                if isRebinding(slot) {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(color(for: slot), lineWidth: 2)
-                }
-            }
+            .shimmer(isRebinding(slot))
+            .glassIfAvailable(
+                isRebinding(slot),
+                shape: RoundedRectangle(cornerRadius: 14, style: .continuous),
+                isDimmed: false
+            )
             .contentShape(Rectangle())
         }
-        .buttonStyle(DecisionButtonStyle())
+        .buttonStyle(DecisionButtonStyle(scalesOnPress: !isRebinding(slot)))
         .foregroundStyle(ColorPalette.textPrimary)
     }
 
@@ -721,9 +721,11 @@ struct ReturnsTaskView: View {
 }
 
 private struct DecisionButtonStyle: ButtonStyle {
+    var scalesOnPress = true
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .scaleEffect(configuration.isPressed && scalesOnPress ? 0.97 : 1)
             .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
     }
 }
