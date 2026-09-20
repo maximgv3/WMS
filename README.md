@@ -11,7 +11,7 @@ The Profile tab covers earnings history, operator ratings, warehouse tariffs, wo
 
 ## Project Status
 
-In development. Putaway, Picking, and Returns inspection are complete end to end and covered by ViewModel tests; further warehouse modules are planned.
+The core app is complete and ready to demo: Putaway, Picking, and Returns inspection work end to end and are covered by ViewModel tests. New features are still added from time to time.
 
 ## Screenshots
 
@@ -287,7 +287,7 @@ Where to start reading:
 3. Use a physical iPhone to test the scanner, because the simulator does not provide a real camera.
 4. Run the `WMS` target.
 
-Minimum iOS version: iOS 17.
+Minimum iOS version: iOS 17. Requires Xcode 26 or later.
 
 ## Demo Guide
 
@@ -313,7 +313,6 @@ The repository includes a short demo guide with test item IDs and scanning instr
 - Task progress is kept between launches, so a task left open in an earlier run keeps the other operations locked. Finish and upload it to unlock them.
 - The demos show the Russian interface and the screenshots show the English one. To switch languages, change the language of WMS in the iOS Settings, or set App Language in the Run options of the Xcode scheme.
 - Camera permission handling blocks warehouse operations when camera access is missing.
-- Further warehouse operations are planned as future modules.
 
 ## Future Improvements
 
