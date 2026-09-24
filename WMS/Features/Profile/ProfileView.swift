@@ -4,10 +4,12 @@ struct ProfileView: View {
     // MARK: - State
 
     @State private var viewModel: ProfileViewModel
+    @State private var isSignOutConfirmationPresented = false
+    @Environment(SessionStore.self) private var sessionStore
+    @Environment(ActiveTaskStore.self) private var activeTaskStore
 
     // MARK: - Constants
 
-    private var id: String = "1 023 780"
     private var iconBackground: Color {
         ColorPalette.surfaceChip
     }
@@ -88,6 +90,7 @@ struct ProfileView: View {
                         financeStack
                     }
                     detailsSection
+                    signOutSection
                     Spacer()
                 }
                 .padding(20)
@@ -211,6 +214,51 @@ struct ProfileView: View {
         }
     }
 
+    private var signOutSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                isSignOutConfirmationPresented = true
+            } label: {
+                MenuRow(
+                    title: .profileHandInDevice,
+                    icon: "rectangle.portrait.and.arrow.right",
+                    showsChevron: false
+                )
+                .padding(.horizontal, 4)
+                .background(ColorPalette.surfacePrimary)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(.gray.opacity(0.15), lineWidth: 1)
+                }
+            }
+            .buttonStyle(.plain)
+            .disabled(activeTaskStore.activeOperation != nil)
+            .opacity(activeTaskStore.activeOperation != nil ? 0.5 : 1)
+
+            if let operation = activeTaskStore.activeOperation {
+                Text(
+                    .profileFinishTaskToSignOut(
+                        String(localized: operation.title)
+                    )
+                )
+                .font(.system(size: 14))
+                .foregroundStyle(ColorPalette.brandMuted)
+                .padding(.horizontal, 12)
+            }
+        }
+        .confirmationDialog(
+            .profileHandInDevice,
+            isPresented: $isSignOutConfirmationPresented
+        ) {
+            Button(role: .destructive) {
+                sessionStore.signOut()
+            } label: {
+                Text(.profileHandInDevice)
+            }
+        }
+    }
+
     @ViewBuilder
     private func destination(for item: ProfileDestination) -> some View {
         Group {
@@ -246,7 +294,7 @@ struct ProfileView: View {
                     HStack {
                         Group {
                             Image(systemName: "person.text.rectangle")
-                            Text(.profileEmployeeId(id))
+                            Text(.profileEmployeeId(sessionStore.badgeId ?? ""))
                         }
                         .font(.system(size: 15))
                         .foregroundStyle(ColorPalette.textPrimary)
@@ -364,6 +412,8 @@ struct ProfileView: View {
 
 #Preview {
     ProfileView(profileService: ProfileServiceMock())
+        .environment(SessionStore())
+        .environment(ActiveTaskStore())
 }
 
 private enum ProfileDestination: Hashable {

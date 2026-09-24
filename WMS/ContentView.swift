@@ -1,22 +1,32 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(SessionStore.self) private var sessionStore
     @AppStorage(AppSettings.Key.colorScheme) private var appColorScheme =
         AppColorScheme.system
 
     var body: some View {
-        TabView {
-            OperationsListView()
-                .tint(nil)
-                .tabItem {
-                    Label(.operationsTitle, systemImage: "shippingbox")
-                }
+        Group {
+            if sessionStore.isSignedIn {
+                TabView {
+                    OperationsListView()
+                        .tint(nil)
+                        .tabItem {
+                            Label(.operationsTitle, systemImage: "shippingbox")
+                        }
 
-            ProfileView(profileService: ProfileServiceMock())
-                .tint(nil)
-                .tabItem {
-                    Label(.profileTitle, systemImage: "person.crop.circle")
+                    ProfileView(profileService: ProfileServiceMock())
+                        .tint(nil)
+                        .tabItem {
+                            Label(
+                                .profileTitle,
+                                systemImage: "person.crop.circle"
+                            )
+                        }
                 }
+            } else {
+                LoginView(authService: AuthServiceMock())
+            }
         }
         .tint(ColorPalette.accentPrimary)
         .foregroundStyle(ColorPalette.textPrimary)
@@ -56,4 +66,5 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .environment(ActiveTaskStore())
+        .environment(SessionStore())
 }

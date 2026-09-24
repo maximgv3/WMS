@@ -5,6 +5,7 @@ enum AppSettings {
         static let colorScheme = "colorScheme"
         static let isScanSoundOn = "isScanSoundOn"
         static let isScreenAlwaysOn = "isScreenAlwaysOn"
+        static let signedInBadgeId = "signedInBadgeId"
     }
 
     // Defaults for readers outside SwiftUI, where @AppStorage cannot supply them.
