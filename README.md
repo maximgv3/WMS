@@ -15,9 +15,11 @@ The core app is complete and ready to demo: Putaway, Picking, and Returns inspec
 
 ## Screenshots
 
-### Operations menu
+### Sign in and operations menu
 
-<img src="assets/operations-list.png" width="230" alt="Warehouse operations menu">
+| Sign in | Operations menu |
+|:---:|:---:|
+| <img src="assets/sign-in.png" width="230" alt="Sign-in screen with the badge scanner"> | <img src="assets/operations-list.png" width="230" alt="Warehouse operations menu"> |
 
 ### Putaway
 
@@ -53,6 +55,7 @@ The core app is complete and ready to demo: Putaway, Picking, and Returns inspec
 
 ### App
 
+- Sign in by scanning an employee badge. The session is kept between launches, and Sign Out in Profile stays locked while a task is open, naming the task to finish first.
 - Warehouse operations menu: Putaway, Picking, Returns inspection.
 - One task at a time: once a task is taken, the other operations lock, and the menu marks the open one with Continue task until its results are uploaded.
 - Task progress in all three modules is saved on the device with SwiftData, so an interrupted task resumes where it left off, even after the app is closed. Putaway and Returns inspection tasks reopen at the container scan.
@@ -139,9 +142,19 @@ The core app is complete and ready to demo: Putaway, Picking, and Returns inspec
 - Mock API-style JSON resources for profile, picking, putaway, and returns task loading, with a Russian and an English copy of each task.
 - Mock services for fetching tasks, validating replacements, encoding finish requests, and finishing picking, putaway, and returns tasks.
 - Mock items with images, storage locations, articles, stock values, prices, and item attributes.
-- Swift Testing coverage for core picking, putaway, and returns ViewModel/result behavior, saved task progress and the one-task lock, tariff grouping and filtering, Profile and Rating ViewModel loading states, and document acknowledgement.
+- Swift Testing coverage for core picking, putaway, and returns ViewModel/result behavior, saved task progress and the one-task lock, sign-in and the saved session, tariff grouping and filtering, Profile and Rating ViewModel loading states, and document acknowledgement.
 
 ## Main Flows
+
+<details>
+<summary>Sign in</summary>
+
+1. Launch the app; the sign-in screen opens until a badge is scanned.
+2. Hold the camera area and scan the badge barcode.
+3. A known badge opens the app; an unknown one shows an error.
+4. To sign out, tap Sign Out at the bottom of Profile and confirm; it is locked while a task is open.
+
+</details>
 
 <details>
 <summary>Putaway</summary>
@@ -217,6 +230,7 @@ The core app is complete and ready to demo: Putaway, Picking, and Returns inspec
 ```text
 WMS/
 ├── Features/
+│   ├── Auth/
 │   ├── Operations/
 │   │   ├── Picking/
 │   │   │   └── PickingTask/
@@ -230,6 +244,7 @@ WMS/
 │       ├── Support/
 │       └── Tariffs/
 ├── Models/
+│   ├── Auth/
 │   ├── Operations/
 │   ├── Picking/
 │   ├── Profile/
@@ -278,7 +293,8 @@ Where to start reading:
 - `ColorPalette.swift` - Semantic color tokens backed by the asset catalog.
 - `ShimmerModifier.swift` - Shimmer highlight that respects Reduce Motion.
 - `MockJSONLoader.swift` - Helper for decoding bundled mock JSON resources.
-- `WMSTests/` - Swift Testing suites for the operation module and the Picking, Putaway, Returns, Tariffs, Profile, Rating, and Documents ViewModels.
+- `SessionStore.swift` - Signed-in badge kept in `UserDefaults` and shared through the environment to switch between sign-in and the app.
+- `WMSTests/` - Swift Testing suites for the operation module, the session store, and the Login, Picking, Putaway, Returns, Tariffs, Profile, Rating, and Documents ViewModels.
 
 ## How to Run
 
@@ -286,18 +302,20 @@ Where to start reading:
 2. Select an iPhone simulator or a physical device.
 3. Use a physical iPhone to test the scanner, because the simulator does not provide a real camera.
 4. Run the `WMS` target.
+5. Scan the test badge `1023780`, printed in the demo guide. In the simulator, sign in through Demo mode in the top-right menu.
 
 Minimum iOS version: iOS 17. Requires Xcode 26 or later.
 
 ## Demo Guide
 
-The repository includes a short demo guide with test item IDs and scanning instructions. It covers only the Picking flow for now; a full guide for all three modules will be added later.
+The repository includes a printable demo guide with the test badge, the codes of every module, and step-by-step instructions for sign-in, Putaway, Picking, and Returns inspection.
 
-- [English demo guide](assets/Guide_Picking_Flow_EN.pdf)
-- [Russian demo guide](assets/Guide_Picking_Flow_RU.pdf)
+- [English demo guide](assets/WMS_Demo_Guide_EN.pdf)
+- [Russian demo guide](assets/WMS_Demo_Guide_RU.pdf)
 
 ## Demo Notes
 
+- The mock auth service accepts the test badge `1023780`; any other code is rejected as unknown.
 - The mock service includes a test user ID for checking the task fetching error state.
 - Profile and warehouse task data are loaded from bundled mock JSON files.
 - The picking finish flow encodes collected, skipped, and replacement item IDs into JSON before completing the mock request.
