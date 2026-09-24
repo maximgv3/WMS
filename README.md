@@ -13,6 +13,13 @@ The Profile tab covers earnings history, operator ratings, warehouse tariffs, wo
 
 The core app is complete and ready to demo: Putaway, Picking, and Returns inspection work end to end and are covered by ViewModel tests. New features are still added from time to time.
 
+## Demo Guide
+
+The repository includes a printable demo guide with the test badge, the codes of every module, and step-by-step instructions for sign-in, Putaway, Picking, and Returns inspection.
+
+- [English demo guide](assets/WMS_Demo_Guide_EN.pdf)
+- [Russian demo guide](assets/WMS_Demo_Guide_RU.pdf)
+
 ## Screenshots
 
 ### Sign in and operations menu
@@ -305,13 +312,6 @@ Where to start reading:
 5. Scan the test badge `1023780`, printed in the demo guide. In the simulator, sign in through Demo mode in the top-right menu.
 
 Minimum iOS version: iOS 17. Requires Xcode 26 or later.
-
-## Demo Guide
-
-The repository includes a printable demo guide with the test badge, the codes of every module, and step-by-step instructions for sign-in, Putaway, Picking, and Returns inspection.
-
-- [English demo guide](assets/WMS_Demo_Guide_EN.pdf)
-- [Russian demo guide](assets/WMS_Demo_Guide_RU.pdf)
 
 ## Demo Notes
 
