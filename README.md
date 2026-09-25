@@ -217,7 +217,7 @@ The repository includes a printable demo guide with the test badge, the codes of
 
 ## Tech Stack
 
-- Swift
+- Swift 6 language mode, main actor by default
 - SwiftUI
 - MVVM
 - Observation (`@Observable`)
