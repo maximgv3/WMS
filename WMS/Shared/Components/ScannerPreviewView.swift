@@ -54,7 +54,10 @@ final class PreviewView: UIView {
 }
 
 extension ScannerPreviewView {
-    final class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate {
+    // Safety: UI state is accessed only on the main thread, capture state only on `sessionQueue`.
+    // Not an actor on purpose: SwiftUI calls this synchronously, so each call would need its own Task,
+    // and Tasks don't keep order (e.g. torch on/off could run reversed). The serial queue does.
+    nonisolated final class Coordinator: NSObject, AVCaptureMetadataOutputObjectsDelegate, @unchecked Sendable {
         var isScanningEnabled: Bool
         var onScan: (String) -> Void
 
@@ -81,7 +84,7 @@ extension ScannerPreviewView {
             setTorchEnabled(isEnabled)
         }
 
-        func configureSession(for previewView: PreviewView) {
+        @MainActor func configureSession(for previewView: PreviewView) {
             previewView.previewLayer.videoGravity = .resizeAspectFill
             previewView.previewLayer.session = session
 
@@ -198,7 +201,7 @@ extension ScannerPreviewView {
                 : supportedTypes
         }
 
-        func setScanAreaSize(_ size: CGSize?, for previewView: PreviewView) {
+        @MainActor func setScanAreaSize(_ size: CGSize?, for previewView: PreviewView) {
             let visibleBounds = previewView.bounds
             guard visibleBounds.width > 0, visibleBounds.height > 0 else { return }
 
