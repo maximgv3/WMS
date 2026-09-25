@@ -165,6 +165,8 @@ struct LoginView: View {
                 Image(systemName: "ellipsis.circle")
                     .font(.system(size: 22, weight: .medium))
                     .foregroundStyle(ColorPalette.textInverted)
+                    .padding(4)
+                    .glassIfAvailable()
             }
         }
 
