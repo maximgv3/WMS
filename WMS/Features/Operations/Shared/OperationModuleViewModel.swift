@@ -57,41 +57,11 @@ final class OperationModuleViewModel {
 
             switch operationType {
             case .putaway:
-                let task = try await putawayService.fetchTask(userId: userId)
-                if putawayProgressStore.load(for: task.container.id) == nil {
-                    putawayProgressStore.save(
-                        PutawayProgress(
-                            containerId: task.container.id,
-                            placedItems: [:]
-                        )
-                    )
-                }
-                route = .putaway(.container(task))
+                route = try await fetchPutawayTask()
             case .picking:
-                let task = try await pickingService.fetchTask(userId: userId)
-                if pickingProgressStore.load() == nil {
-                    pickingProgressStore.save(
-                        PickingProgress(
-                            collectedItemIds: [],
-                            skippedItemIds: [],
-                            replacements: [:]
-                        )
-                    )
-                }
-                route = .picking(.task(task))
+                route = try await fetchPickingTask()
             case .returns:
-                let task = try await returnsService.fetchTask(userId: userId)
-                if returnsProgressStore.load(for: task.container.id) == nil {
-                    returnsProgressStore.save(
-                        ReturnsProgress(
-                            sourceContainerId: task.container.id,
-                            decisions: [:],
-                            photos: [:],
-                            itemContainers: [:]
-                        )
-                    )
-                }
-                route = .returns(.containers(task))
+                route = try await fetchReturnsTask()
             }
 
             activeTaskStore.refresh()
@@ -101,6 +71,48 @@ final class OperationModuleViewModel {
             errorMessage = error.localizedDescription
             return nil
         }
+    }
+
+    private func fetchPutawayTask() async throws -> OperationType.WorkRoute {
+        let task = try await putawayService.fetchTask(userId: userId)
+        if putawayProgressStore.load(for: task.container.id) == nil {
+            putawayProgressStore.save(
+                PutawayProgress(
+                    containerId: task.container.id,
+                    placedItems: [:]
+                )
+            )
+        }
+        return .putaway(.container(task))
+    }
+
+    private func fetchPickingTask() async throws -> OperationType.WorkRoute {
+        let task = try await pickingService.fetchTask(userId: userId)
+        if pickingProgressStore.load() == nil {
+            pickingProgressStore.save(
+                PickingProgress(
+                    collectedItemIds: [],
+                    skippedItemIds: [],
+                    replacements: [:]
+                )
+            )
+        }
+        return .picking(.task(task))
+    }
+
+    private func fetchReturnsTask() async throws -> OperationType.WorkRoute {
+        let task = try await returnsService.fetchTask(userId: userId)
+        if returnsProgressStore.load(for: task.container.id) == nil {
+            returnsProgressStore.save(
+                ReturnsProgress(
+                    sourceContainerId: task.container.id,
+                    decisions: [:],
+                    photos: [:],
+                    itemContainers: [:]
+                )
+            )
+        }
+        return .returns(.containers(task))
     }
 
     #if DEBUG

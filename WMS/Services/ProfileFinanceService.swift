@@ -5,6 +5,7 @@ protocol ProfileFinanceServiceProtocol: AnyObject {
 }
 
 final class ProfileFinanceServiceMock: ProfileFinanceServiceProtocol {
+    // swiftlint:disable:next function_body_length
     func getFinanceSummary() async throws -> ProfileFinanceSummary {
         try await Task.sleep(for: .seconds(1))
         return ProfileFinanceSummary(

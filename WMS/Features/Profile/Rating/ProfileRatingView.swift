@@ -33,7 +33,13 @@ struct ProfileRatingView: View {
         } else if let error = viewModel.errorMessage, viewModel.history.isEmpty {
             errorState(error)
         } else if viewModel.history.isEmpty {
-            ErrorView(type: .other(icon: "chart.xyaxis.line", title: .ratingInsufficientDataMessage, autoDismiss: false))
+            ErrorView(
+                type: .other(
+                    icon: "chart.xyaxis.line",
+                    title: .ratingInsufficientDataMessage,
+                    autoDismiss: false
+                )
+            )
         } else {
             loadedState
         }
@@ -174,6 +180,8 @@ struct ProfileRatingView: View {
         .chartGesture { proxy in
             DragGesture(minimumDistance: 0)
                 .onChanged { value in
+                    // Short name for the chart's X coordinate
+                    // swiftlint:disable:next identifier_name
                     let x = min(max(value.location.x, 0), proxy.plotSize.width)
                     proxy.selectXValue(at: x)
                 }

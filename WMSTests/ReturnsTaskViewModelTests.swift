@@ -1,9 +1,11 @@
+// swiftlint:disable file_length
 import Foundation
 import Testing
 
 @testable import WMS
 
 @MainActor
+// swiftlint:disable:next type_body_length
 struct ReturnsTaskViewModelTests {
 
     private let sourceContainerId = "WMSCT620814"

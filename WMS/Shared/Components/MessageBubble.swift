@@ -45,8 +45,21 @@ struct MessageBubble: View {
 }
 
 #Preview {
-    MessageBubble(message: .init(date: .now, fromUser: true, text: "This is a user message describing an issue", id: UUID().uuidString))
+    MessageBubble(
+        message: .init(
+            date: .now,
+            fromUser: true,
+            text: "This is a user message describing an issue",
+            id: UUID().uuidString
+        )
+    )
 
-    MessageBubble(message: .init(date: .now, fromUser: false, text: "This is a support reply explaining the solution", id: UUID().uuidString)
+    MessageBubble(
+        message: .init(
+            date: .now,
+            fromUser: false,
+            text: "This is a support reply explaining the solution",
+            id: UUID().uuidString
+        )
     )
 }

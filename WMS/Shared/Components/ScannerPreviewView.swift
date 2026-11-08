@@ -37,11 +37,13 @@ struct ScannerPreviewView: UIViewRepresentable {
 final class PreviewView: UIView {
     var onLayout: ((PreviewView) -> Void)?
 
-    override class var layerClass: AnyClass {
+    override static var layerClass: AnyClass {
         AVCaptureVideoPreviewLayer.self
     }
 
     var previewLayer: AVCaptureVideoPreviewLayer {
+        // layerClass guarantees the layer type
+        // swiftlint:disable:next force_cast
         layer as! AVCaptureVideoPreviewLayer
     }
 
