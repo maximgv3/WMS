@@ -3,7 +3,7 @@ import SwiftUI
 struct IconChip: View {
     let systemName: String
     let size: CGFloat
-    
+
     var body: some View {
         Image(systemName: systemName)
             .font(.system(size: size * 0.5))

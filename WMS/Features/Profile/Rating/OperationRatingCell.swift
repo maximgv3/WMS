@@ -20,7 +20,7 @@ struct OperationRatingCell: View {
             }
         }
     }
-    
+
     private var trend: (icon: String, color: Color) {
         switch operation.didGoUp {
         case true?:  ("arrow.up.circle.fill", ColorPalette.success)
@@ -28,7 +28,7 @@ struct OperationRatingCell: View {
         case nil:    ("equal.circle.fill", ColorPalette.brandSecondary)
         }
     }
-    
+
     private var image: some View {
 
         return Image(systemName: trend.icon)

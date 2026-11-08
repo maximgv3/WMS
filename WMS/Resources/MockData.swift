@@ -41,7 +41,7 @@ struct MockData {
             return RatingPoint(date: date, value: value)
         }
     }()
-    
+
     static let operationsRatings: [OperationRating] = [
         .init(name: localized(.operationsPicking), value: 24.20, iconName: "cart", didGoUp: true),
         .init(name: localized(.commonReceiving), value: 11.43, iconName: "tray.and.arrow.down", didGoUp: false),
@@ -116,7 +116,7 @@ struct MockData {
             )
         ]
     }()
-    
+
     static let firstSupportMessages: [ChatMessage] = [
         .init(date: .now - 61 * 60, fromUser: false, text: localized(.commonHelloHowCanWeHelp), id: "1"),
         .init(date: .now - 60 * 60, fromUser: true, text: localized(.supportReceivingTaskCompletionIssue), id: "2"),

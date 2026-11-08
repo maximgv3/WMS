@@ -1,7 +1,7 @@
 import Foundation
 
 nonisolated struct Item: Identifiable, Hashable, Equatable, Sendable, Codable {
-    
+
     let id: Int
     let barcode: String
     let article: String

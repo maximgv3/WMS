@@ -3,13 +3,13 @@ import Observation
 
 @Observable
 final class PutawayTaskViewModel {
-    
+
     let task: PutawayTask
     let service: PutawayTaskServiceProtocol
     private let progressStore: PutawayProgressStoreProtocol
-    
+
     private(set) var currentCell: StorageCell?
-    private(set) var placedItems: [Item.ID : StorageCell.ID] = [:]
+    private(set) var placedItems: [Item.ID: StorageCell.ID] = [:]
     private(set) var lastError: PutawayError?
     private var pendingForeignCode: String?
     private var placementOrder: [Item] = [] // Newest first
@@ -20,7 +20,7 @@ final class PutawayTaskViewModel {
         guard let currentCell else { return [] }
         return placementOrder.filter { placedItems[$0.id] == currentCell.id }
     }
-    
+
     var currentCellItemsCount: Int {
         guard let currentCell else { return 0 }
         return placedItems.values.filter { $0 == currentCell.id }.count
@@ -30,21 +30,21 @@ final class PutawayTaskViewModel {
         guard currentCell != nil, task.cellCapacity > 0 else { return 0 }
         return Double(currentCellItemsCount) / Double(task.cellCapacity)
     }
-    
+
     var isCurrentCellFull: Bool {
         currentCellItemsCount >= task.cellCapacity
     }
-    
+
     var placedItemsCount: Int {
         task.items.filter { placedItems[$0.id] != nil }.count
     }
-    
+
     var allItemsCount: Int { task.items.count }
-    
+
     var leftItems: [Item] { task.items.filter { placedItems[$0.id] == nil } }
     var isAllItemsPlaced: Bool { leftItems.isEmpty }
     var result: PutawayResult { PutawayResult(placedItems: placedItems, skippedItemIds: leftItems.map(\.id)) }
-    
+
     init(
         task: PutawayTask,
         service: PutawayTaskServiceProtocol,
@@ -56,7 +56,7 @@ final class PutawayTaskViewModel {
 
         restoreProgress()
     }
-    
+
     func processCode(_ code: String) {
         let confirmedCode = pendingForeignCode
         pendingForeignCode = nil
@@ -102,7 +102,7 @@ final class PutawayTaskViewModel {
         guard currentCell == nil else { throw PutawayError.notAnItem }
         currentCell = StorageCell(id: cellId)
     }
-    
+
     private func processItemIdCode(
         _ itemId: String,
         confirmedCode: String?
@@ -177,7 +177,7 @@ final class PutawayTaskViewModel {
             )
         )
     }
-    
+
     private func isCellCode(_ code: String) -> Bool {
         code.filter({ $0 == "." }).count == 5 // Cell code contains 5 "." separators
     }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ModuleHeader: View {
     let title: LocalizedStringResource
-    var onBack: (() -> Void)? = nil
+    var onBack: (() -> Void)?
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {

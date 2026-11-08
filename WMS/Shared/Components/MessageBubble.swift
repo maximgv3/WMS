@@ -17,7 +17,7 @@ struct MessageBubble: View {
             if message.fromUser {
                 Spacer(minLength: 60)
             }
-            
+
             (Text(message.text) + Text(.commonSpacing) + time.foregroundStyle(.clear))
             .foregroundStyle(textColor)
             .overlay(alignment: .bottomTrailing) {
@@ -35,7 +35,7 @@ struct MessageBubble: View {
                     style: .circular
                 )
             )
-            
+
             if !message.fromUser {
                 Spacer(minLength: 60)
             }

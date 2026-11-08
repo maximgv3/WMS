@@ -68,7 +68,7 @@ final class ReturnsTaskViewModel {
     func decide(_ decision: ReturnDecision, photo: Data? = nil) {
         guard let currentItem else { return }
         if decision.requiresPhoto && photo == nil { return }
-        
+
         decisions[currentItem.id] = decision
         photos[currentItem.id] = photo
         itemContainers[currentItem.id] = containers[decision.containerSlot]
@@ -99,7 +99,7 @@ final class ReturnsTaskViewModel {
     func clearError() {
         lastError = nil
     }
-    
+
     private func bind(_ code: String, to slot: ReturnContainerSlot)
         throws(ReturnsError)
     {

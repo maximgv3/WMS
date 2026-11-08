@@ -12,7 +12,7 @@ struct ShimmerModifier: ViewModifier {
                     GeometryReader { proxy in
                         let width = proxy.size.width
                         let shimmerWidth = min(max(width * 0.18, 50), 90)
-                        
+
                         LinearGradient(
                             colors: [
                                 .clear,

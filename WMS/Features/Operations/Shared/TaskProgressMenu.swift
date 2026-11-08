@@ -1,27 +1,27 @@
 import SwiftUI
 
 struct TaskProgressMenu<MenuContent: View>: View {
-    
+
     private let doneCount: Int
     private let totalCount: Int
     private let menuContent: MenuContent
-    
+
     private var progressPercentage: Double {
         guard totalCount > 0 else { return 0 }
         return Double(doneCount) / Double(totalCount)
     }
-    
+
     init(doneCount: Int, totalCount: Int, @ViewBuilder menuContent: () -> MenuContent ) {
         self.doneCount = doneCount
         self.totalCount = totalCount
         self.menuContent = menuContent()
     }
-    
+
     var body: some View {
         Menu { menuContent } label: { progressIndicator }
         .buttonStyle(.plain)
     }
-    
+
     private var progressIndicator: some View {
         HStack(spacing: 10) {
             circularProgress
@@ -43,12 +43,12 @@ struct TaskProgressMenu<MenuContent: View>: View {
             value: progressPercentage
         )
     }
-    
+
     private var circularProgress: some View {
         ZStack {
             Circle()
                 .stroke(ColorPalette.brandMuted.opacity(0.22), lineWidth: 3)
-            
+
             Circle()
                 .trim(from: 0, to: progressPercentage)
                 .stroke(

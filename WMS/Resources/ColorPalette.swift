@@ -31,7 +31,6 @@ enum ColorPalette {
 
 }
 
-
 #Preview("Citrus Palette") {
     let items: [(String, Color)] = [
         ("BrandPrimary", ColorPalette.Citrus.brandPrimary),

@@ -46,7 +46,7 @@ struct ErrorView: View {
             do {
                 try await Task.sleep(for: .seconds(2))
             } catch { return }
-            
+
             dismiss()
         }
     }

@@ -214,7 +214,7 @@ struct PickingTaskViewModelTests {
         #expect(viewModel.replacements == [item1.id: 111])
         #expect(viewModel.currentItem == item2)
     }
-    
+
     @Test
     func secondScanDuringReplacementCheckDoesNotReplaceNextItem() async {
         let item1 = makeItem(id: 123)

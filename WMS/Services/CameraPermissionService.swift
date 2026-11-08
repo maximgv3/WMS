@@ -8,7 +8,6 @@ enum CameraAccessBlockReason: Identifiable {
     var id: Self { self }
 }
 
-
 final class CameraPermissionService {
     func blockReason() -> CameraAccessBlockReason? {
         switch AVCaptureDevice.authorizationStatus(for: .video) {

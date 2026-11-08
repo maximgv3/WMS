@@ -79,7 +79,7 @@ struct CameraPickerView: UIViewControllerRepresentable {
         ) {
             onFinish(shot(from: info[.originalImage] as? UIImage))
         }
-        
+
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
             onFinish(nil)
         }

@@ -5,6 +5,6 @@ nonisolated struct OperationRating: Identifiable, Sendable {
     let value: Double
     let iconName: String
     let didGoUp: Bool?
-    
+
     var id: String { name }
 }
